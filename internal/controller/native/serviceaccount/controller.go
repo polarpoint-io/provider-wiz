@@ -133,10 +133,7 @@ func (e *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 	// If publishing the secret failed after Create, the next reconcile finds
 	// the account and nothing would create it again. Say so instead of
 	// reporting a ready resource with unusable credentials.
-	if lost, err := e.secretLost(ctx, cr); err != nil || lost {
-		if err == nil {
-			err = errors.New(errLostSecret)
-		}
+	if err := e.checkSecret(ctx, cr); err != nil {
 		return managed.ExternalObservation{ResourceExists: true, ResourceUpToDate: true}, err
 	}
 	cr.SetConditions(xpv2.Available())
@@ -194,6 +191,18 @@ func (e *external) Delete(ctx context.Context, mg resource.Managed) (managed.Ext
 }
 
 func (e *external) Disconnect(context.Context) error { return nil }
+
+// checkSecret returns an error when the connection secret was lost.
+func (e *external) checkSecret(ctx context.Context, cr serviceAccountResource) error {
+	lost, err := e.secretLost(ctx, cr)
+	if err != nil {
+		return err
+	}
+	if lost {
+		return errors.New(errLostSecret)
+	}
+	return nil
+}
 
 // secretLost reports whether this resource asks for a connection secret,
 // may have created the account, and the secret holds no client secret.

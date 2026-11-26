@@ -22,7 +22,11 @@ import (
 	"github.com/polarpoint-io/provider-wiz/apis/namespaced/iam/v1alpha1"
 )
 
-const testID = "sa-1"
+const (
+	testID     = "sa-1"
+	secretName = "creds"
+	fieldType  = "type"
+)
 
 type fakeWiz struct {
 	t        *testing.T
@@ -59,7 +63,7 @@ func (f *fakeWiz) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		for _, id := range ids {
 			ps = append(ps, map[string]any{"id": id})
 		}
-		a := map[string]any{"id": testID, "name": in["name"], "clientId": "cid", "scopes": in["scopes"], "type": in["type"],
+		a := map[string]any{"id": testID, "name": in["name"], "clientId": "cid", "scopes": in["scopes"], fieldType: in[fieldType],
 			"createdAt": "2026-11-26T00:00:00Z", "lastRotatedAt": "2026-11-26T00:00:00Z", "assignedProjects": ps}
 		f.accounts[testID] = a
 		withSecret := map[string]any{"clientSecret": "s3cret"}
@@ -103,8 +107,8 @@ func TestLifecycle(t *testing.T) {
 	if string(c.ConnectionDetails[ConnClientID]) != "cid" || string(c.ConnectionDetails[ConnClientSecret]) != "s3cret" {
 		t.Errorf("connection details = %v", c.ConnectionDetails)
 	}
-	if fw.last["type"] != "THIRD_PARTY" {
-		t.Errorf("type = %v, want THIRD_PARTY by default", fw.last["type"])
+	if fw.last[fieldType] != "THIRD_PARTY" {
+		t.Errorf("type = %v, want THIRD_PARTY by default", fw.last[fieldType])
 	}
 
 	// Scope order does not matter.
@@ -147,18 +151,18 @@ func TestOtherTypesSendNoScopes(t *testing.T) {
 
 func TestLostSecretIsReported(t *testing.T) {
 	ctx := context.Background()
-	fw := &fakeWiz{t: t, accounts: map[string]map[string]any{testID: {"id": testID, "name": "ci", "type": "THIRD_PARTY"}}}
+	fw := &fakeWiz{t: t, accounts: map[string]map[string]any{testID: {"id": testID, "name": "ci", fieldType: "THIRD_PARTY"}}}
 	srv := httptest.NewServer(fw)
 	defer srv.Close()
 
 	namespaced := &v1alpha1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: "ci", Namespace: "team"}}
 	namespaced.Spec.ForProvider.Name = "ci"
-	namespaced.Spec.WriteConnectionSecretToReference = &xpv2.LocalSecretReference{Name: "creds"}
+	namespaced.Spec.WriteConnectionSecretToReference = &xpv2.LocalSecretReference{Name: secretName}
 	meta.SetExternalName(namespaced, testID)
 
 	cluster := &clusterv1alpha1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: "ci"}}
 	cluster.Spec.ForProvider.Name = "ci"
-	cluster.Spec.WriteConnectionSecretToReference = &xpv2.SecretReference{Name: "creds", Namespace: "ops"}
+	cluster.Spec.WriteConnectionSecretToReference = &xpv2.SecretReference{Name: secretName, Namespace: "ops"}
 	meta.SetExternalName(cluster, testID)
 
 	observeOnly := namespaced.DeepCopy()
@@ -171,13 +175,13 @@ func TestLostSecretIsReported(t *testing.T) {
 	}{
 		"NamespacedMissingSecret": {cr: namespaced, lost: true},
 		"NamespacedWithSecret": {cr: namespaced, secrets: []client.Object{
-			&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: "creds", Namespace: "team"}, Data: map[string][]byte{ConnClientSecret: []byte("s")}},
+			&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: secretName, Namespace: "team"}, Data: map[string][]byte{ConnClientSecret: []byte("s")}},
 		}},
 		"ClusterSecretWithoutKey": {cr: cluster, lost: true, secrets: []client.Object{
-			&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: "creds", Namespace: "ops"}, Data: map[string][]byte{ConnClientID: []byte("cid")}},
+			&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: secretName, Namespace: "ops"}, Data: map[string][]byte{ConnClientID: []byte("cid")}},
 		}},
 		"ClusterUpjetSecret": {cr: cluster, secrets: []client.Object{
-			&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: "creds", Namespace: "ops"}, Data: map[string][]byte{legacyConnClientSecret: []byte("s")}},
+			&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: secretName, Namespace: "ops"}, Data: map[string][]byte{legacyConnClientSecret: []byte("s")}},
 		}},
 		"ObserveOnly": {cr: observeOnly},
 	}
