@@ -15,6 +15,8 @@ import (
 	"github.com/polarpoint-io/provider-wiz/apis/namespaced/project/v1alpha1"
 )
 
+const testID = "p-1"
+
 // fakeWiz is an in-memory stand-in for the Wiz GraphQL API that understands
 // the three project operations.
 type fakeWiz struct {
@@ -39,7 +41,7 @@ func (f *fakeWiz) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "CreateProject":
 		f.last = req.Variables
 		in := req.Variables["input"].(map[string]any)
-		p := map[string]any{"id": "p-1", "name": in["name"], "slug": "generated-slug", "isFolder": false, "archived": false, "riskProfile": map[string]any{}}
+		p := map[string]any{"id": testID, "name": in["name"], "slug": "generated-slug", "isFolder": false, "archived": false, "riskProfile": map[string]any{}}
 		for _, k := range []string{"description", "projectOwners"} {
 			if v, ok := in[k]; ok {
 				p[k] = v
@@ -52,7 +54,7 @@ func (f *fakeWiz) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 			p["projectOwners"] = us
 		}
-		f.projects["p-1"] = p
+		f.projects[testID] = p
 		data = map[string]any{"createProject": map[string]any{"project": p}}
 	case "UpdateProject":
 		f.last = req.Variables
@@ -83,8 +85,9 @@ func (f *fakeWiz) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // readLinks turns cloudAccountLinks input into the shape a query returns.
 func readLinks(v any) []any {
-	out := []any{}
-	for _, l := range v.([]any) {
+	in := v.([]any)
+	out := make([]any, 0, len(in))
+	for _, l := range in {
 		m := l.(map[string]any)
 		out = append(out, map[string]any{"cloudAccount": map[string]any{"id": m["cloudAccount"]}, "environment": m["environment"]})
 	}
@@ -110,7 +113,7 @@ func TestLifecycle(t *testing.T) {
 	if _, err := e.Create(ctx, cr); err != nil {
 		t.Fatal(err)
 	}
-	if got := meta.GetExternalName(cr); got != "p-1" {
+	if got := meta.GetExternalName(cr); got != testID {
 		t.Fatalf("external name = %q", got)
 	}
 	in := fw.last["input"].(map[string]any)
@@ -126,7 +129,7 @@ func TestLifecycle(t *testing.T) {
 	if cr.Spec.ForProvider.Slug == nil || *cr.Spec.ForProvider.Slug != "generated-slug" {
 		t.Errorf("slug not late-initialized: %v", cr.Spec.ForProvider.Slug)
 	}
-	if cr.Status.AtProvider.ID != "p-1" {
+	if cr.Status.AtProvider.ID != testID {
 		t.Errorf("observation not set: %+v", cr.Status.AtProvider)
 	}
 
@@ -190,7 +193,7 @@ func TestUpToDateIgnoresOrderAndUnsetFields(t *testing.T) {
 func TestExplicitEmptyListClearsLinks(t *testing.T) {
 	ctx := context.Background()
 	fw := &fakeWiz{t: t, projects: map[string]map[string]any{
-		"p-1": {"id": "p-1", "name": "A", "slug": "a", "isFolder": false, "archived": false, "riskProfile": map[string]any{},
+		testID: {"id": testID, "name": "A", "slug": "a", "isFolder": false, "archived": false, "riskProfile": map[string]any{},
 			"cloudAccountLinks": []any{map[string]any{"cloudAccount": map[string]any{"id": "c1"}, "environment": "PRODUCTION"}}},
 	}}
 	srv := httptest.NewServer(fw)
@@ -198,7 +201,7 @@ func TestExplicitEmptyListClearsLinks(t *testing.T) {
 	e := &external{wiz: graphql.NewClient(srv.URL, srv.Client())}
 
 	cr := &v1alpha1.Project{ObjectMeta: metav1.ObjectMeta{Name: "a", Namespace: "default"}}
-	meta.SetExternalName(cr, "p-1")
+	meta.SetExternalName(cr, testID)
 	cr.Spec.ForProvider = project.Parameters{Name: "A"}
 
 	// Unset: the existing link is left alone.
