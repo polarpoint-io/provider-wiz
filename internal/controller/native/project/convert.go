@@ -44,34 +44,39 @@ func fromObserved(f *wizapi.ProjectFields) project.Parameters {
 		SensitiveDataTypes:  stringsOf(r.SensitiveDataTypes),
 		RegulatoryStandards: stringsOf(r.RegulatoryStandards),
 	}
+	p.CloudAccountLinks, p.CloudOrganizationLinks, p.KubernetesClusterLinks = observedLinks(f)
+	return p
+}
+
+func observedLinks(f *wizapi.ProjectFields) ([]project.CloudAccountLink, []project.CloudOrganizationLink, []project.KubernetesClusterLink) {
+	ca := make([]project.CloudAccountLink, 0, len(f.CloudAccountLinks))
 	for _, l := range f.CloudAccountLinks {
-		cl := project.CloudAccountLink{CloudAccount: l.CloudAccount.Id, ResourceGroups: l.ResourceGroups, Shared: l.Shared}
-		if l.Environment != nil {
-			cl.Environment = project.Environment(*l.Environment)
-		}
+		cl := project.CloudAccountLink{CloudAccount: l.CloudAccount.Id, ResourceGroups: l.ResourceGroups, Shared: l.Shared, Environment: env(l.Environment)}
 		for _, t := range l.ResourceTags {
 			cl.ResourceTags = append(cl.ResourceTags, project.ResourceTag{Key: t.Key, Value: t.Value})
 		}
-		p.CloudAccountLinks = append(p.CloudAccountLinks, cl)
+		ca = append(ca, cl)
 	}
+	co := make([]project.CloudOrganizationLink, 0, len(f.CloudOrganizationLinks))
 	for _, l := range f.CloudOrganizationLinks {
-		ol := project.CloudOrganizationLink{CloudOrganization: l.CloudOrganization.Id, ResourceGroups: l.ResourceGroups, Shared: l.Shared}
-		if l.Environment != nil {
-			ol.Environment = project.Environment(*l.Environment)
-		}
+		ol := project.CloudOrganizationLink{CloudOrganization: l.CloudOrganization.Id, ResourceGroups: l.ResourceGroups, Shared: l.Shared, Environment: env(l.Environment)}
 		for _, t := range l.ResourceTags {
 			ol.ResourceTags = append(ol.ResourceTags, project.ResourceTag{Key: t.Key, Value: t.Value})
 		}
-		p.CloudOrganizationLinks = append(p.CloudOrganizationLinks, ol)
+		co = append(co, ol)
 	}
+	kc := make([]project.KubernetesClusterLink, 0, len(f.KubernetesClustersLinks))
 	for _, l := range f.KubernetesClustersLinks {
-		kl := project.KubernetesClusterLink{KubernetesCluster: l.KubernetesCluster.Id, Namespaces: l.Namespaces, Shared: l.Shared}
-		if l.Environment != nil {
-			kl.Environment = project.Environment(*l.Environment)
-		}
-		p.KubernetesClusterLinks = append(p.KubernetesClusterLinks, kl)
+		kc = append(kc, project.KubernetesClusterLink{KubernetesCluster: l.KubernetesCluster.Id, Namespaces: l.Namespaces, Shared: l.Shared, Environment: env(l.Environment)})
 	}
-	return p
+	return ca, co, kc
+}
+
+func env(e *wizapi.Environment) project.Environment {
+	if e == nil {
+		return ""
+	}
+	return project.Environment(*e)
 }
 
 func observation(f *wizapi.ProjectFields) project.Observation {
@@ -257,21 +262,21 @@ func toRiskProfileInput(r project.RiskProfile) wizapi.ProjectRiskProfileInput {
 }
 
 func toLinkInputs(p project.Parameters) ([]wizapi.ProjectCloudAccountLinkInput, []wizapi.ProjectCloudOrganizationLinkInput, []wizapi.ProjectKubernetesClusterLinkInput) {
-	var ca []wizapi.ProjectCloudAccountLinkInput
+	ca := make([]wizapi.ProjectCloudAccountLinkInput, 0, len(p.CloudAccountLinks))
 	for _, l := range p.CloudAccountLinks {
 		ca = append(ca, wizapi.ProjectCloudAccountLinkInput{
 			CloudAccount: l.CloudAccount, Environment: wizapi.Environment(l.Environment),
 			ResourceGroups: l.ResourceGroups, ResourceTags: tagInputs(l.ResourceTags), Shared: l.Shared,
 		})
 	}
-	var co []wizapi.ProjectCloudOrganizationLinkInput
+	co := make([]wizapi.ProjectCloudOrganizationLinkInput, 0, len(p.CloudOrganizationLinks))
 	for _, l := range p.CloudOrganizationLinks {
 		co = append(co, wizapi.ProjectCloudOrganizationLinkInput{
 			CloudOrganization: l.CloudOrganization, Environment: wizapi.Environment(l.Environment),
 			ResourceGroups: l.ResourceGroups, ResourceTags: tagInputs(l.ResourceTags), Shared: l.Shared,
 		})
 	}
-	var kc []wizapi.ProjectKubernetesClusterLinkInput
+	kc := make([]wizapi.ProjectKubernetesClusterLinkInput, 0, len(p.KubernetesClusterLinks))
 	for _, l := range p.KubernetesClusterLinks {
 		kc = append(kc, wizapi.ProjectKubernetesClusterLinkInput{
 			KubernetesCluster: l.KubernetesCluster, Environment: wizapi.Environment(l.Environment),
@@ -282,7 +287,10 @@ func toLinkInputs(p project.Parameters) ([]wizapi.ProjectCloudAccountLinkInput, 
 }
 
 func tagInputs(tags []project.ResourceTag) []wizapi.ResourceTagInput {
-	var out []wizapi.ResourceTagInput
+	if len(tags) == 0 {
+		return nil
+	}
+	out := make([]wizapi.ResourceTagInput, 0, len(tags))
 	for _, t := range tags {
 		out = append(out, wizapi.ResourceTagInput{Key: t.Key, Value: t.Value})
 	}

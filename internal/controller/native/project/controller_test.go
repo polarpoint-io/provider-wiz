@@ -46,7 +46,7 @@ func (f *fakeWiz) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if owners, ok := in["projectOwners"].([]any); ok {
-			var us []any
+			us := make([]any, 0, len(owners))
 			for _, o := range owners {
 				us = append(us, map[string]any{"id": o})
 			}
@@ -72,7 +72,9 @@ func (f *fakeWiz) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		f.t.Fatalf("unexpected operation %q", req.OperationName)
 	}
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(map[string]any{"data": data})
+	if err := json.NewEncoder(w).Encode(map[string]any{"data": data}); err != nil {
+		f.t.Error(err)
+	}
 }
 
 func TestLifecycle(t *testing.T) {

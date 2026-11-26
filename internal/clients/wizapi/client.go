@@ -134,29 +134,45 @@ type retryTransport struct {
 func (t *retryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	req.Header.Set("User-Agent", userAgent)
 	for attempt := 0; ; attempt++ {
-		if err := t.limiter.Wait(req.Context()); err != nil {
+		if err := t.prepare(req, attempt); err != nil {
 			return nil, err
-		}
-		if attempt > 0 && req.GetBody != nil {
-			body, err := req.GetBody()
-			if err != nil {
-				return nil, err
-			}
-			req.Body = body
 		}
 		resp, err := t.next.RoundTrip(req)
 		if attempt >= t.max || !retryable(resp, err) {
 			return resp, err
 		}
-		wait := backoff(attempt, resp)
+		d := backoff(attempt, resp)
 		if resp != nil {
 			_ = resp.Body.Close()
 		}
-		select {
-		case <-req.Context().Done():
-			return nil, req.Context().Err()
-		case <-time.After(wait):
+		if err := sleep(req.Context(), d); err != nil {
+			return nil, err
 		}
+	}
+}
+
+// prepare waits for the rate limiter and, on a retry, rewinds the body.
+func (t *retryTransport) prepare(req *http.Request, attempt int) error {
+	if err := t.limiter.Wait(req.Context()); err != nil {
+		return err
+	}
+	if attempt == 0 || req.GetBody == nil {
+		return nil
+	}
+	body, err := req.GetBody()
+	if err != nil {
+		return err
+	}
+	req.Body = body
+	return nil
+}
+
+func sleep(ctx context.Context, d time.Duration) error {
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-time.After(d):
+		return nil
 	}
 }
 

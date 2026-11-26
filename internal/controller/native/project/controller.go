@@ -82,7 +82,7 @@ func setup(mgr ctrl.Manager, o xpcontroller.Options, gvk schema.GroupVersionKind
 	opts := []managed.ReconcilerOption{
 		managed.WithExternalConnector(&connector{kube: mgr.GetClient(), newClient: wizapi.Cached}),
 		managed.WithLogger(o.Logger.WithValues("controller", name)),
-		managed.WithRecorder(event.NewAPIRecorder(mgr.GetEventRecorderFor(name))),
+		managed.WithRecorder(event.NewAPIRecorder(mgr.GetEventRecorderFor(name))), //nolint:staticcheck // event.NewAPIRecorder needs the old recorder, as in the Upjet controllers
 		managed.WithTimeout(2 * time.Minute),
 		managed.WithPollInterval(o.PollInterval),
 	}
