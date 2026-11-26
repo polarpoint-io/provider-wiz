@@ -29,6 +29,7 @@ func GetProvider() *ujconfig.Provider {
 		))
 
 	configureResources(pc)
+	configureExamples(pc)
 
 	pc.ConfigureResources()
 	return pc
@@ -48,6 +49,7 @@ func GetProviderNamespaced() *ujconfig.Provider {
 		}))
 
 	configureResources(pc)
+	configureExamples(pc)
 
 	pc.ConfigureResources()
 	return pc

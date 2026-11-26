@@ -8,8 +8,8 @@ metadata:
   name: test-global-scope
 spec:
   forProvider:
-    group_mappings:
-    - provider_group_id: global-reader-group-id
+    groupMapping:
+    - providerGroupId: global-reader-group-id
       role: PROJECT_READER
     samlIdpIdSelector:
       matchLabels:

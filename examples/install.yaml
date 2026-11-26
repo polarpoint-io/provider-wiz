@@ -3,4 +3,4 @@ kind: Provider
 metadata:
   name: provider-wiz
 spec:
-  package: xpkg.crossplane.io/polarpoint-io/provider-wiz:v0.1.0
+  package: ghcr.io/polarpoint-io/provider-wiz:v0.1.0

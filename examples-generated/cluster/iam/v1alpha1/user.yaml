@@ -8,7 +8,6 @@ metadata:
   name: psm
 spec:
   forProvider:
-    email: ${var.wiz_local_users[each.key].email}
-    for_each: ${local.wiz_local_users}
-    name: ${each.key}
-    role: ${var.wiz_local_users[each.key].role}
+    email: jane.doe@example.com
+    name: Jane Doe
+    role: PROJECT_READER

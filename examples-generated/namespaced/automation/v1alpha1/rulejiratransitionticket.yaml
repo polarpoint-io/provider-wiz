@@ -20,8 +20,6 @@ spec:
     integrationIdSelector:
       matchLabels:
         testing.upbound.io/example-name: default
-    jira_add_issues_report: false
-    jira_project_key: PROJ
     jiraAdvancedFields: |-
       ${jsonencode({
           "resolution" : "Done"
@@ -29,6 +27,7 @@ spec:
     jiraAttachEvidenceCsv: false
     jiraComment: Resolved via Wiz Automation
     jiraCommentOnTransition: true
+    jiraProject: PROJ
     jiraTransitionId: Resolved
     name: example
     triggerSource: ISSUES
