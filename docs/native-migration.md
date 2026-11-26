@@ -52,5 +52,5 @@ pointing at the same Wiz object.
 | --- | --- | --- |
 | Project | native | Wiz cannot delete projects, so deleting a Project archives it. The old `CloudAccountLink` kind is now `spec.forProvider.cloudAccountLinks`. |
 | User | native | `assignedProjectIds` left unset is not managed; `[]` removes every assignment. `isSuspended` is new. Role and projects are read from Wiz's effective values, which a SAML group mapping can override. |
-| ServiceAccount | native | Wiz cannot update a service account: `name`, `type` and `scopes` are immutable, and a change to `assignedProjects` reports a sync error until the resource is recreated. The connection secret gets `client_id` and `client_secret` on create only. `recreateIfRotated` is gone; `status.atProvider.lastRotatedAt` shows a rotation done outside Crossplane. |
+| ServiceAccount | native | Wiz cannot update a service account: `name`, `type` and `scopes` are immutable, and a change to `assignedProjects` reports a sync error until the resource is recreated. The connection secret gets `client_id` and `client_secret` on create only; if that write fails, the resource reports a sync error, because the secret cannot be fetched again. `recreateIfRotated` is gone; `status.atProvider.lastRotatedAt` shows a rotation done outside Crossplane. |
 | All other kinds | Upjet | Unchanged. |

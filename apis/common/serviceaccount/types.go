@@ -9,11 +9,17 @@ type Type string
 // service account, so every field is immutable: delete and recreate the
 // resource to change one. A change to assignedProjects is reported as a sync
 // error rather than rejected, because references fill that field in after
-// the resource is created.
+// the resource is created. Name is required unless the resource only
+// observes (see the rules on the ServiceAccount kinds).
+//
+// Field-level transition rules only run when a field is set before and after
+// the change, so this rule stops scopes being removed and then re-added.
+// +kubebuilder:validation:XValidation:rule="has(self.scopes) == has(oldSelf.scopes)",message="scopes cannot be added or removed after creation"
 type Parameters struct {
 	// Name of the service account.
+	// +optional
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="name is immutable"
-	Name string `json:"name"`
+	Name string `json:"name,omitempty"`
 	// Type of the service account. Defaults to THIRD_PARTY, a GraphQL API
 	// client. Use BROKER for the Wiz Helm charts.
 	// +optional

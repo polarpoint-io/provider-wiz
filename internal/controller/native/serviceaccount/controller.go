@@ -14,6 +14,9 @@ import (
 	"github.com/crossplane/crossplane-runtime/v2/pkg/resource"
 	xpv2 "github.com/crossplane/crossplane/apis/v2/core/v2"
 	"github.com/pkg/errors"
+	corev1 "k8s.io/api/core/v1"
+	kerrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -38,7 +41,12 @@ const (
 	errDelete            = "cannot delete Wiz service account"
 	errNoServiceAccount  = "Wiz returned no service account"
 	errImmutable         = "Wiz cannot update a service account: the spec no longer matches it, so delete and recreate this resource to apply the change"
+	errGetSecret         = "cannot get connection secret"
+	errLostSecret        = "the connection secret has no client secret, and Wiz returns it only when the service account is created; delete and recreate this resource to get a new one"
 )
+
+// legacyConnClientSecret is where the Upjet controller wrote the secret.
+const legacyConnClientSecret = "attribute.client_secret"
 
 // serviceAccountResource is implemented by both the cluster-scoped and the
 // namespaced ServiceAccount types.
@@ -96,11 +104,12 @@ func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.E
 	if err != nil {
 		return nil, err
 	}
-	return &external{wiz: wiz}, nil
+	return &external{wiz: wiz, kube: c.kube}, nil
 }
 
 type external struct {
-	wiz graphql.Client
+	wiz  graphql.Client
+	kube client.Reader
 }
 
 func (e *external) Observe(ctx context.Context, mg resource.Managed) (managed.ExternalObservation, error) {
@@ -121,6 +130,15 @@ func (e *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 	}
 	f := &resp.ServiceAccount.ServiceAccountFields
 	cr.SetObservation(observation(f))
+	// If publishing the secret failed after Create, the next reconcile finds
+	// the account and nothing would create it again. Say so instead of
+	// reporting a ready resource with unusable credentials.
+	if lost, err := e.secretLost(ctx, cr); err != nil || lost {
+		if err == nil {
+			err = errors.New(errLostSecret)
+		}
+		return managed.ExternalObservation{ResourceExists: true, ResourceUpToDate: true}, err
+	}
 	cr.SetConditions(xpv2.Available())
 	// No connection details here: Wiz returns the client secret only on
 	// create, and the secret keeps what Create published.
@@ -176,6 +194,46 @@ func (e *external) Delete(ctx context.Context, mg resource.Managed) (managed.Ext
 }
 
 func (e *external) Disconnect(context.Context) error { return nil }
+
+// secretLost reports whether this resource asks for a connection secret,
+// may have created the account, and the secret holds no client secret.
+// Resources that only observe an account never get its secret.
+func (e *external) secretLost(ctx context.Context, cr serviceAccountResource) (bool, error) {
+	if e.kube == nil || !mayCreate(cr.GetManagementPolicies()) {
+		return false, nil
+	}
+	var key types.NamespacedName
+	switch o := cr.(type) {
+	case interface{ GetWriteConnectionSecretToReference() *xpv2.SecretReference }:
+		ref := o.GetWriteConnectionSecretToReference()
+		if ref == nil {
+			return false, nil
+		}
+		key = types.NamespacedName{Namespace: ref.Namespace, Name: ref.Name}
+	case interface {
+		GetWriteConnectionSecretToReference() *xpv2.LocalSecretReference
+	}:
+		ref := o.GetWriteConnectionSecretToReference()
+		if ref == nil {
+			return false, nil
+		}
+		key = types.NamespacedName{Namespace: cr.GetNamespace(), Name: ref.Name}
+	default:
+		return false, nil
+	}
+	s := &corev1.Secret{}
+	if err := e.kube.Get(ctx, key, s); err != nil {
+		if kerrors.IsNotFound(err) {
+			return true, nil
+		}
+		return false, errors.Wrap(err, errGetSecret)
+	}
+	return len(s.Data[ConnClientSecret]) == 0 && len(s.Data[legacyConnClientSecret]) == 0, nil
+}
+
+func mayCreate(p xpv2.ManagementPolicies) bool {
+	return len(p) == 0 || slices.Contains(p, xpv2.ManagementActionAll) || slices.Contains(p, xpv2.ManagementActionCreate)
+}
 
 func observation(f *wizapi.ServiceAccountFields) serviceaccount.Observation {
 	return serviceaccount.Observation{

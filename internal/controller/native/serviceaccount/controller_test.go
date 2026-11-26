@@ -10,7 +10,13 @@ import (
 
 	"github.com/Khan/genqlient/graphql"
 	"github.com/crossplane/crossplane-runtime/v2/pkg/meta"
+	xpv2 "github.com/crossplane/crossplane/apis/v2/core/v2"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
+
+	clusterv1alpha1 "github.com/polarpoint-io/provider-wiz/apis/cluster/iam/v1alpha1"
 
 	"github.com/polarpoint-io/provider-wiz/apis/common/serviceaccount"
 	"github.com/polarpoint-io/provider-wiz/apis/namespaced/iam/v1alpha1"
@@ -136,5 +142,56 @@ func TestOtherTypesSendNoScopes(t *testing.T) {
 	in := toCreateInput(serviceaccount.Parameters{Name: "b", Type: &broker, Scopes: []string{"read:all"}})
 	if in.Scopes != nil || in.AssignedProjectIds != nil || in.Type == nil || *in.Type != "BROKER" {
 		t.Errorf("create input = %+v", in)
+	}
+}
+
+func TestLostSecretIsReported(t *testing.T) {
+	ctx := context.Background()
+	fw := &fakeWiz{t: t, accounts: map[string]map[string]any{testID: {"id": testID, "name": "ci", "type": "THIRD_PARTY"}}}
+	srv := httptest.NewServer(fw)
+	defer srv.Close()
+
+	namespaced := &v1alpha1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: "ci", Namespace: "team"}}
+	namespaced.Spec.ForProvider.Name = "ci"
+	namespaced.Spec.WriteConnectionSecretToReference = &xpv2.LocalSecretReference{Name: "creds"}
+	meta.SetExternalName(namespaced, testID)
+
+	cluster := &clusterv1alpha1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: "ci"}}
+	cluster.Spec.ForProvider.Name = "ci"
+	cluster.Spec.WriteConnectionSecretToReference = &xpv2.SecretReference{Name: "creds", Namespace: "ops"}
+	meta.SetExternalName(cluster, testID)
+
+	observeOnly := namespaced.DeepCopy()
+	observeOnly.Spec.ManagementPolicies = xpv2.ManagementPolicies{xpv2.ManagementActionObserve}
+
+	cases := map[string]struct {
+		cr      serviceAccountResource
+		secrets []client.Object
+		lost    bool
+	}{
+		"NamespacedMissingSecret": {cr: namespaced, lost: true},
+		"NamespacedWithSecret": {cr: namespaced, secrets: []client.Object{
+			&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: "creds", Namespace: "team"}, Data: map[string][]byte{ConnClientSecret: []byte("s")}},
+		}},
+		"ClusterSecretWithoutKey": {cr: cluster, lost: true, secrets: []client.Object{
+			&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: "creds", Namespace: "ops"}, Data: map[string][]byte{ConnClientID: []byte("cid")}},
+		}},
+		"ClusterUpjetSecret": {cr: cluster, secrets: []client.Object{
+			&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: "creds", Namespace: "ops"}, Data: map[string][]byte{legacyConnClientSecret: []byte("s")}},
+		}},
+		"ObserveOnly": {cr: observeOnly},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			kube := fake.NewClientBuilder().WithObjects(tc.secrets...).Build()
+			e := &external{wiz: graphql.NewClient(srv.URL, srv.Client()), kube: kube}
+			obs, err := e.Observe(ctx, tc.cr)
+			if !obs.ResourceExists {
+				t.Fatal("want the account to exist")
+			}
+			if (err != nil) != tc.lost {
+				t.Errorf("Observe error = %v, want lost=%v", err, tc.lost)
+			}
+		})
 	}
 }

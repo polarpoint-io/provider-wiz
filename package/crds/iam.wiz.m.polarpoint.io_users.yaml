@@ -177,10 +177,6 @@ spec:
                       SendEmailInvite sends the user an invitation email when the user is
                       created. Defaults to true. It has no effect after creation.
                     type: boolean
-                required:
-                - email
-                - name
-                - role
                 type: object
               managementPolicies:
                 default:
@@ -329,6 +325,16 @@ spec:
         required:
         - spec
         type: object
+        x-kubernetes-validations:
+        - message: spec.forProvider.email is a required parameter
+          rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+            || ''Update'' in self.managementPolicies) || has(self.forProvider.email)'
+        - message: spec.forProvider.name is a required parameter
+          rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+            || ''Update'' in self.managementPolicies) || has(self.forProvider.name)'
+        - message: spec.forProvider.role is a required parameter
+          rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+            || ''Update'' in self.managementPolicies) || has(self.forProvider.role)'
     served: true
     storage: true
     subresources:

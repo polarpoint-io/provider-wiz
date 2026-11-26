@@ -1,15 +1,19 @@
 package user
 
 // Parameters are the configurable fields of a Wiz user. They follow the Wiz
-// GraphQL CreateUserInput.
+// GraphQL CreateUserInput. Name, email and role are required unless the
+// resource only observes (see the rules on the User kinds).
 type Parameters struct {
 	// Name of the user.
-	Name string `json:"name"`
+	// +optional
+	Name string `json:"name,omitempty"`
 	// Email address of the user.
-	Email string `json:"email"`
+	// +optional
+	Email string `json:"email,omitempty"`
 	// Role is the ID of the user's Wiz role, for example GLOBAL_ADMIN,
 	// GLOBAL_READER or PROJECT_ADMIN.
-	Role string `json:"role"`
+	// +optional
+	Role string `json:"role,omitempty"`
 	// AssignedProjectIDs are the Wiz IDs of the projects a project-scoped
 	// role applies to. Left unset, assignments are not managed; set it to []
 	// to remove every assignment. It carries no omitempty, so an explicit
