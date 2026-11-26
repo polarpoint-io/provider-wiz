@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" width="1280" height="400" role="img" aria-labelledby="t d">
+  <title id="t">provider-wiz</title>
+  <desc id="d">Banner for provider-wiz, an unofficial Crossplane provider for managing Wiz resources as Kubernetes objects.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1026"/>
+      <stop offset="1" stop-color="#1b2a5c"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5eead4"/>
+      <stop offset="1" stop-color="#818cf8"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#ffffff" stroke-opacity="0.04"/>
+    </pattern>
+  </defs>
+  <rect width="1280" height="400" fill="url(#bg)"/>
+  <rect width="1280" height="400" fill="url(#grid)"/>
+
+  <!-- Reconcile loop: desired state (YAML) to managed resources -->
+  <g transform="translate(1010 200)" fill="none" stroke-linecap="round">
+    <circle r="130" stroke="url(#accent)" stroke-width="3" stroke-dasharray="6 10" opacity="0.7"/>
+    <circle r="84" stroke="#818cf8" stroke-width="2" opacity="0.35"/>
+    <path d="M 0 -130 A 130 130 0 0 1 112.6 65" stroke="url(#accent)" stroke-width="6"/>
+    <path d="M 104 56 L 112.6 65 L 118 53" stroke="#818cf8" stroke-width="6" stroke-linejoin="round"/>
+    <g stroke="#5eead4" stroke-width="2" opacity="0.9">
+      <line x1="0" y1="0" x2="-60" y2="-58"/>
+      <line x1="0" y1="0" x2="72" y2="-30"/>
+      <line x1="0" y1="0" x2="20" y2="78"/>
+      <line x1="0" y1="0" x2="-74" y2="34"/>
+    </g>
+    <g fill="#0b1026" stroke-width="3">
+      <circle r="18" stroke="url(#accent)"/>
+      <circle cx="-60" cy="-58" r="11" stroke="#5eead4"/>
+      <circle cx="72" cy="-30" r="11" stroke="#818cf8"/>
+      <circle cx="20" cy="78" r="11" stroke="#5eead4"/>
+      <circle cx="-74" cy="34" r="11" stroke="#818cf8"/>
+    </g>
+  </g>
+
+  <g font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <text x="80" y="170" font-size="76" font-weight="700" fill="#ffffff">provider-wiz</text>
+    <rect x="82" y="194" width="140" height="5" rx="2.5" fill="url(#accent)"/>
+    <text x="80" y="246" font-size="26" fill="#cbd5e1">Manage Wiz security configuration</text>
+    <text x="80" y="282" font-size="26" fill="#cbd5e1">as Kubernetes resources with Crossplane</text>
+    <text x="80" y="340" font-size="15" fill="#94a3b8" letter-spacing="1.2">UNOFFICIAL COMMUNITY PROJECT · NOT AFFILIATED WITH OR ENDORSED BY WIZ</text>
+  </g>
+</svg>

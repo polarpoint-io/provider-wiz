@@ -1,0 +1,16 @@
+apiVersion: project.wiz.m.polarpoint.io/v1alpha1
+kind: Project
+metadata:
+  annotations:
+    meta.upbound.io/example-id: project/v1alpha1/project
+  labels:
+    testing.upbound.io/example-name: test
+  name: test
+  namespace: crossplane-system
+spec:
+  forProvider:
+    businessUnit: Technology
+    description: My project description
+    name: Test App
+    riskProfile:
+    - businessImpact: MBI

@@ -1,0 +1,47 @@
+apiVersion: policy.wiz.polarpoint.io/v1alpha1
+kind: Control
+metadata:
+  annotations:
+    meta.upbound.io/example-id: policy/v1alpha1/control
+  labels:
+    testing.upbound.io/example-name: test
+  name: test
+spec:
+  forProvider:
+    description: test control 2 description
+    enabled: false
+    name: test control 2
+    projectIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    query: |-
+      ${jsonencode(
+          {
+            "relationships" : [
+              {
+                "type" : [
+                  {
+                    "reverse" : true,
+                    "type" : "CONTAINS"
+                  }
+                ],
+                "with" : {
+                  "select" : true,
+                  "type" : [
+                    "SUBSCRIPTION"
+                  ]
+                }
+              }
+            ]
+          }
+        )}
+    resolutionRecommendation: fix it
+    scopeQuery: |-
+      ${jsonencode(
+          {
+            "type" : [
+              "SUBSCRIPTION"
+            ]
+          }
+        )}
+    severity: LOW

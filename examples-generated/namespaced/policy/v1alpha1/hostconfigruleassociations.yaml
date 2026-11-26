@@ -1,0 +1,17 @@
+apiVersion: policy.wiz.m.polarpoint.io/v1alpha1
+kind: HostConfigRuleAssociations
+metadata:
+  annotations:
+    meta.upbound.io/example-id: policy/v1alpha1/hostconfigruleassociations
+  labels:
+    testing.upbound.io/example-name: test
+  name: test
+  namespace: crossplane-system
+spec:
+  forProvider:
+    hostConfigRuleIds:
+    - 301e5fd0-6a1a-42a7-99f5-3b0436d55a7f
+    - a5fbd955-ed78-445a-827a-06d6cbe5aab2
+    securitySubCategoryIds:
+    - 2e5bc0d5-835b-4b4c-99cf-b1c6ace90a52
+    - 708ec4a1-1a5c-4cb3-9c52-511229c5bb35

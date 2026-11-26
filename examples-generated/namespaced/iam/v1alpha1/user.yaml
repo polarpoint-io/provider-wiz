@@ -1,0 +1,14 @@
+apiVersion: iam.wiz.m.polarpoint.io/v1alpha1
+kind: User
+metadata:
+  annotations:
+    meta.upbound.io/example-id: iam/v1alpha1/user
+  labels:
+    testing.upbound.io/example-name: psm
+  name: psm
+  namespace: crossplane-system
+spec:
+  forProvider:
+    email: jane.doe@example.com
+    name: Jane Doe
+    role: PROJECT_READER

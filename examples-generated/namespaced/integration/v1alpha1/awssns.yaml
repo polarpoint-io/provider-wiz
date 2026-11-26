@@ -1,0 +1,15 @@
+apiVersion: integration.wiz.m.polarpoint.io/v1alpha1
+kind: AWSSNS
+metadata:
+  annotations:
+    meta.upbound.io/example-id: integration/v1alpha1/awssns
+  labels:
+    testing.upbound.io/example-name: specified_role_all_projects
+  name: specified-role-all-projects
+  namespace: crossplane-system
+spec:
+  forProvider:
+    awsSnsAccessMethod: ASSUME_SPECIFIED_ROLE
+    awsSnsCustomerRoleArn: arn:aws:iam::123456789012:role/RemediationRole
+    awsSnsTopicArn: arn:aws:sns:us-east-1:123456789012:RemediationTopic
+    name: test-terraform-001

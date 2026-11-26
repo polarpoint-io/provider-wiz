@@ -1,0 +1,25 @@
+apiVersion: connector.wiz.m.polarpoint.io/v1alpha1
+kind: AWS
+metadata:
+  annotations:
+    meta.upbound.io/example-id: connector/v1alpha1/aws
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+  namespace: crossplane-system
+spec:
+  forProvider:
+    authParamsSecretRef:
+      key: example-key
+      name: example-secret
+    extraConfig: |-
+      ${jsonencode(
+          {
+            "skipOrganizationScan" : true,
+            "optedInRegions" : ["us-east-1"],
+            "excludedAccounts" : [],
+            "excludedOUs" : [],
+            "auditLogMonitorEnabled" : false
+          }
+        )}
+    name: example

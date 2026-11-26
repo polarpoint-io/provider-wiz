@@ -1,0 +1,55 @@
+apiVersion: automation.wiz.polarpoint.io/v1alpha1
+kind: RuleJiraTransitionTicket
+metadata:
+  annotations:
+    meta.upbound.io/example-id: automation/v1alpha1/rulejiratransitionticket
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    description: example description
+    enabled: true
+    filters: |-
+      ${jsonencode({
+          "severity" : [
+            "CRITICAL"
+          ]
+        })}
+    integrationIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: default
+    jiraAdvancedFields: |-
+      ${jsonencode({
+          "resolution" : "Done"
+        })}
+    jiraAttachEvidenceCsv: false
+    jiraComment: Resolved via Wiz Automation
+    jiraCommentOnTransition: true
+    jiraProject: PROJ
+    jiraTransitionId: Resolved
+    name: example
+    triggerSource: ISSUES
+    triggerType:
+    - RESOLVED
+
+---
+
+apiVersion: integration.wiz.polarpoint.io/v1alpha1
+kind: Jira
+metadata:
+  annotations:
+    meta.upbound.io/example-id: automation/v1alpha1/rulejiratransitionticket
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+spec:
+  forProvider:
+    jiraPasswordSecretRef:
+      key: example-key
+      name: example-secret
+      namespace: upbound-system
+    jiraUrl: ${var.jira_url}
+    jiraUsername: ${var.jira_username}
+    name: default
+    scope: All Resources, Restrict this Integration to global roles only
