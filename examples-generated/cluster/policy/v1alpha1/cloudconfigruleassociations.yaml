@@ -1,0 +1,16 @@
+apiVersion: policy.wiz.polarpoint.io/v1alpha1
+kind: CloudConfigRuleAssociations
+metadata:
+  annotations:
+    meta.upbound.io/example-id: policy/v1alpha1/cloudconfigruleassociations
+  labels:
+    testing.upbound.io/example-name: test
+  name: test
+spec:
+  forProvider:
+    cloudConfigRuleIdsRefs:
+    - name: example
+    - name: example
+    securitySubCategoryIds:
+    - 2e5bc0d5-835b-4b4c-99cf-b1c6ace90a52
+    - 708ec4a1-1a5c-4cb3-9c52-511229c5bb35

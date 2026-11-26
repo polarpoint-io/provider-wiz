@@ -1,0 +1,32 @@
+apiVersion: policy.wiz.m.polarpoint.io/v1alpha1
+kind: CICDScanPolicy
+metadata:
+  annotations:
+    meta.upbound.io/example-id: policy/v1alpha1/cicdscanpolicy
+  labels:
+    testing.upbound.io/example-name: iac
+  name: iac
+  namespace: crossplane-system
+spec:
+  forProvider:
+    description: terraform-test-iac description
+    iacParams:
+    - builtinIgnoreTagsEnabled: false
+      countThreshold: 3
+      customIgnoreTags:
+      - ignoreAllRules: false
+        key: testkey1
+        ruleIds:
+        - 063fb380-9eda-4c08-a31b-9211ee37bd42
+        value: testval1
+      - ignoreAllRules: false
+        key: testkey2
+        ruleIds:
+        - 1f0ee3b5-5404-4b40-bbc8-33a990330ac3
+        - a1958aa1-b810-4df6-bd82-487cb37c6039
+        value: testval2
+      ignoredRules:
+      - fd7dd0c6-4953-4b36-bc39-004ec3d870db
+      - 063fb380-9eda-4c08-a31b-9211ee37bd42
+      severityThreshold: CRITICAL
+    name: terraform-test-iac

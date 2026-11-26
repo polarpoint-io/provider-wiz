@@ -1,0 +1,14 @@
+apiVersion: iam.wiz.polarpoint.io/v1alpha1
+kind: User
+metadata:
+  annotations:
+    meta.upbound.io/example-id: iam/v1alpha1/user
+  labels:
+    testing.upbound.io/example-name: psm
+  name: psm
+spec:
+  forProvider:
+    email: ${var.wiz_local_users[each.key].email}
+    for_each: ${local.wiz_local_users}
+    name: ${each.key}
+    role: ${var.wiz_local_users[each.key].role}

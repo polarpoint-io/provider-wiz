@@ -1,0 +1,16 @@
+apiVersion: iam.wiz.polarpoint.io/v1alpha1
+kind: SAMLGroupMapping
+metadata:
+  annotations:
+    meta.upbound.io/example-id: iam/v1alpha1/samlgroupmapping
+  labels:
+    testing.upbound.io/example-name: test_global_scope
+  name: test-global-scope
+spec:
+  forProvider:
+    group_mappings:
+    - provider_group_id: global-reader-group-id
+      role: PROJECT_READER
+    samlIdpIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example

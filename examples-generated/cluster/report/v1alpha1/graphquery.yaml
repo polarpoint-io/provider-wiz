@@ -1,0 +1,28 @@
+apiVersion: report.wiz.polarpoint.io/v1alpha1
+kind: GraphQuery
+metadata:
+  annotations:
+    meta.upbound.io/example-id: report/v1alpha1/graphquery
+  labels:
+    testing.upbound.io/example-name: foo
+  name: foo
+spec:
+  forProvider:
+    name: foo
+    projectIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    query: |
+      {
+        "select": true,
+        "type": [
+          "CONTAINER_IMAGE"
+        ],
+        "where": {
+          "name": {
+            "CONTAINS": [
+              "foo"
+            ]
+          }
+        }
+      }

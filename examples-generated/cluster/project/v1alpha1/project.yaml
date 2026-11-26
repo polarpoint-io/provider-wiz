@@ -1,0 +1,15 @@
+apiVersion: project.wiz.polarpoint.io/v1alpha1
+kind: Project
+metadata:
+  annotations:
+    meta.upbound.io/example-id: project/v1alpha1/project
+  labels:
+    testing.upbound.io/example-name: test
+  name: test
+spec:
+  forProvider:
+    businessUnit: Technology
+    description: My project description
+    name: Test App
+    riskProfile:
+    - businessImpact: MBI

@@ -1,0 +1,26 @@
+apiVersion: policy.wiz.m.polarpoint.io/v1alpha1
+kind: SecurityFramework
+metadata:
+  annotations:
+    meta.upbound.io/example-id: policy/v1alpha1/securityframework
+  labels:
+    testing.upbound.io/example-name: test
+  name: test
+  namespace: crossplane-system
+spec:
+  forProvider:
+    category:
+    - description: test am description
+      name: AM Asset Management
+      subCategory:
+      - title: AM-1 Track asset inventory and their risks
+    - description: test description 2
+      name: test category 2
+      subCategory:
+      - description: bad stuff now
+        title: test subcategory
+      - description: bad stuff could happen
+        title: test subcategory 2
+    description: test description
+    enabled: true
+    name: terraform-test-security-framework1

@@ -1,0 +1,18 @@
+apiVersion: integration.wiz.m.polarpoint.io/v1alpha1
+kind: ServiceNow
+metadata:
+  annotations:
+    meta.upbound.io/example-id: integration/v1alpha1/servicenow
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+  namespace: crossplane-system
+spec:
+  forProvider:
+    name: default
+    scope: All Resources, Restrict this Integration to global roles only
+    servicenowPasswordSecretRef:
+      key: example-key
+      name: example-secret
+    servicenowUrl: ${var.servicename_url}
+    servicenowUsername: ${var.servicenow_username}

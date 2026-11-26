@@ -1,0 +1,1350 @@
+name: jschoombee/wiz
+resources:
+    wiz_automation_rule_aws_sns:
+        subCategory: ""
+        description: Automation Rules define associations between actions and findings.
+        name: wiz_automation_rule_aws_sns
+        title: wiz_automation_rule_aws_sns Resource - terraform-provider-wiz
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "aws_sns_body": "${jsonencode({\n    \"trigger\" : {\n      \"source\" : \"{{triggerSource}}\",\n      \"type\" : \"{{triggerType}}\",\n      \"ruleId\" : \"{{ruleId}}\",\n      \"ruleName\" : \"{{ruleName}}\"\n    },\n    \"issue\" : {\n      \"id\" : \"{{issue.id}}\",\n      \"status\" : \"{{issue.status}}\",\n      \"severity\" : \"{{issue.severity}}\",\n      \"created\" : \"{{issue.createdAt}}\",\n      \"projects\" : \"{{#issue.projects}}{{name}}, {{/issue.projects}}\"\n    },\n    \"resource\" : {\n      \"id\" : \"{{issue.entitySnapshot.providerId}}\",\n      \"name\" : \"{{issue.entitySnapshot.name}}\",\n      \"type\" : \"{{issue.entitySnapshot.nativeType}}\",\n      \"cloudPlatform\" : \"{{issue.entitySnapshot.cloudPlatform}}\",\n      \"subscriptionId\" : \"{{issue.entitySnapshot.subscriptionExternalId}}\",\n      \"subscriptionName\" : \"{{issue.entitySnapshot.subscriptionName}}\",\n      \"region\" : \"{{issue.entitySnapshot.region}}\",\n      \"status\" : \"{{issue.entitySnapshot.status}}\",\n      \"cloudProviderURL\" : \"{{issue.entitySnapshot.cloudProviderURL}}\"\n    },\n    \"control\" : {\n      \"id\" : \"{{issue.control.id}}\",\n      \"name\" : \"{{issue.control.name}}\",\n      \"description\" : \"{{issue.control.description}}\",\n      \"severity\" : \"{{issue.control.severity}}\",\n      \"sourceCloudConfigurationRuleId\" : \"{{issue.control.sourceCloudConfigurationRule.shortId}}\",\n      \"sourceCloudConfigurationRuleName\" : \"{{issue.control.sourceCloudConfigurationRule.name}}\"\n    }\n  })}",
+                  "description": "example description",
+                  "enabled": true,
+                  "filters": "${jsonencode({\n    \"project\" : [],\n    \"relatedEntity\" : {\n      \"cloudPlatform\" : [\n        \"AWS\"\n      ],\n      \"subscriptionId\" : [\n        \"fccc3f07-3304-4f9d-ac2d-a43dd6128eb0\",\n        \"a005e165-49c5-41b7-befb-a0e4d866fc6c\",\n      ]\n    },\n    \"sourceControl\" : [\n      \"b46c34d2-3624-4e1e-bb04-dda5177582c7\",\n      \"6c27d70a-7329-42e9-b19e-0b974f556365\",\n    ]\n  })}",
+                  "integration_id": "${wiz_integration_aws_sns.example.id}",
+                  "name": "example",
+                  "trigger_source": "ISSUES",
+                  "trigger_type": [
+                    "CREATED",
+                    "REOPENED"
+                  ]
+                }
+              references:
+                integration_id: wiz_integration_aws_sns.example.id
+              dependencies:
+                wiz_integration_aws_sns.example: |-
+                    {
+                      "aws_sns_access_method": "ASSUME_SPECIFIED_ROLE",
+                      "aws_sns_customer_role_arn": "arn:aws:iam::123456789012:role/Example-Role",
+                      "aws_sns_topic_arn": "arn:aws:sns:us-east-1:123456789012:Example",
+                      "name": "example",
+                      "scope": "All Resources, Restrict this Integration to global roles only"
+                    }
+        argumentDocs:
+            action_id: (String) Wiz internal ID for the action.
+            aws_sns_body: (String) AWS SNS body.
+            created_at: (String) The date/time at which the automation rule was created.
+            description: (String) Description of the automation rule
+            enabled: (Boolean) Enabled?
+            filters: (String) Value should be wrapped in jsonencode() to avoid diff detection. This is required even though the API states it is not required.  Validate is performed by the UI.
+            id: (String) Wiz internal identifier.
+            integration_id: (String) Wiz identifier for the Integration to leverage for this action. Must be resource type integration_aws_sns.
+            name: (String) Name of the automation rule
+            project_id: (String) Wiz internal ID for a project.
+            trigger_source: (String) Trigger source.
+            trigger_type: (List of String) Trigger type.
+            "true": .
+        importStatements: []
+    wiz_automation_rule_jira_add_comment:
+        subCategory: ""
+        description: Automation Rules define associations between actions and findings.
+        name: wiz_automation_rule_jira_add_comment
+        title: wiz_automation_rule_jira_add_comment Resource - terraform-provider-wiz
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "description": "example description",
+                  "enabled": true,
+                  "filters": "${jsonencode({\n    \"severity\" : [\n      \"CRITICAL\"\n    ]\n  })}",
+                  "integration_id": "${wiz_integration_jira.default.id}",
+                  "jira_comment": "Comment from Wiz",
+                  "jira_project_key": "PROJ",
+                  "name": "example",
+                  "trigger_source": "ISSUES",
+                  "trigger_type": [
+                    "RESOLVED"
+                  ]
+                }
+              references:
+                integration_id: wiz_integration_jira.default.id
+              dependencies:
+                wiz_integration_jira.default: |-
+                    {
+                      "jira_password": "${var.jira_password}",
+                      "jira_url": "${var.jira_url}",
+                      "jira_username": "${var.jira_username}",
+                      "name": "default",
+                      "scope": "All Resources, Restrict this Integration to global roles only"
+                    }
+        argumentDocs:
+            action_id: (String) Wiz internal ID for the action.
+            created_at: (String) The date/time at which the automation rule was created.
+            description: (String) Description of the automation rule
+            enabled: (Boolean) Enabled?
+            "false": .
+            filters: (String) Value should be wrapped in jsonencode() to avoid diff detection. This is required even though the API states it is not required.  Validate is performed by the UI.
+            id: (String) Wiz internal identifier.
+            integration_id: (String) Wiz identifier for the Integration to leverage for this action. Must be resource type integration_jira.
+            jira_add_issues_report: (Boolean) Whether or not to attach a report on all open issues as an attachment to ticket, only relevant in CONTROL triggered actions
+            jira_comment: (String) Issue Jira comment
+            jira_project_key: (String) Issue project
+            name: (String) Name of the automation rule
+            project_id: (String) Wiz internal ID for a project.
+            trigger_source: (String) Trigger source.
+            trigger_type: (List of String) Trigger type. Must be set to CREATED for wiz_automation_rule_jira_add_comment.
+            "true": .
+        importStatements: []
+    wiz_automation_rule_jira_create_ticket:
+        subCategory: ""
+        description: Automation Rules define associations between actions and findings.
+        name: wiz_automation_rule_jira_create_ticket
+        title: wiz_automation_rule_jira_create_ticket Resource - terraform-provider-wiz
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "description": "example description",
+                  "enabled": true,
+                  "filters": "${jsonencode({\n    \"severity\" : [\n      \"CRITICAL\"\n    ]\n  })}",
+                  "integration_id": "${wiz_integration_jira.default.id}",
+                  "jira_description": "Description:  {{issue.description}}\nStatus:       {{issue.status}}\nCreated:      {{issue.createdAt}}\nSeverity:     {{issue.severity}}\nProject:      {{#issue.projects}}{{name}}, {{/issue.projects}}\n",
+                  "jira_project": "PROJ",
+                  "jira_summary": "Wiz Issue: {{issue.control.name}}",
+                  "name": "example",
+                  "trigger_source": "ISSUES",
+                  "trigger_type": [
+                    "CREATED"
+                  ]
+                }
+              references:
+                integration_id: wiz_integration_jira.default.id
+              dependencies:
+                wiz_integration_jira.default: |-
+                    {
+                      "jira_password": "${var.jira_password}",
+                      "jira_url": "${var.jira_url}",
+                      "jira_username": "${var.jira_username}",
+                      "name": "default",
+                      "scope": "All Resources, Restrict this Integration to global roles only"
+                    }
+        argumentDocs:
+            ? 'Description:  {{issue.description}}\nStatus:       {{issue.status}}\nCreated:      {{issue.createdAt}}\nSeverity:     {{issue.severity}}\nProject:      {{#issue.projects}}{{name}}, {{/issue.projects}}\n\n---\nResource:\t            {{issue.entitySnapshot.name}}\nType:\t                {{issue.entitySnapshot.nativeType}}\nCloud Platform:\t        {{issue.entitySnapshot.cloudPlatform}}\nCloud Resource URL:     {{issue.entitySnapshot.cloudProviderURL}}\nSubscription Name (ID): {{issue.entitySnapshot.subscriptionName}} ({{issue.entitySnapshot.subscriptionExternalId}})\nRegion:\t                {{issue.entitySnapshot.region}}\nPlease click the following link to proceed to investigate the issue:\nhttps://{{wizDomain}}/issues#~(issue~''{{issue.id}})\nSource Automation Rule: {{ruleName}}'
+            : .
+            Vulnerability: .
+            'Wiz Issue: {{control.name}}': .
+            action_id: (String) Wiz internal ID for the action.
+            created_at: (String) The date/time at which the automation rule was created.
+            description: (String) Description of the automation rule
+            enabled: (Boolean) Enabled?
+            "false": .
+            filters: (String) Value should be wrapped in jsonencode() to avoid diff detection. This is required even though the API states it is not required.  Validate is performed by the UI.
+            id: (String) Wiz internal identifier.
+            integration_id: (String) Wiz identifier for the Integration to leverage for this action. Must be resource type integration_jira.
+            jira_alternative_description_field: (String) Issue alternative description field
+            jira_assignee: (String) Issue assignee
+            jira_attach_evidence_csv: (Boolean) Upload issue evidence CSV as attachment?
+            jira_components: (List of String) Issue components
+            jira_custom_fields: (String) Custom configuration fields as specified in Jira. Make sure you add the fields that are configured as required in Jira Project, otherwise ticket creation will fail. Must be valid JSON.
+            jira_description: (String) Issue description
+            jira_fix_version: (List of String) Issue fix versions
+            jira_issue_type: (String) Issue type
+            jira_labels: (List of String) Issue labels
+            jira_priority: (String) Issue priority
+            jira_project: (String) Issue project
+            jira_summary: (String) Issue summary
+            name: (String) Name of the automation rule
+            project_id: (String) Wiz internal ID for a project.
+            trigger_source: (String) Trigger source.
+            trigger_type: (List of String) Trigger type. Must be set to CREATED for wiz_automation_rule_jira_create_ticket.
+            "true": .
+        importStatements: []
+    wiz_automation_rule_jira_transition_ticket:
+        subCategory: ""
+        description: Automation Rules define associations between actions and findings.
+        name: wiz_automation_rule_jira_transition_ticket
+        title: wiz_automation_rule_jira_transition_ticket Resource - terraform-provider-wiz
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "description": "example description",
+                  "enabled": true,
+                  "filters": "${jsonencode({\n    \"severity\" : [\n      \"CRITICAL\"\n    ]\n  })}",
+                  "integration_id": "${wiz_integration_jira.default.id}",
+                  "jira_add_issues_report": false,
+                  "jira_advanced_fields": "${jsonencode({\n    \"resolution\" : \"Done\"\n  })}",
+                  "jira_attach_evidence_csv": false,
+                  "jira_comment": "Resolved via Wiz Automation",
+                  "jira_comment_on_transition": true,
+                  "jira_project_key": "PROJ",
+                  "jira_transition_id": "Resolved",
+                  "name": "example",
+                  "trigger_source": "ISSUES",
+                  "trigger_type": [
+                    "RESOLVED"
+                  ]
+                }
+              references:
+                integration_id: wiz_integration_jira.default.id
+              dependencies:
+                wiz_integration_jira.default: |-
+                    {
+                      "jira_password": "${var.jira_password}",
+                      "jira_url": "${var.jira_url}",
+                      "jira_username": "${var.jira_username}",
+                      "name": "default",
+                      "scope": "All Resources, Restrict this Integration to global roles only"
+                    }
+        argumentDocs:
+            action_id: (String) Wiz internal ID for the action.
+            created_at: (String) The date/time at which the automation rule was created.
+            description: (String) Description of the automation rule
+            enabled: (Boolean) Enabled?
+            "false": .
+            filters: (String) Value should be wrapped in jsonencode() to avoid diff detection. This is required even though the API states it is not required.  Validate is performed by the UI.
+            id: (String) Wiz internal identifier.
+            integration_id: (String) Wiz identifier for the Integration to leverage for this action. Must be resource type integration_jira.
+            jira_advanced_fields: (String)
+            jira_attach_evidence_csv: (Boolean) Upload issues report as attachment Only relevant in CONTROL-triggered Actions.
+            jira_comment: (String) Issue Jira comment
+            jira_comment_on_transition: (Boolean) Whether or not to send comment during follow-up call, if this is disabled comment will be sent as update field
+            jira_project: (String) Issue project
+            jira_transition_id: (String) Issue transition ID or Name
+            name: (String) Name of the automation rule
+            project_id: (String) Wiz internal ID for a project.
+            trigger_source: (String) Trigger source.
+            trigger_type: (List of String) Trigger type. Must be set to CREATED for wiz_automation_rule_jira_transition_ticket.
+            "true": .
+        importStatements: []
+    wiz_automation_rule_servicenow_create_ticket:
+        subCategory: ""
+        description: Automation Rules define associations between actions and findings.
+        name: wiz_automation_rule_servicenow_create_ticket
+        title: wiz_automation_rule_servicenow_create_ticket Resource - terraform-provider-wiz
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "description": "example description",
+                  "enabled": true,
+                  "filters": "${jsonencode({\n    \"severity\" : [\n      \"CRITICAL\"\n    ]\n  })}",
+                  "integration_id": "${wiz_integration_servicenow.default.id}",
+                  "name": "example",
+                  "servicenow_description": "Description:  {{issue.description}}\nStatus:       {{issue.status}}\nCreated:      {{issue.createdAt}}\nSeverity:     {{issue.severity}}\nProject:      {{#issue.projects}}{{name}}, {{/issue.projects}}\n\n---\nResource:\t            {{issue.entitySnapshot.name}}\nType:\t                {{issue.entitySnapshot.nativeType}}\nCloud Platform:\t        {{issue.entitySnapshot.cloudPlatform}}\nCloud Resource URL:     {{issue.entitySnapshot.cloudProviderURL}}\nSubscription Name (ID): {{issue.entitySnapshot.subscriptionName}} ({{issue.entitySnapshot.subscriptionExternalId}})\nRegion:\t                {{issue.entitySnapshot.region}}\nPlease click the following link to proceed to investigate the issue:\nhttps://{{wizDomain}}/issues#~(issue~'{{issue.id}})\nSource Automation Rule: {{ruleName}}\n",
+                  "servicenow_summary": "Wiz Issue: {{issue.control.name}}",
+                  "servicenow_table_name": "incident",
+                  "trigger_source": "ISSUES",
+                  "trigger_type": [
+                    "CREATED"
+                  ]
+                }
+              references:
+                integration_id: wiz_integration_servicenow.default.id
+              dependencies:
+                wiz_integration_servicenow.default: |-
+                    {
+                      "name": "default",
+                      "scope": "All Resources, Restrict this Integration to global roles only",
+                      "servicenow_password": "${var.servicenow_password}",
+                      "servicenow_url": "${var.servicename_url}",
+                      "servicenow_username": "${var.servicenow_username}"
+                    }
+        argumentDocs:
+            ? 'Description:  {{issue.description}}\nStatus:       {{issue.status}}\nCreated:      {{issue.createdAt}}\nSeverity:     {{issue.severity}}\nProject:      {{#issue.projects}}{{name}}, {{/issue.projects}}\n\n---\nResource:\t            {{issue.entitySnapshot.name}}\nType:\t                {{issue.entitySnapshot.nativeType}}\nCloud Platform:\t        {{issue.entitySnapshot.cloudPlatform}}\nCloud Resource URL:     {{issue.entitySnapshot.cloudProviderURL}}\nSubscription Name (ID): {{issue.entitySnapshot.subscriptionName}} ({{issue.entitySnapshot.subscriptionExternalId}})\nRegion:\t                {{issue.entitySnapshot.region}}\nPlease click the following link to proceed to investigate the issue:\nhttps://{{wizDomain}}/issues#~(issue~''{{issue.id}})\nSource Automation Rule: {{ruleName}}'
+            : .
+            'Wiz Issue: {{issue.control.name}}': .
+            action_id: (String) Wiz internal ID for the action.
+            created_at: (String) The date/time at which the automation rule was created.
+            description: (String) Description of the automation rule
+            enabled: (Boolean) Enabled?
+            "false": .
+            filters: (String) Value should be wrapped in jsonencode() to avoid diff detection. This is required even though the API states it is not required.  Validate is performed by the UI.
+            id: (String) Wiz internal identifier.
+            incident: .
+            integration_id: (String) Wiz identifier for the Integration to leverage for this action. Must be resource type integration_aws_sns.
+            name: (String) Name of the automation rule
+            project_id: (String) Wiz internal ID for a project.
+            servicenow_attach_evidence_csv: (Boolean) Upload issue evidence CSV as attachment?
+            servicenow_custom_fields: (String) Custom configuration fields as specified in Service Now. Make sure you add the fields that are configured as required in Service Now Project, otherwise ticket creation will fail. Must be valid JSON.
+            servicenow_description: (String) Ticket description
+            servicenow_summary: (String) Ticket summary
+            servicenow_table_name: '(String) Table name to which new tickets will be added to, e.g: ''incident''.'
+            trigger_source: (String) Trigger source.
+            trigger_type: (List of String) Trigger type. Must be set to CREATED for wiz_automation_rule_servicenow_create_ticket.
+            "true": .
+        importStatements: []
+    wiz_automation_rule_servicenow_update_ticket:
+        subCategory: ""
+        description: Automation Rules define associations between actions and findings.
+        name: wiz_automation_rule_servicenow_update_ticket
+        title: wiz_automation_rule_servicenow_update_ticket Resource - terraform-provider-wiz
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "description": "example description",
+                  "enabled": true,
+                  "filters": "${jsonencode({\n    \"severity\" : [\n      \"CRITICAL\"\n    ]\n  })}",
+                  "integration_id": "${wiz_integration_servicenow.default.id}",
+                  "name": "example",
+                  "servicenow_attach_issues_report": true,
+                  "servicenow_fields": "${jsonencode({\n    \"state\" : \"Closed\"\n  })}",
+                  "servicenow_table_name": "incident",
+                  "trigger_source": "ISSUES",
+                  "trigger_type": [
+                    "RESOLVED"
+                  ]
+                }
+              references:
+                integration_id: wiz_integration_servicenow.default.id
+              dependencies:
+                wiz_integration_servicenow.default: |-
+                    {
+                      "name": "default",
+                      "scope": "All Resources, Restrict this Integration to global roles only",
+                      "servicenow_password": "${var.servicenow_password}",
+                      "servicenow_url": "${var.servicename_url}",
+                      "servicenow_username": "${var.servicenow_username}"
+                    }
+        argumentDocs:
+            action_id: (String) Wiz internal ID for the action.
+            created_at: (String) The date/time at which the automation rule was created.
+            description: (String) Description of the automation rule
+            enabled: (Boolean) Enabled?
+            "false": .
+            filters: (String) Value should be wrapped in jsonencode() to avoid diff detection. This is required even though the API states it is not required.  Validate is performed by the UI.
+            id: (String) Wiz internal identifier.
+            incident: .
+            integration_id: (String) Wiz identifier for the Integration to leverage for this action. Must be resource type integration_aws_sns.
+            name: (String) Name of the automation rule
+            project_id: (String) Wiz internal ID for a project.
+            servicenow_attach_issues_report: (Boolean) Upload issues report as attachment Only relevant in CONTROL-triggered Actions.
+            servicenow_fields: (String)
+            servicenow_table_name: '(String) Table name to which new tickets will be added to, e.g: ''incident''.'
+            trigger_source: (String) Trigger source.
+            trigger_type: (List of String) Trigger type. Must be set to CREATED for wiz_automation_rule_servicenow_update_ticket.
+            "true": .
+        importStatements: []
+    wiz_cicd_scan_policy:
+        subCategory: ""
+        description: Configure CI/CD Scan Policies.
+        name: wiz_cicd_scan_policy
+        title: wiz_cicd_scan_policy Resource - terraform-provider-wiz
+        examples:
+            - name: iac
+              manifest: |-
+                {
+                  "description": "terraform-test-iac description",
+                  "iac_params": [
+                    {
+                      "builtin_ignore_tags_enabled": false,
+                      "count_threshold": 3,
+                      "custom_ignore_tags": [
+                        {
+                          "ignore_all_rules": false,
+                          "key": "testkey1",
+                          "rule_ids": [
+                            "063fb380-9eda-4c08-a31b-9211ee37bd42"
+                          ],
+                          "value": "testval1"
+                        },
+                        {
+                          "ignore_all_rules": false,
+                          "key": "testkey2",
+                          "rule_ids": [
+                            "1f0ee3b5-5404-4b40-bbc8-33a990330ac3",
+                            "a1958aa1-b810-4df6-bd82-487cb37c6039"
+                          ],
+                          "value": "testval2"
+                        }
+                      ],
+                      "ignored_rules": [
+                        "fd7dd0c6-4953-4b36-bc39-004ec3d870db",
+                        "063fb380-9eda-4c08-a31b-9211ee37bd42"
+                      ],
+                      "severity_threshold": "CRITICAL"
+                    }
+                  ],
+                  "name": "terraform-test-iac"
+                }
+            - name: secrets
+              manifest: |-
+                {
+                  "description": "terraform-test-secrets description",
+                  "disk_secrets_params": [
+                    {
+                      "count_threshold": 3,
+                      "path_allow_list": [
+                        "/etc",
+                        "/opt",
+                        "/root"
+                      ]
+                    }
+                  ],
+                  "name": "terraform-test-secrets2"
+                }
+            - name: vulnerabilities
+              manifest: |-
+                {
+                  "description": "terraform-test-vulnerabilities description",
+                  "disk_vulnerabilities_params": [
+                    {
+                      "ignore_unfixed": true,
+                      "package_allow_list": [
+                        "lsof",
+                        "sudo",
+                        "apt"
+                      ],
+                      "package_count_threshold": 3,
+                      "severity": "LOW"
+                    }
+                  ],
+                  "name": "terraform-test-vulnerabilities"
+                }
+        argumentDocs:
+            '[disk_vulnerabilities_params disk_secrets_params iac_params]': . (see below for nested schema)
+            admission_controller_config: '(Block Set, Max: 1) Admission controller specific enforcement configuration. Only applicable when deployment_lifecycle is ADMISSION_CONTROLLER. (see below for nested schema)'
+            builtin: (Boolean)
+            builtin_ignore_tags_enabled: (Boolean)
+            count_threshold: (Number)
+            custom_ignore_tags: (Block Set) (see below for nested schema)
+            deployment_lifecycle: (String) Policy deployment lifecycle.
+            description: (String) Description of the Scan Policy.
+            disk_secrets_params: '(Block Set, Max: 1) Secret scan parameters.'
+            disk_vulnerabilities_params: '(Block Set, Max: 1) Vulnerability scan parameters.'
+            enforce_on_scope: (Boolean) Enforce policy on all resources in the scope.
+            enforcement_config: '(Block Set, Max: 1) Policy enforcement configuration for specific deployment lifecycle types. (see below for nested schema)'
+            enforcement_method: (String) Policy enforcement method.
+            iac_params: '(Block Set, Max: 1) IaC scan parameters.'
+            id: (String) Internal identifier
+            ignore_all_rules: (Boolean)
+            ignore_unfixed: (Boolean)
+            ignored_rules: (List of String)
+            key: (String)
+            name: (String) Name of the Scan Policy.
+            package_allow_list: (List of String)
+            package_count_threshold: (Number)
+            path_allow_list: (List of String)
+            policy_lifecycle_enforcements: (Block Set) Policy enforcement method by deployment lifecycle.
+            project_ids: (List of String) The project IDs that the scan policy applies to.
+            rule_ids: (List of String)
+            security_frameworks: (List of String)
+            severity: (String) Severity.
+            severity_threshold: (String) Severity threshold.
+            type: (String) The scan policy type
+            value: (String)
+        importStatements: []
+    wiz_cloud_config_rule:
+        subCategory: ""
+        description: A Cloud Configuration Rule is a configuration check that applies to a specific cloud resource type—if a resource does not pass a Rule, a Configuration Finding is generated and associated with the resource on the Security Graph.
+        name: wiz_cloud_config_rule
+        title: wiz_cloud_config_rule Resource - terraform-provider-wiz
+        examples:
+            - name: test
+              manifest: |-
+                {
+                  "description": "test description",
+                  "enabled": false,
+                  "function_as_control": false,
+                  "iac_matchers": [
+                    {
+                      "rego_code": "package wiz\n\nimport data.generic.cloudformation as cloudFormationLib\n\nimport data.generic.common as common_lib\n\nWizPolicy[result] {\n        resource := input.document[i].Resources[name]\n        resource.Type == \"AWS::Config::ConfigRule\"\n        not hasAccessKeyRotationRule(resource)\n\n        result := {\n                \"documentId\": input.document[i].id,\n                \"searchKey\": sprintf(\"Resources.%s\", [name]),\n                \"issueType\": \"MissingAttribute\",\n                \"keyExpectedValue\": sprintf(\"Resources.%s has a ConfigRule defining rotation period on AccessKeys.\", [name]),\n                \"keyActualValue\": sprintf(\"Resources.%s doesn't have a ConfigRule defining rotation period on AccessKeys.\", [name]),\n                \"resourceTags\": cloudFormationLib.getCFTags(resource),\n        }\n}\n\nhasAccessKeyRotationRule(configRule) {\n        configRule.Properties.Source.SourceIdentifier == \"ACCESS_KEYS_ROTATED\"\n} else = false {\n        true\n}\n",
+                      "type": "CLOUD_FORMATION"
+                    }
+                  ],
+                  "name": "terraform-test-iac",
+                  "opa_policy": "package wiz\n\ndefault result = \"pass\"\n",
+                  "remediation_instructions": "fix it",
+                  "scope_account_ids": [
+                    "87d3d654-41ba-53d2-aeba-8399be9f62d7"
+                  ],
+                  "security_sub_categories": [
+                    "wsct-id-7",
+                    "wsct-id-3759"
+                  ],
+                  "severity": "HIGH",
+                  "target_native_types": [
+                    "account"
+                  ]
+                }
+        argumentDocs:
+            MEDIUM: .
+            description: (String) Detailed description for this rule. There is a defect in the API that makes this required; the description field cannot be nullified after one is defined, so we make it required.
+            enabled: (Boolean) Enable/disable this rule.
+            "false": .
+            function_as_control: (Boolean) Make this rule function as a Control that creates Issues for new findings. By default only findings are created. If enabled=false, an error will be returned if this is set to true.
+            iac_matchers: (Block Set) OPA rego policies that this rule runs (Cloud / IaC rules). (see below for nested schema)
+            id: (String) Wiz internal identifier.
+            name: (String) Name of this rule, as appeared in the UI in the portal.
+            opa_policy: (String) OPA rego policy that defines this rule.
+            rego_code: (String) Write code in the Rego query language. This code will be evaluated against the JSON representation of each resource of the selected Native Type to determine if it passes or fails the rule.
+            remediation_instructions: (String) Steps to mitigate the issue that match this rule. If possible, include sample commands to execute in your cloud provider's console. Markdown formatting is supported.
+            scope_account_ids: (Set of String) Set the rule scope of cloud account IDs. Select only subscriptions matching to the rule cloud provider. To change scope to 'all relevant resources' set to empty array. This must be the Wiz internal identifier for the account(uuid format).
+            security_sub_categories: (Set of String) Associate this rule with security sub-categories to easily monitor your compliance. New Configuration Findings created by this rule will be tagged with the selected sub-categories. There is a defect in the API that makes this required; the security_sub_categories field cannot be nullified after one is defined, so we make it required.
+            severity: (String) Severity that will be set for findings of this rule.
+            target_native_types: (Set of String) The identifier types of the resources targeted by this rule, as seen on the cloud provider service. e.g. 'ec2'
+            "true": .
+            type: (String) The type of resource that will be evaluated by the Rego Code.
+        importStatements: []
+    wiz_cloud_config_rule_associations:
+        subCategory: ""
+        description: Manage associations between cloud configuration rules and security sub-categories. Associations defined outside this resouce will remain untouched through the lifecycle of this resource. Wiz managed cloud configuration rules cannot be associated to Wiz managed security sub-categories. This resource does not support imports; it can, however, overlay existing resources to bring them under management.
+        name: wiz_cloud_config_rule_associations
+        title: wiz_cloud_config_rule_associations Resource - terraform-provider-wiz
+        examples:
+            - name: test
+              manifest: |-
+                {
+                  "cloud_config_rule_ids": [
+                    "301e5fd0-6a1a-42a7-99f5-3b0436d55a7f",
+                    "a5fbd955-ed78-445a-827a-06d6cbe5aab2"
+                  ],
+                  "security_sub_category_ids": [
+                    "2e5bc0d5-835b-4b4c-99cf-b1c6ace90a52",
+                    "708ec4a1-1a5c-4cb3-9c52-511229c5bb35"
+                  ]
+                }
+        argumentDocs:
+            cloud_config_rule_ids: (List of String) List of cloud configuration rule IDs.
+            details: (String) Details of the association. This information is not used to manage resources but can serve as notes or documentation for the associations.
+            id: (String) Internal identifier for the association.
+            security_sub_category_ids: (List of String) List of security sub-category IDs.
+            undefined: .
+        importStatements: []
+    wiz_connector_aws:
+        subCategory: ""
+        description: Connectors are used to connect AWS resources to Wiz.
+        name: wiz_connector_aws
+        title: wiz_connector_aws Resource - terraform-provider-wiz
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "auth_params": "${jsonencode({\n    \"customerRoleARN\" : \"arn:aws:iam::100000000009:role/wiz-customer\",\n  })}",
+                  "extra_config": "${jsonencode(\n    {\n      \"skipOrganizationScan\" : true,\n      \"optedInRegions\" : [\"us-east-1\"],\n      \"excludedAccounts\" : [],\n      \"excludedOUs\" : [],\n      \"auditLogMonitorEnabled\" : false\n    }\n  )}",
+                  "name": "example"
+                }
+            - name: example
+              manifest: |-
+                {
+                  "auth_params": "${jsonencode({\n    \"customerRoleARN\" : \"arn:aws:iam::100000000009:role/wiz-customer\",\n    \"outpostId\" : \"078862d0-a62f-406c-b966-13445af34c0d\",\n    \"diskAnalyzer\" : {\n      \"scanner\" : {\n        \"roleARN\" : \"arn:aws:iam::100000000009:role/outpost-scanner\"\n      }\n    },\n  })}",
+                  "extra_config": "${jsonencode(\n    {\n      \"auditLogMonitorEnabled\" : false,\n      \"excludedAccounts\" : [\"100000000009\", \"100000000010\", \"100000000013\"],\n      \"excludedOUs\" : [\"EXCLUDE-ME\"],\n      \"auditLogMonitorEnabled\" : false,\n      \"skipOrganizationScan\" : true,\n      \"optedInRegions\" : [],\n      \"cloudTrailConfig\" : {\n        \"bucketName\" : \"buckethere\",\n        \"bucketSubAccount\" : \"000000000012\",\n        \"trailOrg\" : \"o-myorg\"\n      }\n    }\n  )}",
+                  "name": "example"
+                }
+        argumentDocs:
+            audit_log_monitor_enabled: (Boolean) Whether audit log monitor is enabled. Note an advanced license is required.
+            auth_params: (String, Sensitive) The authentication parameters. Must be represented in JSON format.
+            customer_role_arn: (String) The AWS customer role arn for Wiz to assume.
+            enabled: (Boolean) Whether the connector is enabled.
+            events_cloudtrail_bucket_name: (String) If using Wiz Cloud Events, the CloudTrail bucket name.
+            events_cloudtrail_bucket_sub_account: (String) If using Wiz Cloud Events and CloudTrail is organizational, the CloudTrail bucket sub account.
+            events_cloudtrail_organization: (String) If using Wiz Cloud Events and CloudTrail is deployed to AWS organizations, the organizational ID.
+            excluded_accounts: (List of String) The AWS accounts excluded from the connector.
+            excluded_ous: (List of String) The AWS OUs excluded from the connector.
+            external_id_nonce: (String) The AWS external ID / nonce, this will be used for IAM-related dependencies (sts:ExternalId conditional trust policies).
+            extra_config: (String) Extra configuration for the connector. Must be represented in JSON format.
+            id: (String) Wiz internal identifier for the connector.
+            name: (String) The connector name.
+            opted_in_regions: (List of String) The AWS regions opted in for the connector.
+            region: (String) The AWS region for the connector.
+            skip_organization_scan: (Boolean) Whether to skip the organization scan (account-scoped only).
+            "true": .
+        importStatements:
+            - |-
+              # Importing Considerations:
+              #
+              # Please note this is considered experimental, exercise caution and consider the following:
+              #
+              # - Make sure that the `auth_params` field is set to the same values as set when the resource was created outside of Terraform.
+              #   This is due to the way we need to handle change as under normal diff conditions, `auth_params` requires a resource recreation.
+              #
+              # - For `auth_params` include `customerRoleArn`. If using outposts, also include `outPostId` and `diskAnalyzer` structure.
+              #
+              # For more information, refer to the examples in the documentation.
+              #
+              terraform import wiz_connector_aws.import_example "7be792ba-bfd1-46d0-9fba-5f6bc19df4a8"
+
+              # Optional - this is to set auth_params in state.
+              #
+              # If not run post-import, the next `terraform apply` will take care of it.
+              # Note any speculative changes to `auth_params` are for setting state for the one-time import only, any further changes would require a resource recreation as normal.
+              terraform apply --target=wiz_connector_aws.import_example
+    wiz_connector_gcp:
+        subCategory: ""
+        description: Connectors are used to connect GCP resources to Wiz.
+        name: wiz_connector_gcp
+        title: wiz_connector_gcp Resource - terraform-provider-wiz
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "auth_params": "${jsonencode({\n    \"isManagedIdentity\" : true,\n    \"organization_id\" : \"o-example\"\n  })}",
+                  "extra_config": "${jsonencode(\n    {\n      \"projects\" : [],\n      \"excludedProjects\" : [],\n      \"includedFolders\" : [],\n      \"excludedFolders\" : [],\n      \"auditLogMonitorEnabled\" : false\n    }\n  )}",
+                  "name": "example"
+                }
+            - name: example
+              manifest: |-
+                {
+                  "auth_params": "${jsonencode({\n    \"isManagedIdentity\" : true,\n    \"project_id\" : \"exmaple-project-id\"\n  })}",
+                  "extra_config": "${jsonencode(\n    {\n      \"projects\" : [],\n      \"excludedProjects\" : [],\n      \"includedFolders\" : [],\n      \"excludedFolders\" : [],\n      \"auditLogMonitorEnabled\" : false\n    }\n  )}",
+                  "name": "example"
+                }
+        argumentDocs:
+            audit_log_monitor_enabled: (Boolean) Whether audit log monitor is enabled. Note an advanced license is required.
+            auth_params: (String, Sensitive) The authentication parameters. Must be represented in JSON format.
+            enabled: (Boolean) Whether the connector is enabled.
+            events_pub_sub_subscription_id: (String) If using Wiz Cloud Events, the Pub/Sub Subscription ID.
+            events_topic_name: (String) If using Wiz Cloud Events, the Topic Name in format projects/<project_id>/topics/<topic_id>.
+            excluded_folders: (List of String) The GCP folders excluded by the connector.
+            excluded_projects: (List of String) The GCP projects excluded by the connector.
+            extra_config: (String) Extra configuration for the connector. Must be represented in JSON format.
+            folder_id: (String) The GCP folder ID.
+            id: (String) Wiz internal identifier for the connector.
+            included_folders: (List of String) The GCP folders included by the connector.
+            is_managed_identity: (String) Is managed identity?
+            name: (String) The connector name.
+            organization_id: (String) The GCP organization ID.
+            projects: (List of String) The GCP projects to target with the connector.
+            "true": .
+        importStatements:
+            - |-
+              # Importing Considerations:
+              #
+              # Please note this is considered experimental, exercise caution and consider the following:
+              #
+              # - Make sure that the `auth_params` field is set to the same values as set when the resource was created outside of Terraform.
+              #   This is due to the way we need to handle change as under normal diff conditions, `auth_params` requires a resource recreation.
+              #
+              # - For `auth_params` include `isManagedIdentity`. If using outposts, also include `outPostId` and `diskAnalyzer` structure.
+              #
+              # For more information, refer to the examples in the documentation.
+              #
+              terraform import wiz_connector_gcp.import_example "7be792ba-bfd1-46d0-9fba-5f6bc19df4a8"
+
+              # Optional - this is to set auth_params in state.
+              #
+              # If not run post-import, the next `terraform apply` will take care of it.
+              # Note any speculative changes to `auth_params` are for setting state for the one-time import only, any further changes would require a resource recreation as normal.
+              terraform apply --target=wiz_connector_gcp.import_example
+    wiz_control:
+        subCategory: ""
+        description: A Control consists of a pre-defined Security Graph query and a severity level—if a Control's query returns any results, an Issue is generated for every result. Each Control is assigned to a category in one or more Policy Frameworks.
+        name: wiz_control
+        title: wiz_control Resource - terraform-provider-wiz
+        examples:
+            - name: test
+              manifest: |-
+                {
+                  "description": "test control 2 description",
+                  "enabled": false,
+                  "name": "test control 2",
+                  "project_id": "*",
+                  "query": "${jsonencode(\n    {\n      \"relationships\" : [\n        {\n          \"type\" : [\n            {\n              \"reverse\" : true,\n              \"type\" : \"CONTAINS\"\n            }\n          ],\n          \"with\" : {\n            \"select\" : true,\n            \"type\" : [\n              \"SUBSCRIPTION\"\n            ]\n          }\n        }\n      ]\n    }\n  )}",
+                  "resolution_recommendation": "fix it",
+                  "scope_query": "${jsonencode(\n    {\n      \"type\" : [\n        \"SUBSCRIPTION\"\n      ]\n    }\n  )}",
+                  "security_sub_categories": [
+                    "wsct-id-8"
+                  ],
+                  "severity": "LOW"
+                }
+        argumentDocs:
+            '*': .
+            description: (String) Description of the Control.
+            enabled: (Boolean) Whether to enable the Control. This has a known defect where if set to false, it will be created as true because the API to create Controls does not accept this parameter.
+            id: (String) Internal identifier for the Control
+            name: (String) Name of the Control.
+            project_id: (String) Project scope of the control. Use '*' for all projects.
+            query: (String) The query that the control runs.
+            resolution_recommendation: (String) Guidance on how the user should address an issue that was created by this control.
+            scope_query: (String) The query that represents the control's scope.
+            security_sub_categories: (List of String) List of security sub-categories IDs.
+            severity: (String) Severity that will be set for this control.
+            "true": .
+        importStatements: []
+    wiz_control_associations:
+        subCategory: ""
+        description: Manage associations between controls and security sub-categories. Associations defined outside this resouce will remain untouched through the lifecycle of this resource. Wiz managed controls cannot be associated to Wiz managed security sub-categories. This resource does not support imports; it can, however, overlay existing resources to bring them under management.
+        name: wiz_control_associations
+        title: wiz_control_associations Resource - terraform-provider-wiz
+        examples:
+            - name: test
+              manifest: |-
+                {
+                  "control_ids": [
+                    "301e5fd0-6a1a-42a7-99f5-3b0436d55a7f",
+                    "a5fbd955-ed78-445a-827a-06d6cbe5aab2"
+                  ],
+                  "security_sub_category_ids": [
+                    "2e5bc0d5-835b-4b4c-99cf-b1c6ace90a52",
+                    "708ec4a1-1a5c-4cb3-9c52-511229c5bb35"
+                  ]
+                }
+        argumentDocs:
+            control_ids: (List of String) List of control IDs.
+            details: (String) Details of the association. This information is not used to manage resources but can serve as notes or documentation for the associations.
+            id: (String) Internal identifier for the association.
+            security_sub_category_ids: (List of String) List of security sub-category IDs.
+            undefined: .
+        importStatements: []
+    wiz_host_config_rule_associations:
+        subCategory: ""
+        description: Manage associations between host configuration rules and security sub-categories. Associations defined outside this resouce will remain untouched through the lifecycle of this resource. Wiz managed host configuration rules cannot be associated to Wiz managed security sub-categories. This resource does not support imports; it can, however, overlay existing resources to bring them under management.
+        name: wiz_host_config_rule_associations
+        title: wiz_host_config_rule_associations Resource - terraform-provider-wiz
+        examples:
+            - name: test
+              manifest: |-
+                {
+                  "host_config_rule_ids": [
+                    "301e5fd0-6a1a-42a7-99f5-3b0436d55a7f",
+                    "a5fbd955-ed78-445a-827a-06d6cbe5aab2"
+                  ],
+                  "security_sub_category_ids": [
+                    "2e5bc0d5-835b-4b4c-99cf-b1c6ace90a52",
+                    "708ec4a1-1a5c-4cb3-9c52-511229c5bb35"
+                  ]
+                }
+        argumentDocs:
+            details: (String) Details of the association. This information is not used to manage resources but can serve as notes or documentation for the associations.
+            host_config_rule_ids: (List of String) List of host configuration rule IDs.
+            id: (String) Internal identifier for the association.
+            security_sub_category_ids: (List of String) List of security sub-category IDs.
+            undefined: .
+        importStatements: []
+    wiz_integration_aws_sns:
+        subCategory: ""
+        description: Integrations are reusable, generic connections between Wiz and third-party platforms like Slack, Google Chat, and Jira that allow data from Wiz to be passed to your preferred tool.
+        name: wiz_integration_aws_sns
+        title: wiz_integration_aws_sns Resource - terraform-provider-wiz
+        examples:
+            - name: specified_role_all_projects
+              manifest: |-
+                {
+                  "aws_sns_access_method": "ASSUME_SPECIFIED_ROLE",
+                  "aws_sns_customer_role_arn": "arn:aws:iam::123456789012:role/RemediationRole",
+                  "aws_sns_topic_arn": "arn:aws:sns:us-east-1:123456789012:RemediationTopic",
+                  "name": "test-terraform-001"
+                }
+            - name: connector_role_all_projects
+              manifest: |-
+                {
+                  "aws_sns_access_method": "ASSUME_CONNECTOR_ROLE",
+                  "aws_sns_connector_id": "ab48ad5e-44fb-48f8-9899-24ee4ed974c1",
+                  "aws_sns_topic_arn": "arn:aws:sns:us-east-1:123456789012:RemediationTopic",
+                  "name": "test-terraform-003"
+                }
+            - name: specified_role_single_project
+              manifest: |-
+                {
+                  "aws_sns_access_method": "ASSUME_CONNECTOR_ROLE",
+                  "aws_sns_connector_id": "ef0bd8a5-165b-4498-b5d7-19871f762c21",
+                  "aws_sns_topic_arn": "arn:aws:sns:us-east-1:981012938874:Wiz-Remediation-Issues-Topic",
+                  "name": "test-terraform-004",
+                  "project_id": "1091ae77-116a-56cf-990e-db2f4f691f66",
+                  "scope": "Selected Project"
+                }
+        argumentDocs:
+            '[aws_sns_connector_id]': .
+            '[aws_sns_customer_role_arn]': .
+            All Resources, Restrict this Integration to global roles only: .
+            aws_sns_access_method: (String) The access method this integration should use.
+            aws_sns_connector_id: (String) Required if and only if accessMethod is ASSUME_CONNECTOR_ROLE, this should be a valid existing AWS connector ID from which the role ARN will be taken.
+            aws_sns_customer_role_arn: (String) Required if and only if accessMethod is ASSUME_SPECIFIED_ROLE, this is the role that should be assumed, the ExternalID of the role must be your Wiz Tenant ID (a GUID).
+            aws_sns_topic_arn: (String) The SNS Topic Arn.
+            created_at: (String) Identifies the date and time when the object was created.
+            id: (String) Identifier for this object.
+            name: (String) The name of the integration.
+            project_id: (String) The project this action is scoped to.
+            scope: (String) Scoping to a selected Project makes this Integration accessible only to users with global roles or Project-scoped access to the selected Project. Other users will not be able to see it, use it, or view its results. Integrations restricted to global roles cannot be seen or used by users with Project-scoped roles.
+        importStatements: []
+    wiz_integration_jira:
+        subCategory: ""
+        description: Integrations are reusable, generic connections between Wiz and third-party platforms like Slack, Google Chat, and Jira that allow data from Wiz to be passed to your preferred tool.
+        name: wiz_integration_jira
+        title: wiz_integration_jira Resource - terraform-provider-wiz
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "jira_password": "${var.jira_password}",
+                  "jira_url": "${var.jira_url}",
+                  "jira_username": "${var.jira_username}",
+                  "name": "default",
+                  "scope": "All Resources, Restrict this Integration to global roles only"
+                }
+              references:
+                jira_password: var.jira_password
+                jira_url: var.jira_url
+                jira_username: var.jira_username
+        argumentDocs:
+            All Resources, Restrict this Integration to global roles only: .
+            CLOUD: .
+            created_at: (String) Identifies the date and time when the object was created.
+            "false": .
+            id: (String) Identifier for this object.
+            jira_allow_insecure_tls: (Boolean) Jira integration TLS setting
+            jira_client_certificate_and_private_key: (String, Sensitive) Jira PEM with client certificate and private key
+            jira_is_on_prem: (Boolean) Whether Jira instance is on prem
+            jira_password: '(String, Sensitive) Jira password. (default: none, environment variable: WIZ_INTEGRATION_JIRA_PASSWORD)'
+            jira_pat: '(String, Sensitive) Jira personal access token (used for on-prem). (default: none, environment variable: WIZ_INTEGRATION_JIRA_PAT)'
+            jira_server_ca: (String) Jira server CA
+            jira_server_type: (String) Jira server type
+            jira_url: '(String) Jira URL. (default: none, environment variable: WIZ_INTEGRATION_JIRA_URL)'
+            jira_username: '(String) Email of a Jira user with permissions to create tickets. (default: none, environment variable: WIZ_INTEGRATION_JIRA_USERNAME)'
+            name: (String) The name of the integration.
+            project_id: (String) The project this action is scoped to.
+            scope: (String) Scoping to a selected Project makes this Integration accessible only to users with global roles or Project-scoped access to the selected Project. Other users will not be able to see it, use it, or view its results. Integrations restricted to global roles cannot be seen or used by users with Project-scoped roles.
+        importStatements: []
+    wiz_integration_servicenow:
+        subCategory: ""
+        description: Integrations are reusable, generic connections between Wiz and third-party platforms like Slack, Google Chat, and Jira that allow data from Wiz to be passed to your preferred tool.
+        name: wiz_integration_servicenow
+        title: wiz_integration_servicenow Resource - terraform-provider-wiz
+        examples:
+            - name: default
+              manifest: |-
+                {
+                  "name": "default",
+                  "scope": "All Resources, Restrict this Integration to global roles only",
+                  "servicenow_password": "${var.servicenow_password}",
+                  "servicenow_url": "${var.servicename_url}",
+                  "servicenow_username": "${var.servicenow_username}"
+                }
+              references:
+                servicenow_password: var.servicenow_password
+                servicenow_url: var.servicename_url
+                servicenow_username: var.servicenow_username
+        argumentDocs:
+            All Resources, Restrict this Integration to global roles only: .
+            created_at: (String) Identifies the date and time when the object was created.
+            id: (String) Identifier for this object.
+            name: (String) The name of the integration.
+            project_id: (String) The project this action is scoped to.
+            scope: (String) Scoping to a selected Project makes this Integration accessible only to users with global roles or Project-scoped access to the selected Project. Other users will not be able to see it, use it, or view its results. Integrations restricted to global roles cannot be seen or used by users with Project-scoped roles.
+            servicenow_client_id: '(String) ServiceNow OAuth Client ID. (default: none, environment variable: WIZ_INTEGRATION_SERVICENOW_CLIENT_ID)'
+            servicenow_client_secret: '(String, Sensitive) ServiceNow OAuth Client Secret. (default: none, environment variable: WIZ_INTEGRATION_SERVICENOW_CLIENT_SECRET)'
+            servicenow_password: '(String, Sensitive) ServiceNow password. (default: none, environment variable: WIZ_INTEGRATION_SERVICENOW_PASSWORD)'
+            servicenow_url: '(String) ServiceNow URL. (default: none, environment variable: WIZ_INTEGRATION_SERVICENOW_URL)'
+            servicenow_username: '(String) Email of a ServiceNow user with permissions to create tickets. (default: none, environment variable: WIZ_INTEGRATION_SERVICENOW_USERNAME)'
+        importStatements: []
+    wiz_project:
+        subCategory: ""
+        description: Projects let you group your cloud resources according to their users and/or purposes.
+        name: wiz_project
+        title: wiz_project Resource - terraform-provider-wiz
+        examples:
+            - name: test
+              manifest: |-
+                {
+                  "business_unit": "Technology",
+                  "description": "My project description",
+                  "name": "Test App",
+                  "risk_profile": [
+                    {
+                      "business_impact": "MBI"
+                    }
+                  ]
+                }
+            - name: root
+              manifest: |-
+                {
+                  "business_unit": "Technology",
+                  "description": "root",
+                  "is_folder": true,
+                  "name": "root",
+                  "risk_profile": [
+                    {
+                      "business_impact": "MBI"
+                    }
+                  ]
+                }
+            - name: child
+              manifest: |-
+                {
+                  "business_unit": "Technology",
+                  "cloud_account_link": [
+                    {
+                      "cloud_account_id": "477ea00a-4d4d-5bb4-9fa6-634691e68fff",
+                      "environment": "PRODUCTION"
+                    }
+                  ],
+                  "name": "project_with_accounts",
+                  "parent_project_id": "${wiz_project.root.id}",
+                  "risk_profile": [
+                    {
+                      "business_impact": "MBI"
+                    }
+                  ]
+                }
+              references:
+                parent_project_id: wiz_project.root.id
+            - name: test
+              manifest: |-
+                {
+                  "business_unit": "Technology",
+                  "cloud_organization_link": [
+                    {
+                      "cloud_organization": "7edbb879-9960-513f-b56d-876e9db2a962",
+                      "environment": "PRODUCTION",
+                      "shared": false
+                    },
+                    {
+                      "cloud_organization": "07401938-0347-5a02-80eb-db19eecfbf98",
+                      "environment": "PRODUCTION",
+                      "resource_tags": [
+                        {
+                          "key": "application",
+                          "value": "Wiz"
+                        },
+                        {
+                          "key": "environment",
+                          "value": "production"
+                        }
+                      ],
+                      "shared": true
+                    }
+                  ],
+                  "description": "My project description",
+                  "name": "Test App",
+                  "risk_profile": [
+                    {
+                      "business_impact": "MBI"
+                    }
+                  ]
+                }
+            - name: test
+              manifest: |-
+                {
+                  "business_unit": "Technology",
+                  "cloud_account_link": [
+                    {
+                      "cloud_account_id": "3225def3-0e0e-5cb8-955a-3583f696f778",
+                      "environment": "PRODUCTION",
+                      "resource_tags": [
+                        {
+                          "key": "created_by",
+                          "value": "terraform"
+                        }
+                      ]
+                    }
+                  ],
+                  "description": "My project description",
+                  "name": "Test App",
+                  "risk_profile": [
+                    {
+                      "business_impact": "MBI"
+                    }
+                  ]
+                }
+            - name: test
+              manifest: |-
+                {
+                  "business_unit": "Technology",
+                  "description": "My project description",
+                  "kubernetes_cluster_link": [
+                    {
+                      "environment": "STAGING",
+                      "kubernetes_cluster": "77de7ca1-02f9-5ed2-a94b-5d19c683efaf",
+                      "namespaces": [
+                        "kube-system"
+                      ],
+                      "shared": true
+                    }
+                  ],
+                  "name": "My Kubernetes Project",
+                  "risk_profile": [
+                    {
+                      "business_impact": "MBI"
+                    }
+                  ]
+                }
+        argumentDocs:
+            PRODUCTION: .
+            UNKNOWN: .
+            archived: (Boolean) Whether the project is archived/inactive
+            business_impact: (String) Business impact.
+            business_unit: (String) The business unit to which the project belongs.
+            cloud_account_id: (String) The Wiz internal identifier for the Cloud Account Subscription.
+            cloud_account_link: (Block Set) Please either use this embedded set or the resource wiz_project_cloud_account_link. Associate the project directly with a cloud account by wiz identifier UID to organize all the subscription resources, issues, and findings within this project. (see below for nested schema)
+            cloud_organization: (String) The Wiz internal identifier for the Organizational Unit.
+            cloud_organization_link: (Block Set) Associate the project with an organizational link to organize all the subscription resources, issues, and findings within this project. (see below for nested schema)
+            description: (String) The project description.
+            environment: (String) The environment.
+            "false": .
+            has_authentication: (String) Does the project require authentication?
+            has_exposed_api: (String) Does the project expose an API?
+            id: (String) Unique identifier for the project.
+            identifiers: (List of String) Identifiers for the project.
+            is_actively_developed: (String) Is the project under active development?
+            is_customer_facing: (String) Is the project customer facing?
+            is_folder: (Boolean) Whether the project is a folder.
+            is_internet_facing: (String) Is the project Internet facing?
+            is_regulated: (String) Is the project regulated?
+            key: (String)
+            kubernetes_cluster: (String) The Wiz internal identifier for the kubernetes cluster.
+            kubernetes_cluster_link: (Block Set) Associate the project with kubernetes clusters. (see below for nested schema)
+            name: (String) The project name to display in Wiz.
+            namespaces: (List of String) The kubernetes namespaces to link. shared must be set to true if namespaces are set.
+            parent_project_id: (String) The parent project ID.
+            project_owners: (List of String) A list of project owner IDs.
+            regulatory_standards: (List of String) Regulatory Standards.
+            resource_groups: (List of String) Please provide a list of resource group identifiers for filtering by resource groups. shared must be true to define resource_groups.
+            resource_tags: (Block Set) Provide a key and value pair for filtering resources. shared must be true to define resource_tags. (see below for nested schema)
+            risk_profile: '(Block List, Max: 1) Contains risk profile related properties for the project (see below for nested schema)'
+            security_champions: (List of String) A list of security champions IDs.
+            sensitive_data_types: (List of String) Sensitive Data Types.
+            shared: (Boolean) Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
+            slug: (String) Short identifier for the project. The value must be unique, even against archived projects, so a uuid is generated and used as the slug value.
+            stores_data: (String) Does the project store data?
+            "true": .
+            value: (String)
+        importStatements:
+            - terraform import wiz_project.example "848025a0-9c2d-5863-8c4d-b60799294fff"
+    wiz_project_cloud_account_link:
+        subCategory: ""
+        description: Associate a cloud subscription with a project. Use either this resource or the cloud_account_link block set for the wiz_project, never both.
+        name: wiz_project_cloud_account_link
+        title: wiz_project_cloud_account_link Resource - terraform-provider-wiz
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "cloud_account_id": "5cc3a684-44cb-4cd5-b78f-f029c25dc617",
+                  "environment": "PRODUCTION",
+                  "project_id": "ee25cc95-82b0-4543-8934-5bc655b86786"
+                }
+            - name: example
+              manifest: |-
+                {
+                  "environment": "PRODUCTION",
+                  "external_cloud_account_id": "04e56587-4408-402a-9c8c-f454ed45da65",
+                  "project_id": "ee25cc95-82b0-4543-8934-5bc655b86786"
+                }
+            - name: example
+              manifest: |-
+                {
+                  "cloud_account_id": "5cc3a684-44cb-4cd5-b78f-f029c25dc617",
+                  "environment": "PRODUCTION",
+                  "external_cloud_account_id": "04e56587-4408-402a-9c8c-f454ed45da65",
+                  "project_id": "ee25cc95-82b0-4543-8934-5bc655b86786"
+                }
+        argumentDocs:
+            PRODUCTION: .
+            cloud_account_id: (String) The Wiz internal identifier for the Cloud Account Subscription.
+            environment: (String) The environment.
+            external_cloud_account_id: (String) The external identifier for the Cloud Account, e.g. an azure subscription id or an aws account id.
+            id: (String) Unique tf-internal identifier for the project cloud account link
+            key: (String)
+            project_id: (String) The Wiz internal identifier of the Wiz project to link the cloud account to
+            resource_groups: (List of String) Please provide a list of resource group identifiers for filtering by resource groups. shared must be true to define resource_groups.
+            resource_tags: (Block Set) Provide a key and value pair for filtering resources. shared must be true to define resource_tags. (see below for nested schema)
+            shared: (Boolean) Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
+            value: (String)
+        importStatements:
+            - |-
+              # The id for importing a wiz_project_cloud_account_link has to be in this format: 'link|<project_id>|<cloud_account_id>'
+              terraform import wiz_project_cloud_account_link.example_import "link|ee25cc95-82b0-4543-8934-5bc655b86786|5cc3a684-44cb-4cd5-b78f-f029c25dc617"
+    wiz_report_graph_query:
+        subCategory: ""
+        description: A GraphQL Query Report is an automated query that can be scheduled to run at hourly intervals.
+        name: wiz_report_graph_query
+        title: wiz_report_graph_query Resource - terraform-provider-wiz
+        examples:
+            - name: foo
+              manifest: |-
+                {
+                  "name": "foo",
+                  "project_id": "2c38b8fa-c315-57ea-9de4-e3a19592d796",
+                  "query": "{\n  \"select\": true,\n  \"type\": [\n    \"CONTAINER_IMAGE\"\n  ],\n  \"where\": {\n    \"name\": {\n      \"CONTAINS\": [\n        \"foo\"\n      ]\n    }\n  }\n}\n"
+                }
+            - name: foo
+              manifest: |-
+                {
+                  "name": "foo",
+                  "project_id": "2c38b8fa-c315-57ea-9de4-e3a19592d796",
+                  "query": "{\n  \"select\": true,\n  \"type\": [\n    \"CONTAINER_IMAGE\"\n  ],\n  \"where\": {\n    \"name\": {\n      \"CONTAINS\": [\n        \"foo\"\n      ]\n    }\n  }\n}\n",
+                  "run_interval_hours": 24,
+                  "run_starts_at": "2023-12-06 16:00:00 +0000 UTC"
+                }
+        argumentDocs:
+            '*': .
+            id: (String) The ID of this resource.
+            name: (String) Name of the Report.
+            project_id: (String) The ID of the project that this report belongs to (changing this requires re-creatting the report). Defaults to all projects.
+            query: (String) The query that the report will run. Required by the GRAPH_QUERY report type.
+            run_interval_hours: (Number) Run interval for scheduled reports (in hours).
+            run_starts_at: '(String) String representing the time and date when the scheduling should start (required when run_interval_hours is set). Must be in the following format: 2006-01-02 15:04:05 +0000 UTC. Also, Wiz will always round this down by the hour.'
+        importStatements: []
+    wiz_saml_group_mapping:
+        subCategory: ""
+        description: Configure SAML Group Role Mapping. When using SSO to authenticate with Wiz, you can map group memberships in SAML assertions to Wiz roles across specific scopes.
+        name: wiz_saml_group_mapping
+        title: wiz_saml_group_mapping Resource - terraform-provider-wiz
+        examples:
+            - name: test_global_scope
+              manifest: |-
+                {
+                  "group_mappings": [
+                    {
+                      "provider_group_id": "global-reader-group-id",
+                      "role": "PROJECT_READER"
+                    }
+                  ],
+                  "saml_idp_id": "test-saml-identity-provider"
+                }
+            - name: test_global_scope
+              manifest: |-
+                {
+                  "group_mappings": [
+                    {
+                      "description": "Global Reader group mapping",
+                      "provider_group_id": "global-reader-group-id",
+                      "role": "PROJECT_READER"
+                    }
+                  ],
+                  "saml_idp_id": "test-saml-identity-provider"
+                }
+            - name: test_single_project
+              manifest: |-
+                {
+                  "group_mappings": [
+                    {
+                      "projects": [
+                        "ee25cc95-82b0-4543-8934-5bc655b86786"
+                      ],
+                      "provider_group_id": "admin-group-id",
+                      "role": "PROJECT_ADMIN"
+                    }
+                  ],
+                  "saml_idp_id": "test-saml-identity-provider"
+                }
+            - name: test_multi_project
+              manifest: |-
+                {
+                  "group_mappings": [
+                    {
+                      "projects": [
+                        "ee25cc95-82b0-4543-8934-5bc655b86786",
+                        "e7f6542c-81f6-43cf-af48-bdd77f09650d"
+                      ],
+                      "provider_group_id": "member-group-id",
+                      "role": "PROJECT_MEMBER"
+                    }
+                  ],
+                  "saml_idp_id": "test-saml-identity-provider"
+                }
+            - name: test_multi_mappings
+              manifest: |-
+                {
+                  "group_mappings": [
+                    {
+                      "provider_group_id": "global-reader-group-id",
+                      "role": "PROJECT_READER"
+                    },
+                    {
+                      "projects": [
+                        "ee25cc95-82b0-4543-8934-5bc655b86786"
+                      ],
+                      "provider_group_id": "admin-group-id",
+                      "role": "PROJECT_ADMIN"
+                    },
+                    {
+                      "projects": [
+                        "ee25cc95-82b0-4543-8934-5bc655b86786",
+                        "e7f6542c-81f6-43cf-af48-bdd77f09650d"
+                      ],
+                      "provider_group_id": "member-group-id",
+                      "role": "PROJECT_MEMBER"
+                    }
+                  ],
+                  "saml_idp_id": "test-saml-identity-provider"
+                }
+        argumentDocs:
+            description: (String) Group Mapping description
+            group_mapping: '(Block Set, Min: 1) (see below for nested schema)'
+            id: (String) Unique tf-internal identifier for the saml group mapping
+            projects: (List of String) Project mapping
+            provider_group_id: (String) Provider group ID
+            role: (String) Wiz Role name
+            saml_idp_id: (String) Identifier for the Saml Provider
+        importStatements:
+            - |-
+              # The id for importing resources has to be in this format: 'mapping|<saml_idp_id>|<provider_group_id>:<project_ids>:<role>#...'.
+              # Import with saml mapping to multiple projects
+              terraform import wiz_saml_group_mapping.example_import "mapping|wiz-azure-ad-saml|88990357-fe36-421b-aedc-fcdd602b91d7:bb62aac7-e8bd-5d5e-b205-2dbafe106e1a,ee25cc95-82b0-4543-8934-5bc655b86786:PROJECT_READER"
+
+              # Import with mapping to single project
+              terraform import wiz_saml_group_mapping.example_import "mapping|wiz-azure-ad-saml|88990357-fe36-421b-aedc-fcdd602b91d7:bb62aac7-e8bd-5d5e-b205-2dbafe106e1a:PROJECT_READER"
+
+              # Import with global mapping
+              terraform import wiz_saml_group_mapping.example_import "mapping|wiz-azure-ad-saml|88990357-fe36-421b-aedc-fcdd602b91d7::PROJECT_READER"
+
+              # Import with multiple group mappings
+              terraform import wiz_saml_group_mapping.example_import "mapping|wiz-azure-ad-saml|88990357-fe36-421b-aedc-fcdd602b91d7:bb62aac7-e8bd-5d5e-b205-2dbafe106e1a:PROJECT_READER#12345678-1234-1234-1234-123456789012:ee25cc95-82b0-4543-8934-5bc655b86786:PROJECT_WRITER"
+    wiz_saml_idp:
+        subCategory: ""
+        description: Configure SAML Providers and associated resources (group mappings).
+        name: wiz_saml_idp
+        title: wiz_saml_idp Resource - terraform-provider-wiz
+        examples:
+            - name: test
+              manifest: |-
+                {
+                  "allow_manual_role_override": false,
+                  "certificate": "-----BEGIN CERTIFICATE-----\nMIIFpzCCA4+gAwIBAgIJAKY0mQyPWs1eMA0GCSqGSIb3DQEBCwUAMGoxCzAJBgNV\nBAYTAlVTMRAwDgYDVQQIDAdOb3doZXJlMRwwGgYDVQQHDBNOb3RoaW5nIHRvIHNl\nZSBoZXJlMRwwGgYDVQQKDBNEZWZhdWx0IENvbXBhbnkgTHRkMQ0wCwYDVQQDDARw\naW5nMB4XDTIyMDYyNDE2MDU1M1oXDTMyMDYyMTE2MDU1M1owajELMAkGA1UEBhMC\nVVMxEDAOBgNVBAgMB05vd2hlcmUxHDAaBgNVBAcME05vdGhpbmcgdG8gc2VlIGhl\ncmUxHDAaBgNVBAoME0RlZmF1bHQgQ29tcGFueSBMdGQxDTALBgNVBAMMBHBpbmcw\nggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDwkVOUv+IpjkU9AyWgpUlC\nwtidRa79Twq6z93fIzuStVt7ITKM0aoIwrtkINlZ3Y78zQb+k3/43QNjO89fj9Bc\nUJaXHBLbRrp1T06n0gbl2pQ2dMQ+GfhhIe82o/4XtbnZFzLDVhnVWxHeZsaqQ934\nVFo/uz6zrfWjaqHhn66TK6ItYM3xRxxb24WVVMjXDpSiboGQl49t266TTidnn/fq\nRuPBc/8lAYcaye4U4r0ExIOw/VT24S0W9X+OBzKJNOI5Moz8c/wPnPGHRlrp/toa\niS3k3sKxMHTbQaP6EYYvgyEHR0aK6SJU39Gf6jm91EJguJpJVCSOW0XC0Vo0O7gH\n9mybgZ6hOtDKIrk8DlfDjpOypZVq542oVTMSjIsaFb1Y5LIaVrKD51j8KrZmyE3d\nEGwatw6VsLerF9yi5wv6wi/oGgLLM5IeLJAa4sk1+eqGxg2nAaZd3EgW36BzlL9P\nGjcbX1Zaiwe4MWxorR3iMADV8a5JPmd8oC+WXXCqq8ddxVsl2nkJ47jUwHPzY2Uu\nHd9XyLoqlY9GTFsz+I6pd/NU9YD/xSuw2jVhaynRjFEboAecZp9kA8fwD7qwKW71\nNIru/KgoKbHl2yQ513LgpzunlT7xMtSId5bvdb7U4pIUH1GZYHZ+wiTi1qU600aH\nHrLI4jSsA5YhnaARnpzQowIDAQABo1AwTjAdBgNVHQ4EFgQUN6E/ZVbo9vAPlFZy\nphVOm9zZ4kwwHwYDVR0jBBgwFoAUN6E/ZVbo9vAPlFZyphVOm9zZ4kwwDAYDVR0T\nBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAgEA6wt/A7kxhjt6RRBBP8WRE2w8oPtx\nsh+4DQWwtHIIiaLd0nuqXYgmlnIBQcuayKgVWvKiMZwlCg7M8aJHb1DV68jn21/J\n5S3C+YHwImP6BlY8158ID280ZU3JoZfyIH+MToumdbfd4wMlKNNOvHbMoUtgq4rS\nCd6vnZ8RF/5MykD4CPhC4zc3hI+xfrtcd2gnSKwDbU5wY94uB0f2QK/qbGnVjz7P\neUFAdPKOiFIRBCVzNJj6JxSUq1CABqW5UDmAK9bDpuWybnRKrZrhg4PA0O7ZIgyq\nD5WaGPD+U+zozrN7YXTu97Ey/S4HFEjJBZaOkPFSTKG6u+l2sjrD6dgrq3ae7t4W\nfxI7pamr7cd1t316c/8zowl7JUkHZMvu2kE3CrCyMKgwZ22EuVSEfSKss5fPelWs\nZGNFLHcI8Xmk+RL13bAh/41bxEt80WQrVJRg3X5mFhzTFec6Ox9v5loh2sEd7jh7\ndKouC0o4KxPVfiAK0FJL9aaB/K/rrSb6ddzal4hZ8t91AKRsUXTw/Iu8+nJ0tbU5\ngu3BmRbPJ5DphvXRY1yy3GERGpQIHWSn7XxvH/OlXO+mHHWNNYa5SW7V4RY4UcSD\nZ8lCchNPFJqIlyvk9LSEorFq4tT21t/pgVOFgw0yJaTyBZ/IvIimjwNHJBnIeBQ2\nGfRTgIAGAQ8ZFfQ=\n-----END CERTIFICATE-----\n",
+                  "group_mapping": [
+                    {
+                      "projects": [
+                        "ee25cc95-82b0-4543-8934-5bc655b86786"
+                      ],
+                      "provider_group_id": "test1.project_admin",
+                      "role": "PROJECT_ADMIN"
+                    },
+                    {
+                      "projects": [
+                        "e7f6542c-81f6-43cf-af48-bdd77f09650d"
+                      ],
+                      "provider_group_id": "test2.project_reader",
+                      "role": "PROJECT_READER"
+                    },
+                    {
+                      "provider_group_id": "global.admin",
+                      "role": "GLOBAL_ADMIN"
+                    }
+                  ],
+                  "issuer_url": "https://ping.example.com/idp/SSO.saml2",
+                  "login_url": "https://ping.example.com/idp/SSO.saml2",
+                  "logout_url": "https://ping.example.com/idp/SLO.saml2",
+                  "merge_groups_mapping_by_role": false,
+                  "name": "SSO-Test",
+                  "use_provider_managed_roles": true
+                }
+        argumentDocs:
+            allow_manual_role_override: (Boolean) When set to true, allow overriding the mapped SSO role for specific users. Must be set true if use_provided_roles is false.
+            certificate: (String) PEM certificate from IdP
+            domains: (List of String, Deprecated) A list of domains the IdP handles.
+            "false": .
+            group_mapping: (Block Set) Group mappings (see below for nested schema)
+            id: (String) Internal identifier for the Saml Provider
+            issuer_url: (String) If undefined, this will default to the login_url value. Set to the same value as login_url if unsure what value to use.
+            login_url: (String) IdP Login URL
+            logout_url: (String) IdP Logout URL
+            merge_groups_mapping_by_role: (Boolean) Manage group mapping by role?
+            name: (String) IdP name to display in Wiz.
+            projects: (List of String) Project mapping
+            provider_group_id: (String) Provider group ID
+            role: (String) Wiz Role name
+            "true": .
+            use_provider_managed_roles: (Boolean) When set to true, roles will be provided by the SSO provider. Manage the roles via Wiz portal otherwise.
+        importStatements: []
+    wiz_security_framework:
+        subCategory: ""
+        description: 'Configure Security Frameworks and associated resources (Categories and Subcategories). Support for extended fields has not been implemented due to issues with the API. This includes: category.external_id, category.sub_category.resolution_recommendation, and category.sub_category.external_id.'
+        name: wiz_security_framework
+        title: wiz_security_framework Resource - terraform-provider-wiz
+        examples:
+            - name: test
+              manifest: |-
+                {
+                  "category": [
+                    {
+                      "description": "test am description",
+                      "name": "AM Asset Management",
+                      "sub_category": [
+                        {
+                          "title": "AM-1 Track asset inventory and their risks"
+                        }
+                      ]
+                    },
+                    {
+                      "description": "test description 2",
+                      "name": "test category 2",
+                      "sub_category": [
+                        {
+                          "description": "bad stuff now",
+                          "title": "test subcategory"
+                        },
+                        {
+                          "description": "bad stuff could happen",
+                          "title": "test subcategory 2"
+                        }
+                      ]
+                    }
+                  ],
+                  "description": "test description",
+                  "enabled": true,
+                  "name": "terraform-test-security-framework1"
+                }
+        argumentDocs:
+            category: '(Block Set, Min: 1) Security framework category. (see below for nested schema)'
+            description: (String) Description of the security framework.
+            enabled: (Boolean) Whether to enable the security framework.
+            id: (String) Internal identifier for the Security Framework
+            name: (String) Name of the security framework.
+            sub_category: '(Block Set, Min: 1) Security subcategory. (see below for nested schema)'
+            title: (String) Title of the security subcategory.
+            "true": .
+        importStatements: []
+    wiz_service_account:
+        subCategory: ""
+        description: Services accounts are used to integrate with Wiz.
+        name: wiz_service_account
+        title: wiz_service_account Resource - terraform-provider-wiz
+        examples:
+            - name: project_reader
+              manifest: |-
+                {
+                  "name": "project_reader",
+                  "scopes": [
+                    "read:projects"
+                  ]
+                }
+            - name: helm
+              manifest: |-
+                {
+                  "name": "helm",
+                  "type": "BROKER"
+                }
+        argumentDocs:
+            THIRD_PARTY: .
+            assigned_projects: (List of String) Project ID assignments, optional with THIRD_PARTY (GraphQL API type)
+            client_id: (String)
+            client_secret: (String)
+            created_at: (String)
+            "false": .
+            id: (String) Wiz internal identifier.
+            last_rotated_at: (String) If a change is detected with this value, the service account will be recreated to ensure a valid secret is stored in Terraform state.
+            name: (String)
+            recreate_if_rotated: (Boolean) Recreate the resource if rotated outside Terraform? This can be used to ensure the state contains valid authentication information. This option should be disabled if external tools are used to manage the credentials for this service account.
+            scopes: (List of String) Scopes, required with THIRD_PARTY (GraphQL API type).
+            type: (String) Service account type, for Helm use BROKER type.`
+        importStatements: []
+    wiz_user:
+        subCategory: ""
+        description: Users let you authenticate to Wiz.
+        name: wiz_user
+        title: wiz_user Resource - terraform-provider-wiz
+        examples:
+            - name: psm
+              manifest: |-
+                {
+                  "email": "${var.wiz_local_users[each.key].email}",
+                  "for_each": "${local.wiz_local_users}",
+                  "name": "${each.key}",
+                  "role": "${var.wiz_local_users[each.key].role}"
+                }
+              references:
+                for_each: local.wiz_local_users
+                name: each.key
+        argumentDocs:
+            assigned_project_ids: (List of String) Assigned Project Identifiers.
+            email: (String) The user email address.
+            id: (String) Unique identifier for the user
+            name: (String) The user name.
+            role: (String) Whether the project is archived/inactive
+            send_email_invite: (Boolean) Send email invite?
+            "true": .
+        importStatements: []
