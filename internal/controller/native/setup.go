@@ -8,6 +8,8 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	"github.com/polarpoint-io/provider-wiz/internal/controller/native/project"
+	"github.com/polarpoint-io/provider-wiz/internal/controller/native/serviceaccount"
+	"github.com/polarpoint-io/provider-wiz/internal/controller/native/user"
 )
 
 // Setup adds every native controller to the manager.
@@ -18,6 +20,10 @@ func Setup(mgr ctrl.Manager, cluster, namespaced xpcontroller.Options) error {
 	}{
 		{project.SetupCluster, cluster},
 		{project.SetupNamespaced, namespaced},
+		{user.SetupCluster, cluster},
+		{user.SetupNamespaced, namespaced},
+		{serviceaccount.SetupCluster, cluster},
+		{serviceaccount.SetupNamespaced, namespaced},
 	} {
 		if err := s.fn(mgr, s.o); err != nil {
 			return err
@@ -34,6 +40,10 @@ func SetupGated(mgr ctrl.Manager, cluster, namespaced xpcontroller.Options) erro
 	}{
 		{project.SetupGatedCluster, cluster},
 		{project.SetupGatedNamespaced, namespaced},
+		{user.SetupGatedCluster, cluster},
+		{user.SetupGatedNamespaced, namespaced},
+		{serviceaccount.SetupGatedCluster, cluster},
+		{serviceaccount.SetupGatedNamespaced, namespaced},
 	} {
 		if err := s.fn(mgr, s.o); err != nil {
 			return err

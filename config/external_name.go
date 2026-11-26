@@ -30,8 +30,6 @@ var ExternalNameConfigs = map[string]config.ExternalName{
 	"wiz_saml_group_mapping":                       config.IdentifierFromProvider,
 	"wiz_saml_idp":                                 config.IdentifierFromProvider,
 	"wiz_security_framework":                       config.IdentifierFromProvider,
-	"wiz_service_account":                          config.IdentifierFromProvider,
-	"wiz_user":                                     config.IdentifierFromProvider,
 }
 
 // ExternalNameConfigurations applies all external name configs listed in the

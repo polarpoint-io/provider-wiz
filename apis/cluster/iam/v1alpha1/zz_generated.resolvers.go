@@ -10,7 +10,6 @@ import (
 	"context"
 	reference "github.com/crossplane/crossplane-runtime/v2/pkg/reference"
 	errors "github.com/pkg/errors"
-	v1alpha1 "github.com/polarpoint-io/provider-wiz/apis/cluster/project/v1alpha1"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -54,94 +53,6 @@ func (mg *SAMLGroupMapping) ResolveReferences(ctx context.Context, c client.Read
 	}
 	mg.Spec.InitProvider.SAMLIdpID = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.InitProvider.SAMLIdpIDRef = rsp.ResolvedReference
-
-	return nil
-}
-
-// ResolveReferences of this ServiceAccount.
-func (mg *ServiceAccount) ResolveReferences(ctx context.Context, c client.Reader) error {
-	r := reference.NewAPIResolver(c, mg)
-
-	var mrsp reference.MultiResolutionResponse
-	var err error
-
-	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromPtrValues(mg.Spec.ForProvider.AssignedProjects),
-		Extract:       reference.ExternalName(),
-		Namespace:     mg.GetNamespace(),
-		References:    mg.Spec.ForProvider.AssignedProjectsRefs,
-		Selector:      mg.Spec.ForProvider.AssignedProjectsSelector,
-		To: reference.To{
-			List:    &v1alpha1.ProjectList{},
-			Managed: &v1alpha1.Project{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.AssignedProjects")
-	}
-	mg.Spec.ForProvider.AssignedProjects = reference.ToPtrValues(mrsp.ResolvedValues)
-	mg.Spec.ForProvider.AssignedProjectsRefs = mrsp.ResolvedReferences
-
-	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromPtrValues(mg.Spec.InitProvider.AssignedProjects),
-		Extract:       reference.ExternalName(),
-		Namespace:     mg.GetNamespace(),
-		References:    mg.Spec.InitProvider.AssignedProjectsRefs,
-		Selector:      mg.Spec.InitProvider.AssignedProjectsSelector,
-		To: reference.To{
-			List:    &v1alpha1.ProjectList{},
-			Managed: &v1alpha1.Project{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.InitProvider.AssignedProjects")
-	}
-	mg.Spec.InitProvider.AssignedProjects = reference.ToPtrValues(mrsp.ResolvedValues)
-	mg.Spec.InitProvider.AssignedProjectsRefs = mrsp.ResolvedReferences
-
-	return nil
-}
-
-// ResolveReferences of this User.
-func (mg *User) ResolveReferences(ctx context.Context, c client.Reader) error {
-	r := reference.NewAPIResolver(c, mg)
-
-	var mrsp reference.MultiResolutionResponse
-	var err error
-
-	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromPtrValues(mg.Spec.ForProvider.AssignedProjectIds),
-		Extract:       reference.ExternalName(),
-		Namespace:     mg.GetNamespace(),
-		References:    mg.Spec.ForProvider.AssignedProjectIdsRefs,
-		Selector:      mg.Spec.ForProvider.AssignedProjectIdsSelector,
-		To: reference.To{
-			List:    &v1alpha1.ProjectList{},
-			Managed: &v1alpha1.Project{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.AssignedProjectIds")
-	}
-	mg.Spec.ForProvider.AssignedProjectIds = reference.ToPtrValues(mrsp.ResolvedValues)
-	mg.Spec.ForProvider.AssignedProjectIdsRefs = mrsp.ResolvedReferences
-
-	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromPtrValues(mg.Spec.InitProvider.AssignedProjectIds),
-		Extract:       reference.ExternalName(),
-		Namespace:     mg.GetNamespace(),
-		References:    mg.Spec.InitProvider.AssignedProjectIdsRefs,
-		Selector:      mg.Spec.InitProvider.AssignedProjectIdsSelector,
-		To: reference.To{
-			List:    &v1alpha1.ProjectList{},
-			Managed: &v1alpha1.Project{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.InitProvider.AssignedProjectIds")
-	}
-	mg.Spec.InitProvider.AssignedProjectIds = reference.ToPtrValues(mrsp.ResolvedValues)
-	mg.Spec.InitProvider.AssignedProjectIdsRefs = mrsp.ResolvedReferences
 
 	return nil
 }

@@ -34,8 +34,9 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: User is the Schema for the Users API. Users let you authenticate
-          to Wiz.
+        description: |-
+          User is a Wiz user, managed directly through the Wiz GraphQL API.
+          Deleting this resource deletes the user from Wiz.
         properties:
           apiVersion:
             description: |-
@@ -55,145 +56,25 @@ spec:
           metadata:
             type: object
           spec:
-            description: UserSpec defines the desired state of User
+            description: UserSpec defines the desired state of a User.
             properties:
               forProvider:
-                properties:
-                  assignedProjectIds:
-                    description: |-
-                      (List of String) Assigned Project Identifiers.
-                      Assigned Project Identifiers.
-                    items:
-                      type: string
-                    type: array
-                  assignedProjectIdsRefs:
-                    description: References to Project in project to populate assignedProjectIds.
-                    items:
-                      description: A NamespacedReference to a named object.
-                      properties:
-                        name:
-                          description: Name of the referenced object.
-                          type: string
-                        namespace:
-                          description: Namespace of the referenced object
-                          type: string
-                        policy:
-                          description: Policies for referencing.
-                          properties:
-                            resolution:
-                              default: Required
-                              description: |-
-                                Resolution specifies whether resolution of this reference is required.
-                                The default is 'Required', which means the reconcile will fail if the
-                                reference cannot be resolved. 'Optional' means this reference will be
-                                a no-op if it cannot be resolved.
-                              enum:
-                              - Required
-                              - Optional
-                              type: string
-                            resolve:
-                              description: |-
-                                Resolve specifies when this reference should be resolved. The default
-                                is 'IfNotPresent', which will attempt to resolve the reference only when
-                                the corresponding field is not present. Use 'Always' to resolve the
-                                reference on every reconcile.
-                              enum:
-                              - Always
-                              - IfNotPresent
-                              type: string
-                          type: object
-                      required:
-                      - name
-                      type: object
-                    type: array
-                  assignedProjectIdsSelector:
-                    description: Selector for a list of Project in project to populate
-                      assignedProjectIds.
-                    properties:
-                      matchControllerRef:
-                        description: |-
-                          MatchControllerRef ensures an object with the same controller reference
-                          as the selecting object is selected.
-                        type: boolean
-                      matchLabels:
-                        additionalProperties:
-                          type: string
-                        description: MatchLabels ensures an object with matching labels
-                          is selected.
-                        type: object
-                      namespace:
-                        description: Namespace for the selector
-                        type: string
-                      policy:
-                        description: Policies for selection.
-                        properties:
-                          resolution:
-                            default: Required
-                            description: |-
-                              Resolution specifies whether resolution of this reference is required.
-                              The default is 'Required', which means the reconcile will fail if the
-                              reference cannot be resolved. 'Optional' means this reference will be
-                              a no-op if it cannot be resolved.
-                            enum:
-                            - Required
-                            - Optional
-                            type: string
-                          resolve:
-                            description: |-
-                              Resolve specifies when this reference should be resolved. The default
-                              is 'IfNotPresent', which will attempt to resolve the reference only when
-                              the corresponding field is not present. Use 'Always' to resolve the
-                              reference on every reconcile.
-                            enum:
-                            - Always
-                            - IfNotPresent
-                            type: string
-                        type: object
-                    type: object
-                  email:
-                    description: |-
-                      (String) The user email address.
-                      The user email address.
-                    type: string
-                  name:
-                    description: |-
-                      (String) The user name.
-                      The user name.
-                    type: string
-                  role:
-                    description: |-
-                      (String) Whether the project is archived/inactive
-                      Whether the project is archived/inactive
-                    type: string
-                  sendEmailInvite:
-                    description: |-
-                      (Boolean) Send email invite?
-                      Send email invite?
-                      - Defaults to `true`.
-                    type: boolean
-                type: object
-              initProvider:
                 description: |-
-                  THIS IS A BETA FIELD. It will be honored
-                  unless the Management Policies feature flag is disabled.
-                  InitProvider holds the same fields as ForProvider, with the exception
-                  of Identifier and other resource reference fields. The fields that are
-                  in InitProvider are merged into ForProvider when the resource is created.
-                  The same fields are also added to the terraform ignore_changes hook, to
-                  avoid updating them after creation. This is useful for fields that are
-                  required on creation, but we do not desire to update them after creation,
-                  for example because of an external controller is managing them, like an
-                  autoscaler.
+                  UserParameters are the User parameters plus references that fill in
+                  assignedProjectIds from Project resources.
                 properties:
                   assignedProjectIds:
                     description: |-
-                      (List of String) Assigned Project Identifiers.
-                      Assigned Project Identifiers.
+                      AssignedProjectIDs are the Wiz IDs of the projects a project-scoped
+                      role applies to. Left unset, assignments are not managed; set it to []
+                      to remove every assignment. It carries no omitempty, so an explicit
+                      empty list survives a round trip.
                     items:
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
                   assignedProjectIdsRefs:
-                    description: References to Project in project to populate assignedProjectIds.
+                    description: References to Project resources to fill in assignedProjectIds.
                     items:
                       description: A NamespacedReference to a named object.
                       properties:
@@ -233,8 +114,7 @@ spec:
                       type: object
                     type: array
                   assignedProjectIdsSelector:
-                    description: Selector for a list of Project in project to populate
-                      assignedProjectIds.
+                    description: Selector for Project resources to fill in assignedProjectIds.
                     properties:
                       matchControllerRef:
                         description: |-
@@ -277,26 +157,30 @@ spec:
                         type: object
                     type: object
                   email:
-                    description: |-
-                      (String) The user email address.
-                      The user email address.
+                    description: Email address of the user.
                     type: string
-                  name:
+                  isSuspended:
                     description: |-
-                      (String) The user name.
-                      The user name.
+                      IsSuspended suspends the user's access to Wiz. Left unset, it is not
+                      managed.
+                    type: boolean
+                  name:
+                    description: Name of the user.
                     type: string
                   role:
                     description: |-
-                      (String) Whether the project is archived/inactive
-                      Whether the project is archived/inactive
+                      Role is the ID of the user's Wiz role, for example GLOBAL_ADMIN,
+                      GLOBAL_READER or PROJECT_ADMIN.
                     type: string
                   sendEmailInvite:
                     description: |-
-                      (Boolean) Send email invite?
-                      Send email invite?
-                      - Defaults to `true`.
+                      SendEmailInvite sends the user an invitation email when the user is
+                      created. Defaults to true. It has no effect after creation.
                     type: boolean
+                required:
+                - email
+                - name
+                - role
                 type: object
               managementPolicies:
                 default:
@@ -356,54 +240,29 @@ spec:
             required:
             - forProvider
             type: object
-            x-kubernetes-validations:
-            - message: spec.forProvider.email is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.email)
-                || (has(self.initProvider) && has(self.initProvider.email))'
-            - message: spec.forProvider.name is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
-                || (has(self.initProvider) && has(self.initProvider.name))'
-            - message: spec.forProvider.role is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.role)
-                || (has(self.initProvider) && has(self.initProvider.role))'
           status:
-            description: UserStatus defines the observed state of User.
+            description: UserStatus defines the observed state of a User.
             properties:
               atProvider:
+                description: Observation is the observed state of a Wiz user.
                 properties:
-                  assignedProjectIds:
-                    description: |-
-                      (List of String) Assigned Project Identifiers.
-                      Assigned Project Identifiers.
+                  effectiveAssignedProjectIds:
+                    description: EffectiveAssignedProjectIDs are the projects Wiz
+                      applies the role to.
                     items:
                       type: string
                     type: array
-                  email:
+                  effectiveRole:
                     description: |-
-                      (String) The user email address.
-                      The user email address.
+                      EffectiveRole is the role Wiz applies, which can come from a SAML
+                      group mapping rather than this resource.
                     type: string
                   id:
-                    description: (String) Unique identifier for the user
+                    description: ID is the Wiz internal user ID, also the external
+                      name.
                     type: string
-                  name:
-                    description: |-
-                      (String) The user name.
-                      The user name.
-                    type: string
-                  role:
-                    description: |-
-                      (String) Whether the project is archived/inactive
-                      Whether the project is archived/inactive
-                    type: string
-                  sendEmailInvite:
-                    description: |-
-                      (Boolean) Send email invite?
-                      Send email invite?
-                      - Defaults to `true`.
+                  isSuspended:
+                    description: IsSuspended as stored by Wiz.
                     type: boolean
                 type: object
               conditions:

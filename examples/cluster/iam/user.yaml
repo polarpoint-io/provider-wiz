@@ -1,0 +1,15 @@
+apiVersion: iam.wiz.polarpoint.io/v1alpha1
+kind: User
+metadata:
+  name: example
+spec:
+  forProvider:
+    name: Jane Doe
+    email: jane.doe@example.com
+    role: PROJECT_READER
+    sendEmailInvite: false
+    # Fill assignedProjectIds from Project resources:
+    assignedProjectIdsRefs:
+      - name: example
+  providerConfigRef:
+    name: default

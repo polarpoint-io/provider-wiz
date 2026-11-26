@@ -23,7 +23,7 @@ Wiz tenant.
 | Group | Kinds |
 | --- | --- |
 | `project` | Project (*native*; cloud account links are part of its spec) |
-| `iam` | ServiceAccount, User, SAMLIdP, SAMLGroupMapping |
+| `iam` | ServiceAccount (*native*), User (*native*), SAMLIdP, SAMLGroupMapping |
 | `connector` | AWS, GCP |
 | `integration` | AWSSNS, Jira, ServiceNow |
 | `automation` | RuleAWSSNS, RuleJiraAddComment, RuleJiraCreateTicket, RuleJiraTransitionTicket, RuleServiceNowCreateTicket, RuleServiceNowUpdateTicket |
@@ -65,7 +65,8 @@ spec:
 ```
 
 A `ServiceAccount` managed resource writes `client_id` and `client_secret` to its connection
-secret, so it can feed another ProviderConfig.
+secret, so it can feed another ProviderConfig. Wiz returns the secret only when the service account
+is created, so set `writeConnectionSecretToRef` before creating it.
 
 ## Developing
 
