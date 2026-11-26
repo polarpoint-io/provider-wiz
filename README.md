@@ -51,7 +51,9 @@ objects keep pointing at the same Wiz objects. These differences matter:
     frees the name for a new project.
   - `cloudAccountLinks`, `cloudOrganizationLinks` and `kubernetesClusterLinks` are part of
     `spec.forProvider`.
-  - A list field left unset is not managed, and `[]` clears it in Wiz.
+  - A top-level list field (`identifiers`, `projectOwners`, `securityChampions` and the three link
+    lists) left unset is not managed, and `[]` clears it in Wiz. The lists inside `riskProfile` are
+    only sent when they have entries.
   - `slug` and `isFolder` cannot be changed or removed once set.
 - **User**
   - Leaving `assignedProjectIds` unset leaves assignments alone, and `[]` removes every
@@ -73,7 +75,7 @@ objects keep pointing at the same Wiz objects. These differences matter:
   - `type` defaults to `THIRD_PARTY`. `scopes` and `assignedProjects` only apply to that type.
 
 All native kinds also work in observe-only mode (`managementPolicies: [Observe]`). In that mode only
-the external-name annotation is required.
+the external-name annotation and an empty `forProvider: {}` are required.
 
 ## Install
 
@@ -124,7 +126,7 @@ spec:
 | `wiz_auth_client_id`, `wiz_auth_client_secret` | yes | both |
 | `wiz_auth_url` (default `https://auth.app.wiz.io/oauth/token`) | no | both |
 | `wiz_auth_audience` (default `wiz-api`) | no | both |
-| `http_client_retry_max` (default `5`) | no | both |
+| `http_client_retry_max` (default `5` for native kinds, `10` for Upjet kinds) | no | both |
 | `wiz_auth_grant_type`, `http_client_retry_wait_*` | no | Upjet only |
 | `proxy`, `proxy_server`, `ca_chain` | no | Upjet only; native kinds use the `HTTPS_PROXY` environment variable |
 

@@ -27,5 +27,6 @@ external name are unchanged, so existing objects keep pointing at the same Wiz o
 ### New
 
 - User `isSuspended`.
-- For Project lists and User `assignedProjectIds`, unset means not managed and `[]` clears the list.
+- For the top-level Project lists and User `assignedProjectIds`, unset means not managed and `[]`
+  clears the list.
 - Native kinds support observe-only imports with an empty `forProvider`.
