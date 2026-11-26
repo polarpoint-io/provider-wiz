@@ -1,0 +1,20 @@
+apiVersion: project.wiz.m.polarpoint.io/v1alpha1
+kind: Project
+metadata:
+  name: example
+  namespace: crossplane-system
+spec:
+  forProvider:
+    name: crossplane-example
+    description: Managed by Crossplane (native Wiz API controller)
+    businessUnit: Platform
+    riskProfile:
+      businessImpact: MBI
+      isInternetFacing: "NO"
+    # cloudAccountLinks replaces the old CloudAccountLink kind:
+    # cloudAccountLinks:
+    #   - cloudAccount: <Wiz cloud account ID>
+    #     environment: PRODUCTION
+  providerConfigRef:
+    name: default
+    kind: ClusterProviderConfig

@@ -34,8 +34,10 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Project is the Schema for the Projects API. Projects let you
-          group your cloud resources according to their users and/or purposes.
+        description: |-
+          Project is a Wiz project, managed directly through the Wiz GraphQL API.
+          Projects group cloud resources by owner or purpose. Wiz cannot delete
+          projects, so deleting this resource archives the project.
         properties:
           apiVersion:
             description: |-
@@ -55,7 +57,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: ProjectSpec defines the desired state of Project
+            description: ProjectSpec defines the desired state of a Project.
             properties:
               deletionPolicy:
                 default: Delete
@@ -72,832 +74,276 @@ spec:
                 - Delete
                 type: string
               forProvider:
-                properties:
-                  archived:
-                    description: |-
-                      (Boolean) Whether the project is archived/inactive
-                      Whether the project is archived/inactive
-                      - Defaults to `false`.
-                    type: boolean
-                  businessUnit:
-                    description: |-
-                      (String) The business unit to which the project belongs.
-                      The business unit to which the project belongs.
-                    type: string
-                  cloudAccountLink:
-                    description: |-
-                      (Block Set) Please either use this embedded set or the resource wiz_project_cloud_account_link. Associate the project directly with a cloud account by wiz identifier UID to organize all the subscription resources, issues, and findings within this project. (see below for nested schema)
-                      Please either use this embedded set or the resource wiz_project_cloud_account_link. Associate the project directly with a cloud account by wiz identifier UID to organize all the subscription resources, issues, and findings within this project.
-                    items:
-                      properties:
-                        cloudAccountId:
-                          description: |-
-                            (String) The Wiz internal identifier for the Cloud Account Subscription.
-                            The Wiz internal identifier for the Cloud Account Subscription.
-                          type: string
-                        environment:
-                          description: |-
-                            (String) The environment.
-                            The environment.
-                            - Allowed values:
-                            - PRODUCTION
-                            - STAGING
-                            - DEVELOPMENT
-                            - TESTING
-                            - OTHER
-
-                            - Defaults to `PRODUCTION`.
-                          type: string
-                        resourceGroups:
-                          description: |-
-                            (List of String) Please provide a list of resource group identifiers for filtering by resource groups. shared must be true to define resource_groups.
-                            Please provide a list of resource group identifiers for filtering by resource groups. `shared` must be true to define resource_groups.
-                          items:
-                            type: string
-                          type: array
-                        resourceTags:
-                          description: |-
-                            (Block Set) Provide a key and value pair for filtering resources. shared must be true to define resource_tags. (see below for nested schema)
-                            Provide a key and value pair for filtering resources. `shared` must be true to define resource_tags.
-                          items:
-                            properties:
-                              key:
-                                description: (String)
-                                type: string
-                              value:
-                                description: (String)
-                                type: string
-                            type: object
-                          type: array
-                        shared:
-                          description: |-
-                            (Boolean) Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
-                            Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
-                          type: boolean
-                      type: object
-                    type: array
-                  cloudOrganizationLink:
-                    description: |-
-                      (Block Set) Associate the project with an organizational link to organize all the subscription resources, issues, and findings within this project. (see below for nested schema)
-                      Associate the project with an organizational link to organize all the subscription resources, issues, and findings within this project.
-                    items:
-                      properties:
-                        cloudOrganization:
-                          description: |-
-                            (String) The Wiz internal identifier for the Organizational Unit.
-                            The Wiz internal identifier for the Organizational Unit.
-                          type: string
-                        environment:
-                          description: |-
-                            (String) The environment.
-                            The environment.
-                            - Allowed values:
-                            - PRODUCTION
-                            - STAGING
-                            - DEVELOPMENT
-                            - TESTING
-                            - OTHER
-
-                            - Defaults to `PRODUCTION`.
-                          type: string
-                        resourceGroups:
-                          description: |-
-                            (List of String) Please provide a list of resource group identifiers for filtering by resource groups. shared must be true to define resource_groups.
-                            Please provide a list of strings for filtering by resource groups. `shared` must be true to define resource_groups.
-                          items:
-                            type: string
-                          type: array
-                        resourceTags:
-                          description: |-
-                            (Block Set) Provide a key and value pair for filtering resources. shared must be true to define resource_tags. (see below for nested schema)
-                            Provide a key and value pair for filtering resources. `shared` must be true to define resource_tags.
-                          items:
-                            properties:
-                              key:
-                                description: (String)
-                                type: string
-                              value:
-                                description: (String)
-                                type: string
-                            type: object
-                          type: array
-                        shared:
-                          description: |-
-                            (Boolean) Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
-                            Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
-                            - Defaults to `true`.
-                          type: boolean
-                      type: object
-                    type: array
-                  description:
-                    description: |-
-                      (String) The project description.
-                      The project description.
-                    type: string
-                  identifiers:
-                    description: |-
-                      (List of String) Identifiers for the project.
-                      Identifiers for the project.
-                    items:
-                      type: string
-                    type: array
-                  isFolder:
-                    description: |-
-                      (Boolean) Whether the project is a folder.
-                      Whether the project is a folder.
-                      - Defaults to `false`.
-                    type: boolean
-                  kubernetesClusterLink:
-                    description: |-
-                      (Block Set) Associate the project with kubernetes clusters. (see below for nested schema)
-                      Associate the project with kubernetes clusters.
-                    items:
-                      properties:
-                        environment:
-                          description: |-
-                            (String) The environment.
-                            The environment.
-                            - Allowed values:
-                            - PRODUCTION
-                            - STAGING
-                            - DEVELOPMENT
-                            - TESTING
-                            - OTHER
-
-                            - Defaults to `PRODUCTION`.
-                          type: string
-                        kubernetesCluster:
-                          description: |-
-                            (String) The Wiz internal identifier for the kubernetes cluster.
-                            The Wiz internal identifier for the kubernetes cluster.
-                          type: string
-                        namespaces:
-                          description: |-
-                            (List of String) The kubernetes namespaces to link. shared must be set to true if namespaces are set.
-                            The kubernetes namespaces to link. `shared` must be set to `true` if namespaces are set.
-                          items:
-                            type: string
-                          type: array
-                        shared:
-                          description: |-
-                            (Boolean) Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
-                            Mark the kubernetes cluster as shared, in which case, specific namespaces can be linked. This needs to be set to `true` if `namespaces` are set.
-                            - Defaults to `true`.
-                          type: boolean
-                      type: object
-                    type: array
-                  name:
-                    description: |-
-                      (String) The project name to display in Wiz.
-                      The project name to display in Wiz.
-                    type: string
-                  parentProjectId:
-                    description: |-
-                      (String) The parent project ID.
-                      The parent project ID.
-                    type: string
-                  parentProjectIdRef:
-                    description: Reference to a Project in project to populate parentProjectId.
-                    properties:
-                      name:
-                        description: Name of the referenced object.
-                        type: string
-                      policy:
-                        description: Policies for referencing.
-                        properties:
-                          resolution:
-                            default: Required
-                            description: |-
-                              Resolution specifies whether resolution of this reference is required.
-                              The default is 'Required', which means the reconcile will fail if the
-                              reference cannot be resolved. 'Optional' means this reference will be
-                              a no-op if it cannot be resolved.
-                            enum:
-                            - Required
-                            - Optional
-                            type: string
-                          resolve:
-                            description: |-
-                              Resolve specifies when this reference should be resolved. The default
-                              is 'IfNotPresent', which will attempt to resolve the reference only when
-                              the corresponding field is not present. Use 'Always' to resolve the
-                              reference on every reconcile.
-                            enum:
-                            - Always
-                            - IfNotPresent
-                            type: string
-                        type: object
-                    required:
-                    - name
-                    type: object
-                  parentProjectIdSelector:
-                    description: Selector for a Project in project to populate parentProjectId.
-                    properties:
-                      matchControllerRef:
-                        description: |-
-                          MatchControllerRef ensures an object with the same controller reference
-                          as the selecting object is selected.
-                        type: boolean
-                      matchLabels:
-                        additionalProperties:
-                          type: string
-                        description: MatchLabels ensures an object with matching labels
-                          is selected.
-                        type: object
-                      policy:
-                        description: Policies for selection.
-                        properties:
-                          resolution:
-                            default: Required
-                            description: |-
-                              Resolution specifies whether resolution of this reference is required.
-                              The default is 'Required', which means the reconcile will fail if the
-                              reference cannot be resolved. 'Optional' means this reference will be
-                              a no-op if it cannot be resolved.
-                            enum:
-                            - Required
-                            - Optional
-                            type: string
-                          resolve:
-                            description: |-
-                              Resolve specifies when this reference should be resolved. The default
-                              is 'IfNotPresent', which will attempt to resolve the reference only when
-                              the corresponding field is not present. Use 'Always' to resolve the
-                              reference on every reconcile.
-                            enum:
-                            - Always
-                            - IfNotPresent
-                            type: string
-                        type: object
-                    type: object
-                  projectOwners:
-                    description: |-
-                      (List of String) A list of project owner IDs.
-                      A list of project owner IDs.
-                    items:
-                      type: string
-                    type: array
-                  riskProfile:
-                    description: |-
-                      (Block List, Max: 1) Contains risk profile related properties for the project (see below for nested schema)
-                      Contains risk profile related properties for the project
-                    items:
-                      properties:
-                        businessImpact:
-                          description: |-
-                            (String) Business impact.
-                            Business impact.
-                            - Allowed values:
-                            - LBI
-                            - MBI
-                            - HBI
-                          type: string
-                        hasAuthentication:
-                          description: |-
-                            (String) Does the project require authentication?
-                            Does the project require authentication?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        hasExposedApi:
-                          description: |-
-                            (String) Does the project expose an API?
-                            Does the project expose an API?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        isActivelyDeveloped:
-                          description: |-
-                            (String) Is the project under active development?
-                            Is the project under active development?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        isCustomerFacing:
-                          description: |-
-                            (String) Is the project customer facing?
-                            Is the project customer facing?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        isInternetFacing:
-                          description: |-
-                            (String) Is the project Internet facing?
-                            Is the project Internet facing?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        isRegulated:
-                          description: |-
-                            (String) Is the project regulated?
-                            Is the project regulated?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        regulatoryStandards:
-                          description: |-
-                            (List of String) Regulatory Standards.
-                            Regulatory Standards.
-                            - Allowed values:
-                            - ISO_20000_1_2011
-                            - ISO_22301
-                            - ISO_27001
-                            - ISO_27017
-                            - ISO_27018
-                            - ISO_27701
-                            - ISO_9001
-                            - SOC
-                            - FEDRAMP
-                            - NIST_800_171
-                            - NIST_CSF
-                            - HIPPA_HITECH
-                            - HITRUST
-                            - PCI_DSS
-                            - SEC_17A_4
-                            - SEC_REGULATION_SCI
-                            - SOX
-                            - GDPR
-                          items:
-                            type: string
-                          type: array
-                        sensitiveDataTypes:
-                          description: |-
-                            (List of String) Sensitive Data Types.
-                            Sensitive Data Types.
-                            - Allowed values:
-                            - CLASSIFIED
-                            - HEALTH
-                            - PII
-                            - PCI
-                            - FINANCIAL
-                            - CUSTOMER
-                          items:
-                            type: string
-                          type: array
-                        storesData:
-                          description: |-
-                            (String) Does the project store data?
-                            Does the project store data?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                      type: object
-                    type: array
-                  securityChampions:
-                    description: |-
-                      (List of String) A list of security champions IDs.
-                      A list of security champions IDs.
-                    items:
-                      type: string
-                    type: array
-                type: object
-              initProvider:
                 description: |-
-                  THIS IS A BETA FIELD. It will be honored
-                  unless the Management Policies feature flag is disabled.
-                  InitProvider holds the same fields as ForProvider, with the exception
-                  of Identifier and other resource reference fields. The fields that are
-                  in InitProvider are merged into ForProvider when the resource is created.
-                  The same fields are also added to the terraform ignore_changes hook, to
-                  avoid updating them after creation. This is useful for fields that are
-                  required on creation, but we do not desire to update them after creation,
-                  for example because of an external controller is managing them, like an
-                  autoscaler.
+                  Parameters are the configurable fields of a Wiz project. They follow the
+                  Wiz GraphQL CreateProjectInput.
+
+                  List fields left unset are not managed; set one to [] to clear it in Wiz.
+                  They carry no omitempty, so an explicit empty list survives a round trip.
                 properties:
                   archived:
                     description: |-
-                      (Boolean) Whether the project is archived/inactive
-                      Whether the project is archived/inactive
-                      - Defaults to `false`.
+                      Archived projects are inactive. Wiz cannot delete projects, so deleting
+                      this resource archives the project.
                     type: boolean
                   businessUnit:
-                    description: |-
-                      (String) The business unit to which the project belongs.
-                      The business unit to which the project belongs.
                     type: string
-                  cloudAccountLink:
-                    description: |-
-                      (Block Set) Please either use this embedded set or the resource wiz_project_cloud_account_link. Associate the project directly with a cloud account by wiz identifier UID to organize all the subscription resources, issues, and findings within this project. (see below for nested schema)
-                      Please either use this embedded set or the resource wiz_project_cloud_account_link. Associate the project directly with a cloud account by wiz identifier UID to organize all the subscription resources, issues, and findings within this project.
+                  cloudAccountLinks:
                     items:
+                      description: |-
+                        CloudAccountLink scopes a cloud account (subscription) into the project.
+                        It replaces the separate CloudAccountLink kind of the Terraform-based API.
                       properties:
-                        cloudAccountId:
-                          description: |-
-                            (String) The Wiz internal identifier for the Cloud Account Subscription.
-                            The Wiz internal identifier for the Cloud Account Subscription.
+                        cloudAccount:
+                          description: CloudAccount is the Wiz internal ID of the
+                            cloud account.
                           type: string
                         environment:
-                          description: |-
-                            (String) The environment.
-                            The environment.
-                            - Allowed values:
-                            - PRODUCTION
-                            - STAGING
-                            - DEVELOPMENT
-                            - TESTING
-                            - OTHER
-
-                            - Defaults to `PRODUCTION`.
+                          description: Environment of the resources linked to a project.
+                          enum:
+                          - PRODUCTION
+                          - STAGING
+                          - DEVELOPMENT
+                          - TESTING
+                          - OTHER
                           type: string
                         resourceGroups:
-                          description: |-
-                            (List of String) Please provide a list of resource group identifiers for filtering by resource groups. shared must be true to define resource_groups.
-                            Please provide a list of resource group identifiers for filtering by resource groups. `shared` must be true to define resource_groups.
+                          description: ResourceGroups limits the link to these resource
+                            groups.
                           items:
                             type: string
                           type: array
                         resourceTags:
-                          description: |-
-                            (Block Set) Provide a key and value pair for filtering resources. shared must be true to define resource_tags. (see below for nested schema)
-                            Provide a key and value pair for filtering resources. `shared` must be true to define resource_tags.
+                          description: ResourceTags limits the link to resources carrying
+                            these tags.
                           items:
+                            description: ResourceTag is a cloud resource tag used
+                              to scope a link.
                             properties:
                               key:
-                                description: (String)
                                 type: string
                               value:
-                                description: (String)
                                 type: string
+                            required:
+                            - key
+                            - value
                             type: object
                           type: array
                         shared:
-                          description: |-
-                            (Boolean) Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
-                            Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
+                          description: Shared marks the account as shared with other
+                            projects.
                           type: boolean
+                      required:
+                      - cloudAccount
+                      - environment
                       type: object
                     type: array
-                  cloudOrganizationLink:
-                    description: |-
-                      (Block Set) Associate the project with an organizational link to organize all the subscription resources, issues, and findings within this project. (see below for nested schema)
-                      Associate the project with an organizational link to organize all the subscription resources, issues, and findings within this project.
+                  cloudOrganizationLinks:
                     items:
+                      description: CloudOrganizationLink scopes a cloud organization
+                        into the project.
                       properties:
                         cloudOrganization:
-                          description: |-
-                            (String) The Wiz internal identifier for the Organizational Unit.
-                            The Wiz internal identifier for the Organizational Unit.
+                          description: CloudOrganization is the Wiz internal ID of
+                            the cloud organization.
                           type: string
                         environment:
-                          description: |-
-                            (String) The environment.
-                            The environment.
-                            - Allowed values:
-                            - PRODUCTION
-                            - STAGING
-                            - DEVELOPMENT
-                            - TESTING
-                            - OTHER
-
-                            - Defaults to `PRODUCTION`.
+                          description: Environment of the resources linked to a project.
+                          enum:
+                          - PRODUCTION
+                          - STAGING
+                          - DEVELOPMENT
+                          - TESTING
+                          - OTHER
                           type: string
                         resourceGroups:
-                          description: |-
-                            (List of String) Please provide a list of resource group identifiers for filtering by resource groups. shared must be true to define resource_groups.
-                            Please provide a list of strings for filtering by resource groups. `shared` must be true to define resource_groups.
                           items:
                             type: string
                           type: array
                         resourceTags:
-                          description: |-
-                            (Block Set) Provide a key and value pair for filtering resources. shared must be true to define resource_tags. (see below for nested schema)
-                            Provide a key and value pair for filtering resources. `shared` must be true to define resource_tags.
                           items:
+                            description: ResourceTag is a cloud resource tag used
+                              to scope a link.
                             properties:
                               key:
-                                description: (String)
                                 type: string
                               value:
-                                description: (String)
                                 type: string
+                            required:
+                            - key
+                            - value
                             type: object
                           type: array
                         shared:
-                          description: |-
-                            (Boolean) Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
-                            Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
-                            - Defaults to `true`.
                           type: boolean
+                      required:
+                      - cloudOrganization
+                      - environment
                       type: object
                     type: array
                   description:
-                    description: |-
-                      (String) The project description.
-                      The project description.
                     type: string
                   identifiers:
-                    description: |-
-                      (List of String) Identifiers for the project.
-                      Identifiers for the project.
+                    description: Identifiers are free-form external identifiers for
+                      the project.
                     items:
                       type: string
                     type: array
                   isFolder:
                     description: |-
-                      (Boolean) Whether the project is a folder.
-                      Whether the project is a folder.
-                      - Defaults to `false`.
+                      IsFolder makes this a folder project that holds other projects.
+                      Immutable.
                     type: boolean
-                  kubernetesClusterLink:
-                    description: |-
-                      (Block Set) Associate the project with kubernetes clusters. (see below for nested schema)
-                      Associate the project with kubernetes clusters.
+                    x-kubernetes-validations:
+                    - message: isFolder is immutable
+                      rule: self == oldSelf
+                  kubernetesClusterLinks:
                     items:
+                      description: KubernetesClusterLink scopes a Kubernetes cluster
+                        into the project.
                       properties:
                         environment:
-                          description: |-
-                            (String) The environment.
-                            The environment.
-                            - Allowed values:
-                            - PRODUCTION
-                            - STAGING
-                            - DEVELOPMENT
-                            - TESTING
-                            - OTHER
-
-                            - Defaults to `PRODUCTION`.
+                          description: Environment of the resources linked to a project.
+                          enum:
+                          - PRODUCTION
+                          - STAGING
+                          - DEVELOPMENT
+                          - TESTING
+                          - OTHER
                           type: string
                         kubernetesCluster:
-                          description: |-
-                            (String) The Wiz internal identifier for the kubernetes cluster.
-                            The Wiz internal identifier for the kubernetes cluster.
+                          description: KubernetesCluster is the Wiz internal ID of
+                            the cluster.
                           type: string
                         namespaces:
-                          description: |-
-                            (List of String) The kubernetes namespaces to link. shared must be set to true if namespaces are set.
-                            The kubernetes namespaces to link. `shared` must be set to `true` if namespaces are set.
+                          description: Namespaces limits the link to these namespaces.
                           items:
                             type: string
                           type: array
                         shared:
-                          description: |-
-                            (Boolean) Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
-                            Mark the kubernetes cluster as shared, in which case, specific namespaces can be linked. This needs to be set to `true` if `namespaces` are set.
-                            - Defaults to `true`.
                           type: boolean
+                      required:
+                      - environment
+                      - kubernetesCluster
                       type: object
                     type: array
                   name:
-                    description: |-
-                      (String) The project name to display in Wiz.
-                      The project name to display in Wiz.
+                    description: Name of the project.
                     type: string
                   parentProjectId:
-                    description: |-
-                      (String) The parent project ID.
-                      The parent project ID.
+                    description: ParentProjectID is the Wiz ID of the folder project
+                      this project sits in.
                     type: string
-                  parentProjectIdRef:
-                    description: Reference to a Project in project to populate parentProjectId.
-                    properties:
-                      name:
-                        description: Name of the referenced object.
-                        type: string
-                      policy:
-                        description: Policies for referencing.
-                        properties:
-                          resolution:
-                            default: Required
-                            description: |-
-                              Resolution specifies whether resolution of this reference is required.
-                              The default is 'Required', which means the reconcile will fail if the
-                              reference cannot be resolved. 'Optional' means this reference will be
-                              a no-op if it cannot be resolved.
-                            enum:
-                            - Required
-                            - Optional
-                            type: string
-                          resolve:
-                            description: |-
-                              Resolve specifies when this reference should be resolved. The default
-                              is 'IfNotPresent', which will attempt to resolve the reference only when
-                              the corresponding field is not present. Use 'Always' to resolve the
-                              reference on every reconcile.
-                            enum:
-                            - Always
-                            - IfNotPresent
-                            type: string
-                        type: object
-                    required:
-                    - name
-                    type: object
-                  parentProjectIdSelector:
-                    description: Selector for a Project in project to populate parentProjectId.
-                    properties:
-                      matchControllerRef:
-                        description: |-
-                          MatchControllerRef ensures an object with the same controller reference
-                          as the selecting object is selected.
-                        type: boolean
-                      matchLabels:
-                        additionalProperties:
-                          type: string
-                        description: MatchLabels ensures an object with matching labels
-                          is selected.
-                        type: object
-                      policy:
-                        description: Policies for selection.
-                        properties:
-                          resolution:
-                            default: Required
-                            description: |-
-                              Resolution specifies whether resolution of this reference is required.
-                              The default is 'Required', which means the reconcile will fail if the
-                              reference cannot be resolved. 'Optional' means this reference will be
-                              a no-op if it cannot be resolved.
-                            enum:
-                            - Required
-                            - Optional
-                            type: string
-                          resolve:
-                            description: |-
-                              Resolve specifies when this reference should be resolved. The default
-                              is 'IfNotPresent', which will attempt to resolve the reference only when
-                              the corresponding field is not present. Use 'Always' to resolve the
-                              reference on every reconcile.
-                            enum:
-                            - Always
-                            - IfNotPresent
-                            type: string
-                        type: object
-                    type: object
                   projectOwners:
-                    description: |-
-                      (List of String) A list of project owner IDs.
-                      A list of project owner IDs.
+                    description: ProjectOwners are Wiz user IDs.
                     items:
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
                   riskProfile:
-                    description: |-
-                      (Block List, Max: 1) Contains risk profile related properties for the project (see below for nested schema)
-                      Contains risk profile related properties for the project
-                    items:
-                      properties:
-                        businessImpact:
-                          description: |-
-                            (String) Business impact.
-                            Business impact.
-                            - Allowed values:
-                            - LBI
-                            - MBI
-                            - HBI
+                    description: RiskProfile describes the business context of a project.
+                    properties:
+                      businessImpact:
+                        description: 'BusinessImpact of the project: LBI (low), MBI
+                          (medium) or HBI (high).'
+                        enum:
+                        - LBI
+                        - MBI
+                        - HBI
+                        type: string
+                      hasAuthentication:
+                        description: YesNoUnknown is a tri-state answer used by a
+                          project's risk profile.
+                        enum:
+                        - "YES"
+                        - "NO"
+                        - UNKNOWN
+                        type: string
+                      hasExposedAPI:
+                        description: YesNoUnknown is a tri-state answer used by a
+                          project's risk profile.
+                        enum:
+                        - "YES"
+                        - "NO"
+                        - UNKNOWN
+                        type: string
+                      isActivelyDeveloped:
+                        description: YesNoUnknown is a tri-state answer used by a
+                          project's risk profile.
+                        enum:
+                        - "YES"
+                        - "NO"
+                        - UNKNOWN
+                        type: string
+                      isCustomerFacing:
+                        description: YesNoUnknown is a tri-state answer used by a
+                          project's risk profile.
+                        enum:
+                        - "YES"
+                        - "NO"
+                        - UNKNOWN
+                        type: string
+                      isInternetFacing:
+                        description: YesNoUnknown is a tri-state answer used by a
+                          project's risk profile.
+                        enum:
+                        - "YES"
+                        - "NO"
+                        - UNKNOWN
+                        type: string
+                      isRegulated:
+                        description: YesNoUnknown is a tri-state answer used by a
+                          project's risk profile.
+                        enum:
+                        - "YES"
+                        - "NO"
+                        - UNKNOWN
+                        type: string
+                      regulatoryStandards:
+                        description: RegulatoryStandards that apply, for example ISO_27001
+                          or SOC.
+                        items:
                           type: string
-                        hasAuthentication:
-                          description: |-
-                            (String) Does the project require authentication?
-                            Does the project require authentication?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
+                        type: array
+                        x-kubernetes-list-type: set
+                      sensitiveDataTypes:
+                        description: SensitiveDataTypes the project stores, for example
+                          PII or PCI.
+                        items:
                           type: string
-                        hasExposedApi:
-                          description: |-
-                            (String) Does the project expose an API?
-                            Does the project expose an API?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        isActivelyDeveloped:
-                          description: |-
-                            (String) Is the project under active development?
-                            Is the project under active development?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        isCustomerFacing:
-                          description: |-
-                            (String) Is the project customer facing?
-                            Is the project customer facing?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        isInternetFacing:
-                          description: |-
-                            (String) Is the project Internet facing?
-                            Is the project Internet facing?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        isRegulated:
-                          description: |-
-                            (String) Is the project regulated?
-                            Is the project regulated?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        regulatoryStandards:
-                          description: |-
-                            (List of String) Regulatory Standards.
-                            Regulatory Standards.
-                            - Allowed values:
-                            - ISO_20000_1_2011
-                            - ISO_22301
-                            - ISO_27001
-                            - ISO_27017
-                            - ISO_27018
-                            - ISO_27701
-                            - ISO_9001
-                            - SOC
-                            - FEDRAMP
-                            - NIST_800_171
-                            - NIST_CSF
-                            - HIPPA_HITECH
-                            - HITRUST
-                            - PCI_DSS
-                            - SEC_17A_4
-                            - SEC_REGULATION_SCI
-                            - SOX
-                            - GDPR
-                          items:
-                            type: string
-                          type: array
-                        sensitiveDataTypes:
-                          description: |-
-                            (List of String) Sensitive Data Types.
-                            Sensitive Data Types.
-                            - Allowed values:
-                            - CLASSIFIED
-                            - HEALTH
-                            - PII
-                            - PCI
-                            - FINANCIAL
-                            - CUSTOMER
-                          items:
-                            type: string
-                          type: array
-                        storesData:
-                          description: |-
-                            (String) Does the project store data?
-                            Does the project store data?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                      type: object
-                    type: array
+                        type: array
+                        x-kubernetes-list-type: set
+                      storesData:
+                        description: YesNoUnknown is a tri-state answer used by a
+                          project's risk profile.
+                        enum:
+                        - "YES"
+                        - "NO"
+                        - UNKNOWN
+                        type: string
+                    type: object
                   securityChampions:
-                    description: |-
-                      (List of String) A list of security champions IDs.
-                      A list of security champions IDs.
+                    description: SecurityChampions are Wiz user IDs.
                     items:
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
+                  slug:
+                    description: |-
+                      Slug is a short identifier, unique across all projects including
+                      archived ones. Wiz generates one when unset. Immutable once set.
+                    type: string
+                    x-kubernetes-validations:
+                    - message: slug is immutable
+                      rule: self == oldSelf
+                required:
+                - name
                 type: object
+                x-kubernetes-validations:
+                - message: slug cannot be removed once set
+                  rule: '!has(oldSelf.slug) || has(self.slug)'
+                - message: isFolder cannot be removed once set
+                  rule: '!has(oldSelf.isFolder) || has(self.isFolder)'
               managementPolicies:
                 default:
                 - '*'
@@ -984,354 +430,27 @@ spec:
             required:
             - forProvider
             type: object
-            x-kubernetes-validations:
-            - message: spec.forProvider.name is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
-                || (has(self.initProvider) && has(self.initProvider.name))'
           status:
-            description: ProjectStatus defines the observed state of Project.
+            description: ProjectStatus defines the observed state of a Project.
             properties:
               atProvider:
+                description: Observation is the observed state of a Wiz project.
                 properties:
+                  ancestorProjectIds:
+                    description: AncestorProjectIDs lists the folder projects above
+                      this one.
+                    items:
+                      type: string
+                    type: array
                   archived:
-                    description: |-
-                      (Boolean) Whether the project is archived/inactive
-                      Whether the project is archived/inactive
-                      - Defaults to `false`.
+                    description: Archived as stored by Wiz.
                     type: boolean
-                  businessUnit:
-                    description: |-
-                      (String) The business unit to which the project belongs.
-                      The business unit to which the project belongs.
-                    type: string
-                  cloudAccountLink:
-                    description: |-
-                      (Block Set) Please either use this embedded set or the resource wiz_project_cloud_account_link. Associate the project directly with a cloud account by wiz identifier UID to organize all the subscription resources, issues, and findings within this project. (see below for nested schema)
-                      Please either use this embedded set or the resource wiz_project_cloud_account_link. Associate the project directly with a cloud account by wiz identifier UID to organize all the subscription resources, issues, and findings within this project.
-                    items:
-                      properties:
-                        cloudAccountId:
-                          description: |-
-                            (String) The Wiz internal identifier for the Cloud Account Subscription.
-                            The Wiz internal identifier for the Cloud Account Subscription.
-                          type: string
-                        environment:
-                          description: |-
-                            (String) The environment.
-                            The environment.
-                            - Allowed values:
-                            - PRODUCTION
-                            - STAGING
-                            - DEVELOPMENT
-                            - TESTING
-                            - OTHER
-
-                            - Defaults to `PRODUCTION`.
-                          type: string
-                        resourceGroups:
-                          description: |-
-                            (List of String) Please provide a list of resource group identifiers for filtering by resource groups. shared must be true to define resource_groups.
-                            Please provide a list of resource group identifiers for filtering by resource groups. `shared` must be true to define resource_groups.
-                          items:
-                            type: string
-                          type: array
-                        resourceTags:
-                          description: |-
-                            (Block Set) Provide a key and value pair for filtering resources. shared must be true to define resource_tags. (see below for nested schema)
-                            Provide a key and value pair for filtering resources. `shared` must be true to define resource_tags.
-                          items:
-                            properties:
-                              key:
-                                description: (String)
-                                type: string
-                              value:
-                                description: (String)
-                                type: string
-                            type: object
-                          type: array
-                        shared:
-                          description: |-
-                            (Boolean) Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
-                            Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
-                          type: boolean
-                      type: object
-                    type: array
-                  cloudOrganizationLink:
-                    description: |-
-                      (Block Set) Associate the project with an organizational link to organize all the subscription resources, issues, and findings within this project. (see below for nested schema)
-                      Associate the project with an organizational link to organize all the subscription resources, issues, and findings within this project.
-                    items:
-                      properties:
-                        cloudOrganization:
-                          description: |-
-                            (String) The Wiz internal identifier for the Organizational Unit.
-                            The Wiz internal identifier for the Organizational Unit.
-                          type: string
-                        environment:
-                          description: |-
-                            (String) The environment.
-                            The environment.
-                            - Allowed values:
-                            - PRODUCTION
-                            - STAGING
-                            - DEVELOPMENT
-                            - TESTING
-                            - OTHER
-
-                            - Defaults to `PRODUCTION`.
-                          type: string
-                        resourceGroups:
-                          description: |-
-                            (List of String) Please provide a list of resource group identifiers for filtering by resource groups. shared must be true to define resource_groups.
-                            Please provide a list of strings for filtering by resource groups. `shared` must be true to define resource_groups.
-                          items:
-                            type: string
-                          type: array
-                        resourceTags:
-                          description: |-
-                            (Block Set) Provide a key and value pair for filtering resources. shared must be true to define resource_tags. (see below for nested schema)
-                            Provide a key and value pair for filtering resources. `shared` must be true to define resource_tags.
-                          items:
-                            properties:
-                              key:
-                                description: (String)
-                                type: string
-                              value:
-                                description: (String)
-                                type: string
-                            type: object
-                          type: array
-                        shared:
-                          description: |-
-                            (Boolean) Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
-                            Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
-                            - Defaults to `true`.
-                          type: boolean
-                      type: object
-                    type: array
-                  description:
-                    description: |-
-                      (String) The project description.
-                      The project description.
-                    type: string
                   id:
-                    description: (String) Unique identifier for the project.
+                    description: ID is the Wiz internal project ID, also the external
+                      name.
                     type: string
-                  identifiers:
-                    description: |-
-                      (List of String) Identifiers for the project.
-                      Identifiers for the project.
-                    items:
-                      type: string
-                    type: array
-                  isFolder:
-                    description: |-
-                      (Boolean) Whether the project is a folder.
-                      Whether the project is a folder.
-                      - Defaults to `false`.
-                    type: boolean
-                  kubernetesClusterLink:
-                    description: |-
-                      (Block Set) Associate the project with kubernetes clusters. (see below for nested schema)
-                      Associate the project with kubernetes clusters.
-                    items:
-                      properties:
-                        environment:
-                          description: |-
-                            (String) The environment.
-                            The environment.
-                            - Allowed values:
-                            - PRODUCTION
-                            - STAGING
-                            - DEVELOPMENT
-                            - TESTING
-                            - OTHER
-
-                            - Defaults to `PRODUCTION`.
-                          type: string
-                        kubernetesCluster:
-                          description: |-
-                            (String) The Wiz internal identifier for the kubernetes cluster.
-                            The Wiz internal identifier for the kubernetes cluster.
-                          type: string
-                        namespaces:
-                          description: |-
-                            (List of String) The kubernetes namespaces to link. shared must be set to true if namespaces are set.
-                            The kubernetes namespaces to link. `shared` must be set to `true` if namespaces are set.
-                          items:
-                            type: string
-                          type: array
-                        shared:
-                          description: |-
-                            (Boolean) Subscriptions that host a few projects can be marked as ‘shared subscriptions’ and resources can be filtered by tags.
-                            Mark the kubernetes cluster as shared, in which case, specific namespaces can be linked. This needs to be set to `true` if `namespaces` are set.
-                            - Defaults to `true`.
-                          type: boolean
-                      type: object
-                    type: array
-                  name:
-                    description: |-
-                      (String) The project name to display in Wiz.
-                      The project name to display in Wiz.
-                    type: string
-                  parentProjectId:
-                    description: |-
-                      (String) The parent project ID.
-                      The parent project ID.
-                    type: string
-                  projectOwners:
-                    description: |-
-                      (List of String) A list of project owner IDs.
-                      A list of project owner IDs.
-                    items:
-                      type: string
-                    type: array
-                  riskProfile:
-                    description: |-
-                      (Block List, Max: 1) Contains risk profile related properties for the project (see below for nested schema)
-                      Contains risk profile related properties for the project
-                    items:
-                      properties:
-                        businessImpact:
-                          description: |-
-                            (String) Business impact.
-                            Business impact.
-                            - Allowed values:
-                            - LBI
-                            - MBI
-                            - HBI
-                          type: string
-                        hasAuthentication:
-                          description: |-
-                            (String) Does the project require authentication?
-                            Does the project require authentication?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        hasExposedApi:
-                          description: |-
-                            (String) Does the project expose an API?
-                            Does the project expose an API?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        isActivelyDeveloped:
-                          description: |-
-                            (String) Is the project under active development?
-                            Is the project under active development?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        isCustomerFacing:
-                          description: |-
-                            (String) Is the project customer facing?
-                            Is the project customer facing?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        isInternetFacing:
-                          description: |-
-                            (String) Is the project Internet facing?
-                            Is the project Internet facing?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        isRegulated:
-                          description: |-
-                            (String) Is the project regulated?
-                            Is the project regulated?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                        regulatoryStandards:
-                          description: |-
-                            (List of String) Regulatory Standards.
-                            Regulatory Standards.
-                            - Allowed values:
-                            - ISO_20000_1_2011
-                            - ISO_22301
-                            - ISO_27001
-                            - ISO_27017
-                            - ISO_27018
-                            - ISO_27701
-                            - ISO_9001
-                            - SOC
-                            - FEDRAMP
-                            - NIST_800_171
-                            - NIST_CSF
-                            - HIPPA_HITECH
-                            - HITRUST
-                            - PCI_DSS
-                            - SEC_17A_4
-                            - SEC_REGULATION_SCI
-                            - SOX
-                            - GDPR
-                          items:
-                            type: string
-                          type: array
-                        sensitiveDataTypes:
-                          description: |-
-                            (List of String) Sensitive Data Types.
-                            Sensitive Data Types.
-                            - Allowed values:
-                            - CLASSIFIED
-                            - HEALTH
-                            - PII
-                            - PCI
-                            - FINANCIAL
-                            - CUSTOMER
-                          items:
-                            type: string
-                          type: array
-                        storesData:
-                          description: |-
-                            (String) Does the project store data?
-                            Does the project store data?
-                            - Allowed values:
-                            - YES
-                            - NO
-                            - UNKNOWN
-
-                            - Defaults to `UNKNOWN`.
-                          type: string
-                      type: object
-                    type: array
-                  securityChampions:
-                    description: |-
-                      (List of String) A list of security champions IDs.
-                      A list of security champions IDs.
-                    items:
-                      type: string
-                    type: array
                   slug:
-                    description: |-
-                      (String) Short identifier for the project. The value must be unique, even against archived projects, so a uuid is generated and used as the slug value.
-                      Short identifier for the project. The value must be unique, even against archived projects, so a uuid is generated and used as the slug value.
+                    description: Slug as stored by Wiz.
                     type: string
                 type: object
               conditions:

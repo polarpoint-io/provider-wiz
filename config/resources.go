@@ -17,6 +17,16 @@ const (
 	fieldIntegrationID = "integration_id"
 )
 
+// nativeResources are Terraform resources this provider no longer generates
+// with Upjet. They are served by native controllers that call the Wiz GraphQL
+// API directly (internal/controller/native), or folded into another native
+// kind. The value is the native Go type references should point to, relative
+// to apis/<scope>/, or "" when the resource has no native kind of its own.
+var nativeResources = map[string]string{
+	tfProject:                        "project/v1alpha1.Project",
+	"wiz_project_cloud_account_link": "", // folded into Project.spec.forProvider.cloudAccountLinks
+}
+
 // groupKind is the Crossplane API short group and kind for a Terraform resource.
 type groupKind struct {
 	group string
@@ -25,9 +35,6 @@ type groupKind struct {
 
 // resourceGroupKinds maps every Terraform resource to its API group and kind.
 var resourceGroupKinds = map[string]groupKind{
-	tfProject:                        {"project", "Project"},
-	"wiz_project_cloud_account_link": {"project", "CloudAccountLink"},
-
 	"wiz_service_account":    {"iam", "ServiceAccount"},
 	"wiz_user":               {"iam", "User"},
 	"wiz_saml_idp":           {"iam", "SAMLIdP"},
@@ -61,11 +68,9 @@ var resourceGroupKinds = map[string]groupKind{
 // resourceReferences maps a Terraform resource to the fields that hold the ID
 // of another Wiz resource managed by this provider.
 var resourceReferences = map[string]map[string]string{
-	tfProject:                        {"parent_project_id": tfProject},
-	"wiz_project_cloud_account_link": {fieldProjectID: tfProject},
-	"wiz_service_account":            {"assigned_projects": tfProject},
-	"wiz_user":                       {"assigned_project_ids": tfProject},
-	"wiz_saml_group_mapping":         {"saml_idp_id": "wiz_saml_idp"},
+	"wiz_service_account":    {"assigned_projects": tfProject},
+	"wiz_user":               {"assigned_project_ids": tfProject},
+	"wiz_saml_group_mapping": {"saml_idp_id": "wiz_saml_idp"},
 
 	"wiz_integration_aws_sns": {fieldProjectID: tfProject, "aws_sns_connector_id": "wiz_connector_aws"},
 	tfIntegrationJira:         {fieldProjectID: tfProject},
@@ -86,18 +91,29 @@ var resourceReferences = map[string]map[string]string{
 	"wiz_report_graph_query": {fieldProjectID: tfProject},
 }
 
+// reference builds the reference to a Terraform resource. References to a
+// resource that is now native point at the native Go type, since Upjet cannot
+// resolve a Terraform name it does not generate.
+func reference(scope, target string) ujconfig.Reference {
+	if t, ok := nativeResources[target]; ok && t != "" {
+		//nolint:staticcheck // Type is the only way to reference a non-Upjet kind.
+		return ujconfig.Reference{Type: modulePath + "/apis/" + scope + "/" + t}
+	}
+	return ujconfig.Reference{TerraformName: target}
+}
+
 // configureResources registers the group, kind and reference configuration
 // for every Wiz resource. The same configuration serves both the cluster
 // scoped and the namespaced provider, because references are declared by
 // Terraform resource name.
-func configureResources(p *ujconfig.Provider) {
+func configureResources(p *ujconfig.Provider, scope string) {
 	for name, gk := range resourceGroupKinds {
 		refs := resourceReferences[name]
 		p.AddResourceConfigurator(name, func(r *ujconfig.Resource) {
 			r.ShortGroup = gk.group
 			r.Kind = gk.kind
 			for field, target := range refs {
-				r.References[field] = ujconfig.Reference{TerraformName: target}
+				r.References[field] = reference(scope, target)
 			}
 		})
 	}

@@ -28,7 +28,7 @@ func GetProvider() *ujconfig.Provider {
 			ExternalNameConfigurations(),
 		))
 
-	configureResources(pc)
+	configureResources(pc, "cluster")
 	configureExamples(pc)
 
 	pc.ConfigureResources()
@@ -48,7 +48,7 @@ func GetProviderNamespaced() *ujconfig.Provider {
 			ManagedResourceNamespace: "crossplane-system",
 		}))
 
-	configureResources(pc)
+	configureResources(pc, "namespaced")
 	configureExamples(pc)
 
 	pc.ConfigureResources()

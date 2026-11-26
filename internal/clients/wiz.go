@@ -183,3 +183,23 @@ func resolveModern(ctx context.Context, crClient client.Client, mg resource.Mode
 	}
 	return &pcSpec, nil
 }
+
+// ExtractCredentials resolves the managed resource's ProviderConfig, tracks
+// its usage and returns the decoded credentials secret. Native (non-Terraform)
+// controllers use it to build a Wiz API client from the same ProviderConfig
+// the Terraform-based controllers use.
+func ExtractCredentials(ctx context.Context, kube client.Client, mg resource.Managed) (map[string]any, error) {
+	pcSpec, err := resolveProviderConfig(ctx, kube, mg)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot resolve provider config")
+	}
+	data, err := resource.CommonCredentialExtractor(ctx, pcSpec.Credentials.Source, kube, pcSpec.Credentials.CommonCredentialSelectors)
+	if err != nil {
+		return nil, errors.Wrap(err, errExtractCredentials)
+	}
+	creds := map[string]any{}
+	if err := json.Unmarshal(data, &creds); err != nil {
+		return nil, errors.Wrap(err, errUnmarshalCredentials)
+	}
+	return creds, nil
+}

@@ -26,8 +26,6 @@ var ExternalNameConfigs = map[string]config.ExternalName{
 	"wiz_integration_aws_sns":                      config.IdentifierFromProvider,
 	tfIntegrationJira:                              config.IdentifierFromProvider,
 	tfIntegrationServiceNow:                        config.IdentifierFromProvider,
-	tfProject:                                      config.IdentifierFromProvider,
-	"wiz_project_cloud_account_link":               config.IdentifierFromProvider,
 	"wiz_report_graph_query":                       config.IdentifierFromProvider,
 	"wiz_saml_group_mapping":                       config.IdentifierFromProvider,
 	"wiz_saml_idp":                                 config.IdentifierFromProvider,
