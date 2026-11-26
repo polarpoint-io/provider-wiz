@@ -71,24 +71,33 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 			return ps, errors.Wrap(err, errUnmarshalCredentials)
 		}
 
-		// Set credentials in Terraform provider configuration. Required keys
-		// must be present; optional keys are passed through only when set so
-		// the Terraform provider keeps its own defaults.
-		ps.Configuration = map[string]any{}
-		for _, k := range requiredCredentialKeys {
-			v, ok := creds[k]
-			if !ok || v == nil || v == "" {
-				return ps, errors.Errorf(errMissingCredentialKeyFmt, k)
-			}
-			ps.Configuration[k] = v
+		cfg, err := terraformConfiguration(creds)
+		if err != nil {
+			return ps, err
 		}
-		for _, k := range optionalCredentialKeys {
-			if v, ok := creds[k]; ok && v != nil && v != "" {
-				ps.Configuration[k] = v
-			}
-		}
+		ps.Configuration = cfg
 		return ps, nil
 	}
+}
+
+// terraformConfiguration builds the Terraform provider configuration from the
+// credentials. Required keys must be present; optional keys are passed through
+// only when set so the Terraform provider keeps its own defaults.
+func terraformConfiguration(creds map[string]any) (map[string]any, error) {
+	cfg := map[string]any{}
+	for _, k := range requiredCredentialKeys {
+		v, ok := creds[k]
+		if !ok || v == nil || v == "" {
+			return nil, errors.Errorf(errMissingCredentialKeyFmt, k)
+		}
+		cfg[k] = v
+	}
+	for _, k := range optionalCredentialKeys {
+		if v, ok := creds[k]; ok && v != nil && v != "" {
+			cfg[k] = v
+		}
+	}
+	return cfg, nil
 }
 
 func toSharedPCSpec(pc *clusterv1beta1.ProviderConfig) (*namespacedv1beta1.ProviderConfigSpec, error) {

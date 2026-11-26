@@ -1,5 +1,13 @@
 # provider-wiz
 
+![provider-wiz](docs/images/hero.svg)
+
+> [!IMPORTANT]
+> **Unofficial provider.** This is a community project. It is not made, approved, endorsed or
+> supported by Wiz, Inc. "Wiz" is a trademark of its owner and is used here only to describe what
+> the provider manages. Use it at your own risk, and contact Wiz support only about Wiz itself,
+> not about this provider.
+
 `provider-wiz` is a [Crossplane](https://crossplane.io/) provider for [Wiz](https://www.wiz.io),
 generated with [Upjet](https://github.com/crossplane/upjet) from the
 [`jschoombee/wiz`](https://registry.terraform.io/providers/jschoombee/wiz/latest/docs) Terraform provider
