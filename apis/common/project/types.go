@@ -88,6 +88,12 @@ type KubernetesClusterLink struct {
 
 // Parameters are the configurable fields of a Wiz project. They follow the
 // Wiz GraphQL CreateProjectInput.
+//
+// List fields left unset are not managed; set one to [] to clear it in Wiz.
+// They carry no omitempty, so an explicit empty list survives a round trip.
+//
+// +kubebuilder:validation:XValidation:rule="!has(oldSelf.slug) || has(self.slug)",message="slug cannot be removed once set"
+// +kubebuilder:validation:XValidation:rule="!has(oldSelf.isFolder) || has(self.isFolder)",message="isFolder cannot be removed once set"
 type Parameters struct {
 	// Name of the project.
 	Name string `json:"name"`
@@ -111,26 +117,26 @@ type Parameters struct {
 	BusinessUnit *string `json:"businessUnit,omitempty"`
 	// Identifiers are free-form external identifiers for the project.
 	// +optional
-	Identifiers []string `json:"identifiers,omitempty"`
+	Identifiers []string `json:"identifiers"`
 	// ParentProjectID is the Wiz ID of the folder project this project sits in.
 	// +optional
 	ParentProjectID *string `json:"parentProjectId,omitempty"`
 	// ProjectOwners are Wiz user IDs.
 	// +optional
 	// +listType=set
-	ProjectOwners []string `json:"projectOwners,omitempty"`
+	ProjectOwners []string `json:"projectOwners"`
 	// SecurityChampions are Wiz user IDs.
 	// +optional
 	// +listType=set
-	SecurityChampions []string `json:"securityChampions,omitempty"`
+	SecurityChampions []string `json:"securityChampions"`
 	// +optional
 	RiskProfile RiskProfile `json:"riskProfile,omitempty"`
 	// +optional
-	CloudAccountLinks []CloudAccountLink `json:"cloudAccountLinks,omitempty"`
+	CloudAccountLinks []CloudAccountLink `json:"cloudAccountLinks"`
 	// +optional
-	CloudOrganizationLinks []CloudOrganizationLink `json:"cloudOrganizationLinks,omitempty"`
+	CloudOrganizationLinks []CloudOrganizationLink `json:"cloudOrganizationLinks"`
 	// +optional
-	KubernetesClusterLinks []KubernetesClusterLink `json:"kubernetesClusterLinks,omitempty"`
+	KubernetesClusterLinks []KubernetesClusterLink `json:"kubernetesClusterLinks"`
 }
 
 // Observation is the observed state of a Wiz project.

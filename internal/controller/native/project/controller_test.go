@@ -61,7 +61,11 @@ func (f *fakeWiz) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		for _, key := range []string{"override", "patch"} {
 			if o, ok := in[key].(map[string]any); ok {
 				for k, v := range o {
-					if k != "projectOwners" {
+					switch k {
+					case "projectOwners":
+					case "cloudAccountLinks":
+						p[k] = readLinks(v)
+					default:
 						p[k] = v
 					}
 				}
@@ -75,6 +79,16 @@ func (f *fakeWiz) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(map[string]any{"data": data}); err != nil {
 		f.t.Error(err)
 	}
+}
+
+// readLinks turns cloudAccountLinks input into the shape a query returns.
+func readLinks(v any) []any {
+	out := []any{}
+	for _, l := range v.([]any) {
+		m := l.(map[string]any)
+		out = append(out, map[string]any{"cloudAccount": map[string]any{"id": m["cloudAccount"]}, "environment": m["environment"]})
+	}
+	return out
 }
 
 func TestLifecycle(t *testing.T) {
@@ -136,9 +150,9 @@ func TestLifecycle(t *testing.T) {
 	if _, err := e.Delete(ctx, cr); err != nil {
 		t.Fatal(err)
 	}
-	p := fw.last["input"].(map[string]any)["patch"].(map[string]any)
-	if len(p) != 1 || p["archived"] != true {
-		t.Errorf("delete patch = %v, want only archived=true", p)
+	p := fw.last["input"].(map[string]any)["override"].(map[string]any)
+	if p["archived"] != true || p["name"] != "generated-slug" || p["description"] != "second" {
+		t.Errorf("delete override = %v, want archived, renamed to the slug, other fields kept", p)
 	}
 	now := metav1.Now()
 	cr.SetDeletionTimestamp(&now)
@@ -170,5 +184,54 @@ func TestUpToDateIgnoresOrderAndUnsetFields(t *testing.T) {
 	spec.CloudAccountLinks = spec.CloudAccountLinks[:1]
 	if upToDate(spec, obs) {
 		t.Error("want not up to date: a cloud account link was removed")
+	}
+}
+
+func TestExplicitEmptyListClearsLinks(t *testing.T) {
+	ctx := context.Background()
+	fw := &fakeWiz{t: t, projects: map[string]map[string]any{
+		"p-1": {"id": "p-1", "name": "A", "slug": "a", "isFolder": false, "archived": false, "riskProfile": map[string]any{},
+			"cloudAccountLinks": []any{map[string]any{"cloudAccount": map[string]any{"id": "c1"}, "environment": "PRODUCTION"}}},
+	}}
+	srv := httptest.NewServer(fw)
+	defer srv.Close()
+	e := &external{wiz: graphql.NewClient(srv.URL, srv.Client())}
+
+	cr := &v1alpha1.Project{ObjectMeta: metav1.ObjectMeta{Name: "a", Namespace: "default"}}
+	meta.SetExternalName(cr, "p-1")
+	cr.Spec.ForProvider = project.Parameters{Name: "A"}
+
+	// Unset: the existing link is left alone.
+	if obs, _ := e.Observe(ctx, cr); !obs.ResourceUpToDate {
+		t.Fatal("want up to date while cloudAccountLinks is unset")
+	}
+
+	// The empty list must survive the API round trip...
+	raw, err := json.Marshal(project.Parameters{Name: "A", CloudAccountLinks: []project.CloudAccountLink{}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var back project.Parameters
+	if err := json.Unmarshal(raw, &back); err != nil {
+		t.Fatal(err)
+	}
+	if back.CloudAccountLinks == nil {
+		t.Fatalf("explicit empty list lost in round trip: %s", raw)
+	}
+
+	// ...and clear the link in Wiz.
+	cr.Spec.ForProvider = back
+	if obs, _ := e.Observe(ctx, cr); obs.ResourceUpToDate {
+		t.Fatal("want not up to date when [] removes the last link")
+	}
+	if _, err := e.Update(ctx, cr); err != nil {
+		t.Fatal(err)
+	}
+	o := fw.last["input"].(map[string]any)["override"].(map[string]any)
+	if l, ok := o["cloudAccountLinks"].([]any); !ok || len(l) != 0 {
+		t.Errorf("override cloudAccountLinks = %#v, want []", o["cloudAccountLinks"])
+	}
+	if obs, _ := e.Observe(ctx, cr); !obs.ResourceUpToDate {
+		t.Fatal("want up to date after the link was cleared")
 	}
 }

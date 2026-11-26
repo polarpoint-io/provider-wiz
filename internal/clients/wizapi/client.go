@@ -2,6 +2,7 @@ package wizapi
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math"
@@ -119,6 +120,8 @@ func New(ctx context.Context, cfg Config) graphql.Client {
 		EndpointParams: map[string][]string{"audience": {cfg.Audience}},
 		AuthStyle:      oauth2.AuthStyleInParams,
 	}
+	// Bound token requests too; the token source keeps this context.
+	ctx = context.WithValue(ctx, oauth2.HTTPClient, &http.Client{Timeout: 30 * time.Second})
 	httpClient := cc.Client(ctx)
 	httpClient.Transport = &retryTransport{next: httpClient.Transport, max: cfg.RetryMax, limiter: limiter}
 	httpClient.Timeout = 60 * time.Second
@@ -138,7 +141,7 @@ func (t *retryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 			return nil, err
 		}
 		resp, err := t.next.RoundTrip(req)
-		if attempt >= t.max || !retryable(resp, err) {
+		if attempt >= t.max || !retryable(resp, err, replayable(req)) {
 			return resp, err
 		}
 		d := backoff(attempt, resp)
@@ -176,11 +179,37 @@ func sleep(ctx context.Context, d time.Duration) error {
 	}
 }
 
-func retryable(resp *http.Response, err error) bool {
-	if err != nil {
+// retryable reports whether to try again. A 429 means Wiz did not process the
+// request, so it is always safe. A transport error or 5xx is ambiguous: Wiz may
+// have applied the request, so only replayable operations are retried.
+func retryable(resp *http.Response, err error, replayable bool) bool {
+	if err == nil && resp.StatusCode == http.StatusTooManyRequests {
 		return true
 	}
-	return resp.StatusCode == http.StatusTooManyRequests || resp.StatusCode >= http.StatusInternalServerError
+	if !replayable {
+		return false
+	}
+	return err != nil || resp.StatusCode >= http.StatusInternalServerError
+}
+
+// replayable reports whether sending the request twice is harmless. Queries
+// and updates are; a create could make a second, untracked object.
+func replayable(req *http.Request) bool {
+	if req.GetBody == nil {
+		return false
+	}
+	body, err := req.GetBody()
+	if err != nil {
+		return false
+	}
+	defer body.Close() //nolint:errcheck // read-only copy of the request body
+	var op struct {
+		OperationName string `json:"operationName"`
+	}
+	if err := json.NewDecoder(body).Decode(&op); err != nil {
+		return false
+	}
+	return !strings.HasPrefix(op.OperationName, "Create")
 }
 
 func backoff(attempt int, resp *http.Response) time.Duration {

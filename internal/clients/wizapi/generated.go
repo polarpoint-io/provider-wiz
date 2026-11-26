@@ -982,14 +982,14 @@ type UpdateProjectPatch struct {
 	Description            *string                             `json:"description,omitempty"`
 	Archived               *bool                               `json:"archived,omitempty"`
 	BusinessUnit           *string                             `json:"businessUnit,omitempty"`
-	Identifiers            []string                            `json:"identifiers,omitempty"`
+	Identifiers            []string                            `json:"identifiers"`
 	ParentProjectId        *string                             `json:"parentProjectId,omitempty"`
-	ProjectOwners          []string                            `json:"projectOwners,omitempty"`
-	SecurityChampions      []string                            `json:"securityChampions,omitempty"`
+	ProjectOwners          []string                            `json:"projectOwners"`
+	SecurityChampions      []string                            `json:"securityChampions"`
 	RiskProfile            *ProjectRiskProfileInput            `json:"riskProfile,omitempty"`
-	CloudAccountLinks      []ProjectCloudAccountLinkInput      `json:"cloudAccountLinks,omitempty"`
-	CloudOrganizationLinks []ProjectCloudOrganizationLinkInput `json:"cloudOrganizationLinks,omitempty"`
-	KubernetesClusterLinks []ProjectKubernetesClusterLinkInput `json:"kubernetesClusterLinks,omitempty"`
+	CloudAccountLinks      []ProjectCloudAccountLinkInput      `json:"cloudAccountLinks"`
+	CloudOrganizationLinks []ProjectCloudOrganizationLinkInput `json:"cloudOrganizationLinks"`
+	KubernetesClusterLinks []ProjectKubernetesClusterLinkInput `json:"kubernetesClusterLinks"`
 }
 
 // GetName returns UpdateProjectPatch.Name, and is useful for accessing the field via an interface.
@@ -1533,6 +1533,8 @@ fragment ProjectFields on Project {
 }
 `
 
+// List fields in UpdateProjectPatch are always sent, so an override with an
+// empty list clears it.
 func UpdateProject(
 	ctx_ context.Context,
 	client_ graphql.Client,

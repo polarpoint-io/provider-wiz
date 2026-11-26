@@ -10,6 +10,7 @@ import (
 	"sync/atomic"
 	"testing"
 
+	"github.com/Khan/genqlient/graphql"
 	"golang.org/x/time/rate"
 )
 
@@ -82,5 +83,31 @@ func TestClientAuthRetryAndNotFound(t *testing.T) {
 	}
 	if tokens.Load() != 1 {
 		t.Errorf("want 1 token request, got %d", tokens.Load())
+	}
+}
+
+func TestCreateIsNotReplayedAfterServerError(t *testing.T) {
+	limiter = rate.NewLimiter(rate.Inf, 1)
+	var calls atomic.Int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		calls.Add(1)
+		http.Error(w, "boom", http.StatusBadGateway)
+	}))
+	defer srv.Close()
+	c := graphql.NewClient(srv.URL, &http.Client{Transport: &retryTransport{next: http.DefaultTransport, max: 3, limiter: limiter}})
+
+	if _, err := CreateProject(context.Background(), c, CreateProjectInput{Name: "x"}); err == nil {
+		t.Fatal("want error")
+	}
+	if calls.Load() != 1 {
+		t.Errorf("CreateProject sent %d times after a 502, want 1", calls.Load())
+	}
+
+	calls.Store(0)
+	if _, err := GetProject(context.Background(), c, "p1"); err == nil {
+		t.Fatal("want error")
+	}
+	if calls.Load() != 4 {
+		t.Errorf("GetProject sent %d times, want 4 (1 + 3 retries)", calls.Load())
 	}
 }

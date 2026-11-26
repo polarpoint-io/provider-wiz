@@ -236,10 +236,10 @@ func toPatch(p project.Parameters) *wizapi.UpdateProjectPatch {
 		Description:       p.Description,
 		Archived:          p.Archived,
 		BusinessUnit:      p.BusinessUnit,
-		Identifiers:       p.Identifiers,
+		Identifiers:       orEmpty(p.Identifiers),
 		ParentProjectId:   p.ParentProjectID,
-		ProjectOwners:     p.ProjectOwners,
-		SecurityChampions: p.SecurityChampions,
+		ProjectOwners:     orEmpty(p.ProjectOwners),
+		SecurityChampions: orEmpty(p.SecurityChampions),
 		RiskProfile:       &rp,
 	}
 	patch.CloudAccountLinks, patch.CloudOrganizationLinks, patch.KubernetesClusterLinks = toLinkInputs(p)
@@ -298,6 +298,14 @@ func tagInputs(tags []project.ResourceTag) []wizapi.ResourceTagInput {
 }
 
 func ptr[T any](v T) *T { return &v }
+
+// orEmpty turns nil into an empty slice, so it is sent as [] rather than null.
+func orEmpty[T any](s []T) []T {
+	if s == nil {
+		return []T{}
+	}
+	return s
+}
 
 func overlay[T any](dst **T, src *T) {
 	if src != nil {

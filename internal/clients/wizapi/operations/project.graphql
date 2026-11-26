@@ -93,14 +93,10 @@ mutation CreateProject(
 # @genqlient(for: "UpdateProjectPatch.description", omitempty: true)
 # @genqlient(for: "UpdateProjectPatch.archived", omitempty: true)
 # @genqlient(for: "UpdateProjectPatch.businessUnit", omitempty: true)
-# @genqlient(for: "UpdateProjectPatch.identifiers", omitempty: true)
 # @genqlient(for: "UpdateProjectPatch.parentProjectId", omitempty: true)
-# @genqlient(for: "UpdateProjectPatch.projectOwners", omitempty: true)
-# @genqlient(for: "UpdateProjectPatch.securityChampions", omitempty: true)
 # @genqlient(for: "UpdateProjectPatch.riskProfile", omitempty: true)
-# @genqlient(for: "UpdateProjectPatch.cloudAccountLinks", omitempty: true)
-# @genqlient(for: "UpdateProjectPatch.cloudOrganizationLinks", omitempty: true)
-# @genqlient(for: "UpdateProjectPatch.kubernetesClusterLinks", omitempty: true)
+# List fields in UpdateProjectPatch are always sent, so an override with an
+# empty list clears it.
 mutation UpdateProject(
   $input: UpdateProjectInput!
 ) {

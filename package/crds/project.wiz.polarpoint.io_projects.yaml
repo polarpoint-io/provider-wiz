@@ -77,6 +77,9 @@ spec:
                 description: |-
                   Parameters are the configurable fields of a Wiz project. They follow the
                   Wiz GraphQL CreateProjectInput.
+
+                  List fields left unset are not managed; set one to [] to clear it in Wiz.
+                  They carry no omitempty, so an explicit empty list survives a round trip.
                 properties:
                   archived:
                     description: |-
@@ -336,6 +339,11 @@ spec:
                 required:
                 - name
                 type: object
+                x-kubernetes-validations:
+                - message: slug cannot be removed once set
+                  rule: '!has(oldSelf.slug) || has(self.slug)'
+                - message: isFolder cannot be removed once set
+                  rule: '!has(oldSelf.isFolder) || has(self.isFolder)'
               managementPolicies:
                 default:
                 - '*'

@@ -84,6 +84,9 @@ func setup(mgr ctrl.Manager, o xpcontroller.Options, gvk schema.GroupVersionKind
 		managed.WithLogger(o.Logger.WithValues("controller", name)),
 		managed.WithRecorder(event.NewAPIRecorder(mgr.GetEventRecorderFor(name))), //nolint:staticcheck // event.NewAPIRecorder needs the old recorder, as in the Upjet controllers
 		managed.WithTimeout(2 * time.Minute),
+		// No initializers: the default would set the external name to the
+		// Kubernetes name, but it must stay empty until Wiz returns an ID.
+		managed.WithInitializers(),
 		managed.WithPollInterval(o.PollInterval),
 	}
 	if o.Features.Enabled(features.EnableBetaManagementPolicies) {
@@ -216,11 +219,25 @@ func (e *external) Delete(ctx context.Context, mg resource.Managed) (managed.Ext
 		return managed.ExternalDelete{}, errors.New(errNotProject)
 	}
 	cr.SetConditions(xpv2.Deleting())
-	// Wiz has no deleteProject mutation; archiving is the closest thing.
-	_, err := wizapi.UpdateProject(ctx, e.wiz, wizapi.UpdateProjectInput{
-		Id:    meta.GetExternalName(cr),
-		Patch: &wizapi.UpdateProjectPatch{Archived: ptr(true)},
-	})
+	id := meta.GetExternalName(cr)
+	cur, err := wizapi.GetProject(ctx, e.wiz, id)
+	if err != nil {
+		return managed.ExternalDelete{}, errors.Wrap(err, errGet)
+	}
+	if cur == nil || cur.Project == nil {
+		return managed.ExternalDelete{}, nil
+	}
+	// Wiz has no deleteProject mutation, so archive instead. Project names
+	// are unique per tenant, so rename the archived project to its slug (as
+	// the Terraform provider does) to free the name for a new project.
+	f := &cur.Project.ProjectFields
+	p := fromObserved(f)
+	p.Archived = ptr(true)
+	p.Name = f.Slug
+	if p.Name == "" {
+		p.Name = f.Id
+	}
+	_, err = wizapi.UpdateProject(ctx, e.wiz, wizapi.UpdateProjectInput{Id: id, Override: toPatch(p)})
 	return managed.ExternalDelete{}, errors.Wrap(err, errArchive)
 }
 
