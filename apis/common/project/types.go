@@ -95,8 +95,10 @@ type KubernetesClusterLink struct {
 // +kubebuilder:validation:XValidation:rule="!has(oldSelf.slug) || has(self.slug)",message="slug cannot be removed once set"
 // +kubebuilder:validation:XValidation:rule="!has(oldSelf.isFolder) || has(self.isFolder)",message="isFolder cannot be removed once set"
 type Parameters struct {
-	// Name of the project.
-	Name string `json:"name"`
+	// Name of the project. Required unless the resource only observes (see
+	// the rules on the Project kinds).
+	// +optional
+	Name string `json:"name,omitempty"`
 	// Slug is a short identifier, unique across all projects including
 	// archived ones. Wiz generates one when unset. Immutable once set.
 	// +optional

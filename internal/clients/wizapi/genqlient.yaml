@@ -9,3 +9,5 @@ optional: pointer
 bindings:
   DateTime:
     type: string
+  UpdateUserPatch:
+    type: github.com/polarpoint-io/provider-wiz/internal/clients/wizapi.UserPatch

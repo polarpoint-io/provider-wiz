@@ -11,9 +11,3 @@ func (tr *SAMLGroupMapping) Hub() {}
 
 // Hub marks this type as a conversion hub.
 func (tr *SAMLIdP) Hub() {}
-
-// Hub marks this type as a conversion hub.
-func (tr *ServiceAccount) Hub() {}
-
-// Hub marks this type as a conversion hub.
-func (tr *User) Hub() {}

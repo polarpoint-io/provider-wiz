@@ -12,15 +12,6 @@ import (
 // have. Each fix edits the first example, which is the one written to
 // examples-generated.
 var exampleFixes = map[string]func(m map[string]any){
-	// The docs loop over a variable with for_each; a managed resource is one user.
-	"wiz_user": func(m map[string]any) {
-		for k := range m {
-			delete(m, k)
-		}
-		m["email"] = "jane.doe@example.com"
-		m["name"] = "Jane Doe"
-		m["role"] = "PROJECT_READER"
-	},
 	// The schema block is group_mapping, not group_mappings.
 	"wiz_saml_group_mapping": func(m map[string]any) {
 		if v, ok := m["group_mappings"]; ok {

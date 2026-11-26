@@ -274,6 +274,347 @@ func (v *CreateProjectResponse) GetCreateProject() *CreateProjectCreateProjectCr
 	return v.CreateProject
 }
 
+// CreateServiceAccountCreateServiceAccountCreateServiceAccountPayload includes the requested fields of the GraphQL type CreateServiceAccountPayload.
+type CreateServiceAccountCreateServiceAccountCreateServiceAccountPayload struct {
+	ServiceAccount *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount `json:"serviceAccount"`
+}
+
+// GetServiceAccount returns CreateServiceAccountCreateServiceAccountCreateServiceAccountPayload.ServiceAccount, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayload) GetServiceAccount() *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount {
+	return v.ServiceAccount
+}
+
+// CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount includes the requested fields of the GraphQL type ServiceAccount.
+type CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount struct {
+	ServiceAccountFields `json:"-"`
+	ClientSecret         *string `json:"clientSecret"`
+}
+
+// GetClientSecret returns CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount.ClientSecret, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount) GetClientSecret() *string {
+	return v.ClientSecret
+}
+
+// GetId returns CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount.Id, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount) GetId() string {
+	return v.ServiceAccountFields.Id
+}
+
+// GetName returns CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount.Name, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount) GetName() string {
+	return v.ServiceAccountFields.Name
+}
+
+// GetClientId returns CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount.ClientId, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount) GetClientId() *string {
+	return v.ServiceAccountFields.ClientId
+}
+
+// GetScopes returns CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount.Scopes, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount) GetScopes() []string {
+	return v.ServiceAccountFields.Scopes
+}
+
+// GetType returns CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount.Type, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount) GetType() *ServiceAccountType {
+	return v.ServiceAccountFields.Type
+}
+
+// GetCreatedAt returns CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount.CreatedAt, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount) GetCreatedAt() *string {
+	return v.ServiceAccountFields.CreatedAt
+}
+
+// GetLastRotatedAt returns CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount.LastRotatedAt, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount) GetLastRotatedAt() *string {
+	return v.ServiceAccountFields.LastRotatedAt
+}
+
+// GetAssignedProjects returns CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount.AssignedProjects, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount) GetAssignedProjects() []ServiceAccountFieldsAssignedProjectsProject {
+	return v.ServiceAccountFields.AssignedProjects
+}
+
+func (v *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ServiceAccountFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalCreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount struct {
+	ClientSecret *string `json:"clientSecret"`
+
+	Id string `json:"id"`
+
+	Name string `json:"name"`
+
+	ClientId *string `json:"clientId"`
+
+	Scopes []string `json:"scopes"`
+
+	Type *ServiceAccountType `json:"type"`
+
+	CreatedAt *string `json:"createdAt"`
+
+	LastRotatedAt *string `json:"lastRotatedAt"`
+
+	AssignedProjects []ServiceAccountFieldsAssignedProjectsProject `json:"assignedProjects"`
+}
+
+func (v *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount) __premarshalJSON() (*__premarshalCreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount, error) {
+	var retval __premarshalCreateServiceAccountCreateServiceAccountCreateServiceAccountPayloadServiceAccount
+
+	retval.ClientSecret = v.ClientSecret
+	retval.Id = v.ServiceAccountFields.Id
+	retval.Name = v.ServiceAccountFields.Name
+	retval.ClientId = v.ServiceAccountFields.ClientId
+	retval.Scopes = v.ServiceAccountFields.Scopes
+	retval.Type = v.ServiceAccountFields.Type
+	retval.CreatedAt = v.ServiceAccountFields.CreatedAt
+	retval.LastRotatedAt = v.ServiceAccountFields.LastRotatedAt
+	retval.AssignedProjects = v.ServiceAccountFields.AssignedProjects
+	return &retval, nil
+}
+
+type CreateServiceAccountInput struct {
+	Name               string              `json:"name"`
+	Scopes             []string            `json:"scopes"`
+	AssignedProjectIds []string            `json:"assignedProjectIds,omitempty"`
+	Type               *ServiceAccountType `json:"type,omitempty"`
+}
+
+// GetName returns CreateServiceAccountInput.Name, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountInput) GetName() string { return v.Name }
+
+// GetScopes returns CreateServiceAccountInput.Scopes, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountInput) GetScopes() []string { return v.Scopes }
+
+// GetAssignedProjectIds returns CreateServiceAccountInput.AssignedProjectIds, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountInput) GetAssignedProjectIds() []string { return v.AssignedProjectIds }
+
+// GetType returns CreateServiceAccountInput.Type, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountInput) GetType() *ServiceAccountType { return v.Type }
+
+// CreateServiceAccountResponse is returned by CreateServiceAccount on success.
+type CreateServiceAccountResponse struct {
+	CreateServiceAccount *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayload `json:"createServiceAccount"`
+}
+
+// GetCreateServiceAccount returns CreateServiceAccountResponse.CreateServiceAccount, and is useful for accessing the field via an interface.
+func (v *CreateServiceAccountResponse) GetCreateServiceAccount() *CreateServiceAccountCreateServiceAccountCreateServiceAccountPayload {
+	return v.CreateServiceAccount
+}
+
+// CreateUserCreateUserCreateUserPayload includes the requested fields of the GraphQL type CreateUserPayload.
+type CreateUserCreateUserCreateUserPayload struct {
+	User *CreateUserCreateUserCreateUserPayloadUser `json:"user"`
+}
+
+// GetUser returns CreateUserCreateUserCreateUserPayload.User, and is useful for accessing the field via an interface.
+func (v *CreateUserCreateUserCreateUserPayload) GetUser() *CreateUserCreateUserCreateUserPayloadUser {
+	return v.User
+}
+
+// CreateUserCreateUserCreateUserPayloadUser includes the requested fields of the GraphQL type User.
+type CreateUserCreateUserCreateUserPayloadUser struct {
+	UserFields `json:"-"`
+}
+
+// GetId returns CreateUserCreateUserCreateUserPayloadUser.Id, and is useful for accessing the field via an interface.
+func (v *CreateUserCreateUserCreateUserPayloadUser) GetId() string { return v.UserFields.Id }
+
+// GetName returns CreateUserCreateUserCreateUserPayloadUser.Name, and is useful for accessing the field via an interface.
+func (v *CreateUserCreateUserCreateUserPayloadUser) GetName() *string { return v.UserFields.Name }
+
+// GetEmail returns CreateUserCreateUserCreateUserPayloadUser.Email, and is useful for accessing the field via an interface.
+func (v *CreateUserCreateUserCreateUserPayloadUser) GetEmail() *string { return v.UserFields.Email }
+
+// GetIsSuspended returns CreateUserCreateUserCreateUserPayloadUser.IsSuspended, and is useful for accessing the field via an interface.
+func (v *CreateUserCreateUserCreateUserPayloadUser) GetIsSuspended() *bool {
+	return v.UserFields.IsSuspended
+}
+
+// GetEffectiveRole returns CreateUserCreateUserCreateUserPayloadUser.EffectiveRole, and is useful for accessing the field via an interface.
+func (v *CreateUserCreateUserCreateUserPayloadUser) GetEffectiveRole() *UserFieldsEffectiveRoleUserRole {
+	return v.UserFields.EffectiveRole
+}
+
+// GetEffectiveAssignedProjects returns CreateUserCreateUserCreateUserPayloadUser.EffectiveAssignedProjects, and is useful for accessing the field via an interface.
+func (v *CreateUserCreateUserCreateUserPayloadUser) GetEffectiveAssignedProjects() []UserFieldsEffectiveAssignedProjectsProject {
+	return v.UserFields.EffectiveAssignedProjects
+}
+
+func (v *CreateUserCreateUserCreateUserPayloadUser) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*CreateUserCreateUserCreateUserPayloadUser
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.CreateUserCreateUserCreateUserPayloadUser = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.UserFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalCreateUserCreateUserCreateUserPayloadUser struct {
+	Id string `json:"id"`
+
+	Name *string `json:"name"`
+
+	Email *string `json:"email"`
+
+	IsSuspended *bool `json:"isSuspended"`
+
+	EffectiveRole *UserFieldsEffectiveRoleUserRole `json:"effectiveRole"`
+
+	EffectiveAssignedProjects []UserFieldsEffectiveAssignedProjectsProject `json:"effectiveAssignedProjects"`
+}
+
+func (v *CreateUserCreateUserCreateUserPayloadUser) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *CreateUserCreateUserCreateUserPayloadUser) __premarshalJSON() (*__premarshalCreateUserCreateUserCreateUserPayloadUser, error) {
+	var retval __premarshalCreateUserCreateUserCreateUserPayloadUser
+
+	retval.Id = v.UserFields.Id
+	retval.Name = v.UserFields.Name
+	retval.Email = v.UserFields.Email
+	retval.IsSuspended = v.UserFields.IsSuspended
+	retval.EffectiveRole = v.UserFields.EffectiveRole
+	retval.EffectiveAssignedProjects = v.UserFields.EffectiveAssignedProjects
+	return &retval, nil
+}
+
+type CreateUserInput struct {
+	Email              string   `json:"email"`
+	Name               string   `json:"name"`
+	Role               string   `json:"role"`
+	AssignedProjectIds []string `json:"assignedProjectIds,omitempty"`
+	SendEmailInvite    bool     `json:"sendEmailInvite"`
+}
+
+// GetEmail returns CreateUserInput.Email, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetEmail() string { return v.Email }
+
+// GetName returns CreateUserInput.Name, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetName() string { return v.Name }
+
+// GetRole returns CreateUserInput.Role, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetRole() string { return v.Role }
+
+// GetAssignedProjectIds returns CreateUserInput.AssignedProjectIds, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetAssignedProjectIds() []string { return v.AssignedProjectIds }
+
+// GetSendEmailInvite returns CreateUserInput.SendEmailInvite, and is useful for accessing the field via an interface.
+func (v *CreateUserInput) GetSendEmailInvite() bool { return v.SendEmailInvite }
+
+// CreateUserResponse is returned by CreateUser on success.
+type CreateUserResponse struct {
+	CreateUser *CreateUserCreateUserCreateUserPayload `json:"createUser"`
+}
+
+// GetCreateUser returns CreateUserResponse.CreateUser, and is useful for accessing the field via an interface.
+func (v *CreateUserResponse) GetCreateUser() *CreateUserCreateUserCreateUserPayload {
+	return v.CreateUser
+}
+
+// DeleteServiceAccountDeleteServiceAccountDeleteServiceAccountPayload includes the requested fields of the GraphQL type DeleteServiceAccountPayload.
+type DeleteServiceAccountDeleteServiceAccountDeleteServiceAccountPayload struct {
+	Stub *string `json:"_stub"`
+}
+
+// GetStub returns DeleteServiceAccountDeleteServiceAccountDeleteServiceAccountPayload.Stub, and is useful for accessing the field via an interface.
+func (v *DeleteServiceAccountDeleteServiceAccountDeleteServiceAccountPayload) GetStub() *string {
+	return v.Stub
+}
+
+type DeleteServiceAccountInput struct {
+	Id string `json:"id"`
+}
+
+// GetId returns DeleteServiceAccountInput.Id, and is useful for accessing the field via an interface.
+func (v *DeleteServiceAccountInput) GetId() string { return v.Id }
+
+// DeleteServiceAccountResponse is returned by DeleteServiceAccount on success.
+type DeleteServiceAccountResponse struct {
+	DeleteServiceAccount *DeleteServiceAccountDeleteServiceAccountDeleteServiceAccountPayload `json:"deleteServiceAccount"`
+}
+
+// GetDeleteServiceAccount returns DeleteServiceAccountResponse.DeleteServiceAccount, and is useful for accessing the field via an interface.
+func (v *DeleteServiceAccountResponse) GetDeleteServiceAccount() *DeleteServiceAccountDeleteServiceAccountDeleteServiceAccountPayload {
+	return v.DeleteServiceAccount
+}
+
+// DeleteUserDeleteUserDeleteUserPayload includes the requested fields of the GraphQL type DeleteUserPayload.
+type DeleteUserDeleteUserDeleteUserPayload struct {
+	Stub *string `json:"_stub"`
+}
+
+// GetStub returns DeleteUserDeleteUserDeleteUserPayload.Stub, and is useful for accessing the field via an interface.
+func (v *DeleteUserDeleteUserDeleteUserPayload) GetStub() *string { return v.Stub }
+
+type DeleteUserInput struct {
+	Id string `json:"id"`
+}
+
+// GetId returns DeleteUserInput.Id, and is useful for accessing the field via an interface.
+func (v *DeleteUserInput) GetId() string { return v.Id }
+
+// DeleteUserResponse is returned by DeleteUser on success.
+type DeleteUserResponse struct {
+	DeleteUser *DeleteUserDeleteUserDeleteUserPayload `json:"deleteUser"`
+}
+
+// GetDeleteUser returns DeleteUserResponse.DeleteUser, and is useful for accessing the field via an interface.
+func (v *DeleteUserResponse) GetDeleteUser() *DeleteUserDeleteUserDeleteUserPayload {
+	return v.DeleteUser
+}
+
 type Environment string
 
 const (
@@ -449,6 +790,214 @@ type GetProjectResponse struct {
 
 // GetProject returns GetProjectResponse.Project, and is useful for accessing the field via an interface.
 func (v *GetProjectResponse) GetProject() *GetProjectProject { return v.Project }
+
+// GetServiceAccountResponse is returned by GetServiceAccount on success.
+type GetServiceAccountResponse struct {
+	ServiceAccount *GetServiceAccountServiceAccount `json:"serviceAccount"`
+}
+
+// GetServiceAccount returns GetServiceAccountResponse.ServiceAccount, and is useful for accessing the field via an interface.
+func (v *GetServiceAccountResponse) GetServiceAccount() *GetServiceAccountServiceAccount {
+	return v.ServiceAccount
+}
+
+// GetServiceAccountServiceAccount includes the requested fields of the GraphQL type ServiceAccount.
+type GetServiceAccountServiceAccount struct {
+	ServiceAccountFields `json:"-"`
+}
+
+// GetId returns GetServiceAccountServiceAccount.Id, and is useful for accessing the field via an interface.
+func (v *GetServiceAccountServiceAccount) GetId() string { return v.ServiceAccountFields.Id }
+
+// GetName returns GetServiceAccountServiceAccount.Name, and is useful for accessing the field via an interface.
+func (v *GetServiceAccountServiceAccount) GetName() string { return v.ServiceAccountFields.Name }
+
+// GetClientId returns GetServiceAccountServiceAccount.ClientId, and is useful for accessing the field via an interface.
+func (v *GetServiceAccountServiceAccount) GetClientId() *string {
+	return v.ServiceAccountFields.ClientId
+}
+
+// GetScopes returns GetServiceAccountServiceAccount.Scopes, and is useful for accessing the field via an interface.
+func (v *GetServiceAccountServiceAccount) GetScopes() []string { return v.ServiceAccountFields.Scopes }
+
+// GetType returns GetServiceAccountServiceAccount.Type, and is useful for accessing the field via an interface.
+func (v *GetServiceAccountServiceAccount) GetType() *ServiceAccountType {
+	return v.ServiceAccountFields.Type
+}
+
+// GetCreatedAt returns GetServiceAccountServiceAccount.CreatedAt, and is useful for accessing the field via an interface.
+func (v *GetServiceAccountServiceAccount) GetCreatedAt() *string {
+	return v.ServiceAccountFields.CreatedAt
+}
+
+// GetLastRotatedAt returns GetServiceAccountServiceAccount.LastRotatedAt, and is useful for accessing the field via an interface.
+func (v *GetServiceAccountServiceAccount) GetLastRotatedAt() *string {
+	return v.ServiceAccountFields.LastRotatedAt
+}
+
+// GetAssignedProjects returns GetServiceAccountServiceAccount.AssignedProjects, and is useful for accessing the field via an interface.
+func (v *GetServiceAccountServiceAccount) GetAssignedProjects() []ServiceAccountFieldsAssignedProjectsProject {
+	return v.ServiceAccountFields.AssignedProjects
+}
+
+func (v *GetServiceAccountServiceAccount) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*GetServiceAccountServiceAccount
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.GetServiceAccountServiceAccount = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ServiceAccountFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalGetServiceAccountServiceAccount struct {
+	Id string `json:"id"`
+
+	Name string `json:"name"`
+
+	ClientId *string `json:"clientId"`
+
+	Scopes []string `json:"scopes"`
+
+	Type *ServiceAccountType `json:"type"`
+
+	CreatedAt *string `json:"createdAt"`
+
+	LastRotatedAt *string `json:"lastRotatedAt"`
+
+	AssignedProjects []ServiceAccountFieldsAssignedProjectsProject `json:"assignedProjects"`
+}
+
+func (v *GetServiceAccountServiceAccount) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *GetServiceAccountServiceAccount) __premarshalJSON() (*__premarshalGetServiceAccountServiceAccount, error) {
+	var retval __premarshalGetServiceAccountServiceAccount
+
+	retval.Id = v.ServiceAccountFields.Id
+	retval.Name = v.ServiceAccountFields.Name
+	retval.ClientId = v.ServiceAccountFields.ClientId
+	retval.Scopes = v.ServiceAccountFields.Scopes
+	retval.Type = v.ServiceAccountFields.Type
+	retval.CreatedAt = v.ServiceAccountFields.CreatedAt
+	retval.LastRotatedAt = v.ServiceAccountFields.LastRotatedAt
+	retval.AssignedProjects = v.ServiceAccountFields.AssignedProjects
+	return &retval, nil
+}
+
+// GetUserResponse is returned by GetUser on success.
+type GetUserResponse struct {
+	User *GetUserUser `json:"user"`
+}
+
+// GetUser returns GetUserResponse.User, and is useful for accessing the field via an interface.
+func (v *GetUserResponse) GetUser() *GetUserUser { return v.User }
+
+// GetUserUser includes the requested fields of the GraphQL type User.
+type GetUserUser struct {
+	UserFields `json:"-"`
+}
+
+// GetId returns GetUserUser.Id, and is useful for accessing the field via an interface.
+func (v *GetUserUser) GetId() string { return v.UserFields.Id }
+
+// GetName returns GetUserUser.Name, and is useful for accessing the field via an interface.
+func (v *GetUserUser) GetName() *string { return v.UserFields.Name }
+
+// GetEmail returns GetUserUser.Email, and is useful for accessing the field via an interface.
+func (v *GetUserUser) GetEmail() *string { return v.UserFields.Email }
+
+// GetIsSuspended returns GetUserUser.IsSuspended, and is useful for accessing the field via an interface.
+func (v *GetUserUser) GetIsSuspended() *bool { return v.UserFields.IsSuspended }
+
+// GetEffectiveRole returns GetUserUser.EffectiveRole, and is useful for accessing the field via an interface.
+func (v *GetUserUser) GetEffectiveRole() *UserFieldsEffectiveRoleUserRole {
+	return v.UserFields.EffectiveRole
+}
+
+// GetEffectiveAssignedProjects returns GetUserUser.EffectiveAssignedProjects, and is useful for accessing the field via an interface.
+func (v *GetUserUser) GetEffectiveAssignedProjects() []UserFieldsEffectiveAssignedProjectsProject {
+	return v.UserFields.EffectiveAssignedProjects
+}
+
+func (v *GetUserUser) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*GetUserUser
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.GetUserUser = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.UserFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalGetUserUser struct {
+	Id string `json:"id"`
+
+	Name *string `json:"name"`
+
+	Email *string `json:"email"`
+
+	IsSuspended *bool `json:"isSuspended"`
+
+	EffectiveRole *UserFieldsEffectiveRoleUserRole `json:"effectiveRole"`
+
+	EffectiveAssignedProjects []UserFieldsEffectiveAssignedProjectsProject `json:"effectiveAssignedProjects"`
+}
+
+func (v *GetUserUser) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *GetUserUser) __premarshalJSON() (*__premarshalGetUserUser, error) {
+	var retval __premarshalGetUserUser
+
+	retval.Id = v.UserFields.Id
+	retval.Name = v.UserFields.Name
+	retval.Email = v.UserFields.Email
+	retval.IsSuspended = v.UserFields.IsSuspended
+	retval.EffectiveRole = v.UserFields.EffectiveRole
+	retval.EffectiveAssignedProjects = v.UserFields.EffectiveAssignedProjects
+	return &retval, nil
+}
 
 type ProjectCloudAccountLinkInput struct {
 	CloudAccount   string             `json:"cloudAccount"`
@@ -961,6 +1510,72 @@ func (v *ResourceTagInput) GetKey() string { return v.Key }
 // GetValue returns ResourceTagInput.Value, and is useful for accessing the field via an interface.
 func (v *ResourceTagInput) GetValue() string { return v.Value }
 
+// ServiceAccountFields includes the GraphQL fields of ServiceAccount requested by the fragment ServiceAccountFields.
+type ServiceAccountFields struct {
+	Id               string                                        `json:"id"`
+	Name             string                                        `json:"name"`
+	ClientId         *string                                       `json:"clientId"`
+	Scopes           []string                                      `json:"scopes"`
+	Type             *ServiceAccountType                           `json:"type"`
+	CreatedAt        *string                                       `json:"createdAt"`
+	LastRotatedAt    *string                                       `json:"lastRotatedAt"`
+	AssignedProjects []ServiceAccountFieldsAssignedProjectsProject `json:"assignedProjects"`
+}
+
+// GetId returns ServiceAccountFields.Id, and is useful for accessing the field via an interface.
+func (v *ServiceAccountFields) GetId() string { return v.Id }
+
+// GetName returns ServiceAccountFields.Name, and is useful for accessing the field via an interface.
+func (v *ServiceAccountFields) GetName() string { return v.Name }
+
+// GetClientId returns ServiceAccountFields.ClientId, and is useful for accessing the field via an interface.
+func (v *ServiceAccountFields) GetClientId() *string { return v.ClientId }
+
+// GetScopes returns ServiceAccountFields.Scopes, and is useful for accessing the field via an interface.
+func (v *ServiceAccountFields) GetScopes() []string { return v.Scopes }
+
+// GetType returns ServiceAccountFields.Type, and is useful for accessing the field via an interface.
+func (v *ServiceAccountFields) GetType() *ServiceAccountType { return v.Type }
+
+// GetCreatedAt returns ServiceAccountFields.CreatedAt, and is useful for accessing the field via an interface.
+func (v *ServiceAccountFields) GetCreatedAt() *string { return v.CreatedAt }
+
+// GetLastRotatedAt returns ServiceAccountFields.LastRotatedAt, and is useful for accessing the field via an interface.
+func (v *ServiceAccountFields) GetLastRotatedAt() *string { return v.LastRotatedAt }
+
+// GetAssignedProjects returns ServiceAccountFields.AssignedProjects, and is useful for accessing the field via an interface.
+func (v *ServiceAccountFields) GetAssignedProjects() []ServiceAccountFieldsAssignedProjectsProject {
+	return v.AssignedProjects
+}
+
+// ServiceAccountFieldsAssignedProjectsProject includes the requested fields of the GraphQL type Project.
+type ServiceAccountFieldsAssignedProjectsProject struct {
+	Id string `json:"id"`
+}
+
+// GetId returns ServiceAccountFieldsAssignedProjectsProject.Id, and is useful for accessing the field via an interface.
+func (v *ServiceAccountFieldsAssignedProjectsProject) GetId() string { return v.Id }
+
+type ServiceAccountType string
+
+const (
+	ServiceAccountTypeThirdParty                    ServiceAccountType = "THIRD_PARTY"
+	ServiceAccountTypeSensor                        ServiceAccountType = "SENSOR"
+	ServiceAccountTypeKubernetesAdmissionController ServiceAccountType = "KUBERNETES_ADMISSION_CONTROLLER"
+	ServiceAccountTypeBroker                        ServiceAccountType = "BROKER"
+	ServiceAccountTypeKubernetesConnector           ServiceAccountType = "KUBERNETES_CONNECTOR"
+	ServiceAccountTypeFirstParty                    ServiceAccountType = "FIRST_PARTY"
+)
+
+var AllServiceAccountType = []ServiceAccountType{
+	ServiceAccountTypeThirdParty,
+	ServiceAccountTypeSensor,
+	ServiceAccountTypeKubernetesAdmissionController,
+	ServiceAccountTypeBroker,
+	ServiceAccountTypeKubernetesConnector,
+	ServiceAccountTypeFirstParty,
+}
+
 type UpdateProjectInput struct {
 	Id       string              `json:"id"`
 	Patch    *UpdateProjectPatch `json:"patch,omitempty"`
@@ -1223,6 +1838,171 @@ func (v *UpdateProjectUpdateProjectUpdateProjectPayloadProject) __premarshalJSON
 	return &retval, nil
 }
 
+type UpdateUserInput struct {
+	Id    string    `json:"id"`
+	Patch UserPatch `json:"patch"`
+}
+
+// GetId returns UpdateUserInput.Id, and is useful for accessing the field via an interface.
+func (v *UpdateUserInput) GetId() string { return v.Id }
+
+// GetPatch returns UpdateUserInput.Patch, and is useful for accessing the field via an interface.
+func (v *UpdateUserInput) GetPatch() UserPatch { return v.Patch }
+
+// UpdateUserResponse is returned by UpdateUser on success.
+type UpdateUserResponse struct {
+	UpdateUser *UpdateUserUpdateUserUpdateUserPayload `json:"updateUser"`
+}
+
+// GetUpdateUser returns UpdateUserResponse.UpdateUser, and is useful for accessing the field via an interface.
+func (v *UpdateUserResponse) GetUpdateUser() *UpdateUserUpdateUserUpdateUserPayload {
+	return v.UpdateUser
+}
+
+// UpdateUserUpdateUserUpdateUserPayload includes the requested fields of the GraphQL type UpdateUserPayload.
+type UpdateUserUpdateUserUpdateUserPayload struct {
+	User *UpdateUserUpdateUserUpdateUserPayloadUser `json:"user"`
+}
+
+// GetUser returns UpdateUserUpdateUserUpdateUserPayload.User, and is useful for accessing the field via an interface.
+func (v *UpdateUserUpdateUserUpdateUserPayload) GetUser() *UpdateUserUpdateUserUpdateUserPayloadUser {
+	return v.User
+}
+
+// UpdateUserUpdateUserUpdateUserPayloadUser includes the requested fields of the GraphQL type User.
+type UpdateUserUpdateUserUpdateUserPayloadUser struct {
+	UserFields `json:"-"`
+}
+
+// GetId returns UpdateUserUpdateUserUpdateUserPayloadUser.Id, and is useful for accessing the field via an interface.
+func (v *UpdateUserUpdateUserUpdateUserPayloadUser) GetId() string { return v.UserFields.Id }
+
+// GetName returns UpdateUserUpdateUserUpdateUserPayloadUser.Name, and is useful for accessing the field via an interface.
+func (v *UpdateUserUpdateUserUpdateUserPayloadUser) GetName() *string { return v.UserFields.Name }
+
+// GetEmail returns UpdateUserUpdateUserUpdateUserPayloadUser.Email, and is useful for accessing the field via an interface.
+func (v *UpdateUserUpdateUserUpdateUserPayloadUser) GetEmail() *string { return v.UserFields.Email }
+
+// GetIsSuspended returns UpdateUserUpdateUserUpdateUserPayloadUser.IsSuspended, and is useful for accessing the field via an interface.
+func (v *UpdateUserUpdateUserUpdateUserPayloadUser) GetIsSuspended() *bool {
+	return v.UserFields.IsSuspended
+}
+
+// GetEffectiveRole returns UpdateUserUpdateUserUpdateUserPayloadUser.EffectiveRole, and is useful for accessing the field via an interface.
+func (v *UpdateUserUpdateUserUpdateUserPayloadUser) GetEffectiveRole() *UserFieldsEffectiveRoleUserRole {
+	return v.UserFields.EffectiveRole
+}
+
+// GetEffectiveAssignedProjects returns UpdateUserUpdateUserUpdateUserPayloadUser.EffectiveAssignedProjects, and is useful for accessing the field via an interface.
+func (v *UpdateUserUpdateUserUpdateUserPayloadUser) GetEffectiveAssignedProjects() []UserFieldsEffectiveAssignedProjectsProject {
+	return v.UserFields.EffectiveAssignedProjects
+}
+
+func (v *UpdateUserUpdateUserUpdateUserPayloadUser) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*UpdateUserUpdateUserUpdateUserPayloadUser
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.UpdateUserUpdateUserUpdateUserPayloadUser = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.UserFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalUpdateUserUpdateUserUpdateUserPayloadUser struct {
+	Id string `json:"id"`
+
+	Name *string `json:"name"`
+
+	Email *string `json:"email"`
+
+	IsSuspended *bool `json:"isSuspended"`
+
+	EffectiveRole *UserFieldsEffectiveRoleUserRole `json:"effectiveRole"`
+
+	EffectiveAssignedProjects []UserFieldsEffectiveAssignedProjectsProject `json:"effectiveAssignedProjects"`
+}
+
+func (v *UpdateUserUpdateUserUpdateUserPayloadUser) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *UpdateUserUpdateUserUpdateUserPayloadUser) __premarshalJSON() (*__premarshalUpdateUserUpdateUserUpdateUserPayloadUser, error) {
+	var retval __premarshalUpdateUserUpdateUserUpdateUserPayloadUser
+
+	retval.Id = v.UserFields.Id
+	retval.Name = v.UserFields.Name
+	retval.Email = v.UserFields.Email
+	retval.IsSuspended = v.UserFields.IsSuspended
+	retval.EffectiveRole = v.UserFields.EffectiveRole
+	retval.EffectiveAssignedProjects = v.UserFields.EffectiveAssignedProjects
+	return &retval, nil
+}
+
+// UserFields includes the GraphQL fields of User requested by the fragment UserFields.
+type UserFields struct {
+	Id                        string                                       `json:"id"`
+	Name                      *string                                      `json:"name"`
+	Email                     *string                                      `json:"email"`
+	IsSuspended               *bool                                        `json:"isSuspended"`
+	EffectiveRole             *UserFieldsEffectiveRoleUserRole             `json:"effectiveRole"`
+	EffectiveAssignedProjects []UserFieldsEffectiveAssignedProjectsProject `json:"effectiveAssignedProjects"`
+}
+
+// GetId returns UserFields.Id, and is useful for accessing the field via an interface.
+func (v *UserFields) GetId() string { return v.Id }
+
+// GetName returns UserFields.Name, and is useful for accessing the field via an interface.
+func (v *UserFields) GetName() *string { return v.Name }
+
+// GetEmail returns UserFields.Email, and is useful for accessing the field via an interface.
+func (v *UserFields) GetEmail() *string { return v.Email }
+
+// GetIsSuspended returns UserFields.IsSuspended, and is useful for accessing the field via an interface.
+func (v *UserFields) GetIsSuspended() *bool { return v.IsSuspended }
+
+// GetEffectiveRole returns UserFields.EffectiveRole, and is useful for accessing the field via an interface.
+func (v *UserFields) GetEffectiveRole() *UserFieldsEffectiveRoleUserRole { return v.EffectiveRole }
+
+// GetEffectiveAssignedProjects returns UserFields.EffectiveAssignedProjects, and is useful for accessing the field via an interface.
+func (v *UserFields) GetEffectiveAssignedProjects() []UserFieldsEffectiveAssignedProjectsProject {
+	return v.EffectiveAssignedProjects
+}
+
+// UserFieldsEffectiveAssignedProjectsProject includes the requested fields of the GraphQL type Project.
+type UserFieldsEffectiveAssignedProjectsProject struct {
+	Id string `json:"id"`
+}
+
+// GetId returns UserFieldsEffectiveAssignedProjectsProject.Id, and is useful for accessing the field via an interface.
+func (v *UserFieldsEffectiveAssignedProjectsProject) GetId() string { return v.Id }
+
+// UserFieldsEffectiveRoleUserRole includes the requested fields of the GraphQL type UserRole.
+type UserFieldsEffectiveRoleUserRole struct {
+	Id string `json:"id"`
+}
+
+// GetId returns UserFieldsEffectiveRoleUserRole.Id, and is useful for accessing the field via an interface.
+func (v *UserFieldsEffectiveRoleUserRole) GetId() string { return v.Id }
+
 type YesNoUnknown string
 
 const (
@@ -1245,6 +2025,38 @@ type __CreateProjectInput struct {
 // GetInput returns __CreateProjectInput.Input, and is useful for accessing the field via an interface.
 func (v *__CreateProjectInput) GetInput() CreateProjectInput { return v.Input }
 
+// __CreateServiceAccountInput is used internally by genqlient
+type __CreateServiceAccountInput struct {
+	Input CreateServiceAccountInput `json:"input"`
+}
+
+// GetInput returns __CreateServiceAccountInput.Input, and is useful for accessing the field via an interface.
+func (v *__CreateServiceAccountInput) GetInput() CreateServiceAccountInput { return v.Input }
+
+// __CreateUserInput is used internally by genqlient
+type __CreateUserInput struct {
+	Input CreateUserInput `json:"input"`
+}
+
+// GetInput returns __CreateUserInput.Input, and is useful for accessing the field via an interface.
+func (v *__CreateUserInput) GetInput() CreateUserInput { return v.Input }
+
+// __DeleteServiceAccountInput is used internally by genqlient
+type __DeleteServiceAccountInput struct {
+	Input DeleteServiceAccountInput `json:"input"`
+}
+
+// GetInput returns __DeleteServiceAccountInput.Input, and is useful for accessing the field via an interface.
+func (v *__DeleteServiceAccountInput) GetInput() DeleteServiceAccountInput { return v.Input }
+
+// __DeleteUserInput is used internally by genqlient
+type __DeleteUserInput struct {
+	Input DeleteUserInput `json:"input"`
+}
+
+// GetInput returns __DeleteUserInput.Input, and is useful for accessing the field via an interface.
+func (v *__DeleteUserInput) GetInput() DeleteUserInput { return v.Input }
+
 // __GetProjectInput is used internally by genqlient
 type __GetProjectInput struct {
 	Id string `json:"id"`
@@ -1253,6 +2065,22 @@ type __GetProjectInput struct {
 // GetId returns __GetProjectInput.Id, and is useful for accessing the field via an interface.
 func (v *__GetProjectInput) GetId() string { return v.Id }
 
+// __GetServiceAccountInput is used internally by genqlient
+type __GetServiceAccountInput struct {
+	Id string `json:"id"`
+}
+
+// GetId returns __GetServiceAccountInput.Id, and is useful for accessing the field via an interface.
+func (v *__GetServiceAccountInput) GetId() string { return v.Id }
+
+// __GetUserInput is used internally by genqlient
+type __GetUserInput struct {
+	Id string `json:"id"`
+}
+
+// GetId returns __GetUserInput.Id, and is useful for accessing the field via an interface.
+func (v *__GetUserInput) GetId() string { return v.Id }
+
 // __UpdateProjectInput is used internally by genqlient
 type __UpdateProjectInput struct {
 	Input UpdateProjectInput `json:"input"`
@@ -1260,6 +2088,14 @@ type __UpdateProjectInput struct {
 
 // GetInput returns __UpdateProjectInput.Input, and is useful for accessing the field via an interface.
 func (v *__UpdateProjectInput) GetInput() UpdateProjectInput { return v.Input }
+
+// __UpdateUserInput is used internally by genqlient
+type __UpdateUserInput struct {
+	Input UpdateUserInput `json:"input"`
+}
+
+// GetInput returns __UpdateUserInput.Input, and is useful for accessing the field via an interface.
+func (v *__UpdateUserInput) GetInput() UpdateUserInput { return v.Input }
 
 // The mutation executed by CreateProject.
 const CreateProject_Operation = `
@@ -1351,6 +2187,172 @@ func CreateProject(
 	}
 
 	data_ = &CreateProjectResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by CreateServiceAccount.
+const CreateServiceAccount_Operation = `
+mutation CreateServiceAccount ($input: CreateServiceAccountInput!) {
+	createServiceAccount(input: $input) {
+		serviceAccount {
+			... ServiceAccountFields
+			clientSecret
+		}
+	}
+}
+fragment ServiceAccountFields on ServiceAccount {
+	id
+	name
+	clientId
+	scopes
+	type
+	createdAt
+	lastRotatedAt
+	assignedProjects {
+		id
+	}
+}
+`
+
+// The client secret is only returned here, so it is read on create alone.
+func CreateServiceAccount(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input CreateServiceAccountInput,
+) (data_ *CreateServiceAccountResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "CreateServiceAccount",
+		Query:  CreateServiceAccount_Operation,
+		Variables: &__CreateServiceAccountInput{
+			Input: input,
+		},
+	}
+
+	data_ = &CreateServiceAccountResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by CreateUser.
+const CreateUser_Operation = `
+mutation CreateUser ($input: CreateUserInput!) {
+	createUser(input: $input) {
+		user {
+			... UserFields
+		}
+	}
+}
+fragment UserFields on User {
+	id
+	name
+	email
+	isSuspended
+	effectiveRole {
+		id
+	}
+	effectiveAssignedProjects {
+		id
+	}
+}
+`
+
+func CreateUser(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input CreateUserInput,
+) (data_ *CreateUserResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "CreateUser",
+		Query:  CreateUser_Operation,
+		Variables: &__CreateUserInput{
+			Input: input,
+		},
+	}
+
+	data_ = &CreateUserResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by DeleteServiceAccount.
+const DeleteServiceAccount_Operation = `
+mutation DeleteServiceAccount ($input: DeleteServiceAccountInput!) {
+	deleteServiceAccount(input: $input) {
+		_stub
+	}
+}
+`
+
+func DeleteServiceAccount(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input DeleteServiceAccountInput,
+) (data_ *DeleteServiceAccountResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "DeleteServiceAccount",
+		Query:  DeleteServiceAccount_Operation,
+		Variables: &__DeleteServiceAccountInput{
+			Input: input,
+		},
+	}
+
+	data_ = &DeleteServiceAccountResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by DeleteUser.
+const DeleteUser_Operation = `
+mutation DeleteUser ($input: DeleteUserInput!) {
+	deleteUser(input: $input) {
+		_stub
+	}
+}
+`
+
+func DeleteUser(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input DeleteUserInput,
+) (data_ *DeleteUserResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "DeleteUser",
+		Query:  DeleteUser_Operation,
+		Variables: &__DeleteUserInput{
+			Input: input,
+		},
+	}
+
+	data_ = &DeleteUserResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -1459,6 +2461,98 @@ func GetProject(
 	return data_, err_
 }
 
+// The query executed by GetServiceAccount.
+const GetServiceAccount_Operation = `
+query GetServiceAccount ($id: ID!) {
+	serviceAccount(id: $id) {
+		... ServiceAccountFields
+	}
+}
+fragment ServiceAccountFields on ServiceAccount {
+	id
+	name
+	clientId
+	scopes
+	type
+	createdAt
+	lastRotatedAt
+	assignedProjects {
+		id
+	}
+}
+`
+
+func GetServiceAccount(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	id string,
+) (data_ *GetServiceAccountResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetServiceAccount",
+		Query:  GetServiceAccount_Operation,
+		Variables: &__GetServiceAccountInput{
+			Id: id,
+		},
+	}
+
+	data_ = &GetServiceAccountResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by GetUser.
+const GetUser_Operation = `
+query GetUser ($id: ID!) {
+	user(id: $id) {
+		... UserFields
+	}
+}
+fragment UserFields on User {
+	id
+	name
+	email
+	isSuspended
+	effectiveRole {
+		id
+	}
+	effectiveAssignedProjects {
+		id
+	}
+}
+`
+
+func GetUser(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	id string,
+) (data_ *GetUserResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "GetUser",
+		Query:  GetUser_Operation,
+		Variables: &__GetUserInput{
+			Id: id,
+		},
+	}
+
+	data_ = &GetUserResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The mutation executed by UpdateProject.
 const UpdateProject_Operation = `
 mutation UpdateProject ($input: UpdateProjectInput!) {
@@ -1549,6 +2643,56 @@ func UpdateProject(
 	}
 
 	data_ = &UpdateProjectResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by UpdateUser.
+const UpdateUser_Operation = `
+mutation UpdateUser ($input: UpdateUserInput!) {
+	updateUser(input: $input) {
+		user {
+			... UserFields
+		}
+	}
+}
+fragment UserFields on User {
+	id
+	name
+	email
+	isSuspended
+	effectiveRole {
+		id
+	}
+	effectiveAssignedProjects {
+		id
+	}
+}
+`
+
+// UpdateUserPatch is bound to the hand-written UserPatch (patch.go) so that
+// an unset list is left out but an empty one is sent.
+func UpdateUser(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input UpdateUserInput,
+) (data_ *UpdateUserResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "UpdateUser",
+		Query:  UpdateUser_Operation,
+		Variables: &__UpdateUserInput{
+			Input: input,
+		},
+	}
+
+	data_ = &UpdateUserResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

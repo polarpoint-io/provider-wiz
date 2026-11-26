@@ -4,40 +4,31 @@ package project
 
 import (
 	"context"
-	"time"
 
 	"github.com/Khan/genqlient/graphql"
 	xpcontroller "github.com/crossplane/crossplane-runtime/v2/pkg/controller"
-	"github.com/crossplane/crossplane-runtime/v2/pkg/event"
-	xpfeature "github.com/crossplane/crossplane-runtime/v2/pkg/feature"
 	"github.com/crossplane/crossplane-runtime/v2/pkg/meta"
-	"github.com/crossplane/crossplane-runtime/v2/pkg/ratelimiter"
 	"github.com/crossplane/crossplane-runtime/v2/pkg/reconciler/managed"
 	"github.com/crossplane/crossplane-runtime/v2/pkg/resource"
-	"github.com/crossplane/crossplane-runtime/v2/pkg/statemetrics"
 	xpv2 "github.com/crossplane/crossplane/apis/v2/core/v2"
 	"github.com/pkg/errors"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	clusterv1alpha1 "github.com/polarpoint-io/provider-wiz/apis/cluster/project/v1alpha1"
 	"github.com/polarpoint-io/provider-wiz/apis/common/project"
 	namespacedv1alpha1 "github.com/polarpoint-io/provider-wiz/apis/namespaced/project/v1alpha1"
-	"github.com/polarpoint-io/provider-wiz/internal/clients"
 	"github.com/polarpoint-io/provider-wiz/internal/clients/wizapi"
-	"github.com/polarpoint-io/provider-wiz/internal/features"
+	"github.com/polarpoint-io/provider-wiz/internal/controller/native/base"
 )
 
 const (
-	errNotProject  = "managed resource is not a Wiz Project"
-	errCredentials = "cannot get Wiz credentials"
-	errConfig      = "invalid Wiz credentials"
-	errGet         = "cannot get Wiz project"
-	errCreate      = "cannot create Wiz project"
-	errUpdate      = "cannot update Wiz project"
-	errArchive     = "cannot archive Wiz project"
-	errNoProject   = "Wiz returned no project"
+	errNotProject = "managed resource is not a Wiz Project"
+	errGet        = "cannot get Wiz project"
+	errCreate     = "cannot create Wiz project"
+	errUpdate     = "cannot update Wiz project"
+	errArchive    = "cannot archive Wiz project"
+	errNoProject  = "Wiz returned no project"
 )
 
 // projectResource is implemented by both the cluster-scoped and the
@@ -50,68 +41,37 @@ type projectResource interface {
 
 // SetupCluster adds the cluster-scoped Project controller.
 func SetupCluster(mgr ctrl.Manager, o xpcontroller.Options) error {
-	return setup(mgr, o, clusterv1alpha1.Project_GroupVersionKind, &clusterv1alpha1.Project{}, &clusterv1alpha1.ProjectList{})
+	return base.Setup(mgr, o, clusterKind)
 }
 
 // SetupNamespaced adds the namespaced Project controller.
 func SetupNamespaced(mgr ctrl.Manager, o xpcontroller.Options) error {
-	return setup(mgr, o, namespacedv1alpha1.Project_GroupVersionKind, &namespacedv1alpha1.Project{}, &namespacedv1alpha1.ProjectList{})
+	return base.Setup(mgr, o, namespacedKind)
 }
 
 // SetupGatedCluster adds the cluster-scoped controller once its CRD exists.
 func SetupGatedCluster(mgr ctrl.Manager, o xpcontroller.Options) error {
-	return gated(mgr, o, clusterv1alpha1.Project_GroupVersionKind, SetupCluster)
+	return base.SetupGated(mgr, o, clusterKind)
 }
 
 // SetupGatedNamespaced adds the namespaced controller once its CRD exists.
 func SetupGatedNamespaced(mgr ctrl.Manager, o xpcontroller.Options) error {
-	return gated(mgr, o, namespacedv1alpha1.Project_GroupVersionKind, SetupNamespaced)
+	return base.SetupGated(mgr, o, namespacedKind)
 }
 
-func gated(mgr ctrl.Manager, o xpcontroller.Options, gvk schema.GroupVersionKind, setup func(ctrl.Manager, xpcontroller.Options) error) error {
-	o.Gate.Register(func() {
-		if err := setup(mgr, o); err != nil {
-			mgr.GetLogger().Error(err, "unable to setup reconciler", "gvk", gvk.String())
-		}
-	}, gvk)
-	return nil
-}
+var (
+	clusterKind = base.Kind{
+		GVK: clusterv1alpha1.Project_GroupVersionKind, Obj: &clusterv1alpha1.Project{}, List: &clusterv1alpha1.ProjectList{},
+		Connector: newConnector,
+	}
+	namespacedKind = base.Kind{
+		GVK: namespacedv1alpha1.Project_GroupVersionKind, Obj: &namespacedv1alpha1.Project{}, List: &namespacedv1alpha1.ProjectList{},
+		Connector: newConnector,
+	}
+)
 
-func setup(mgr ctrl.Manager, o xpcontroller.Options, gvk schema.GroupVersionKind, obj client.Object, list resource.ManagedList) error {
-	name := managed.ControllerName(gvk.String())
-	opts := []managed.ReconcilerOption{
-		managed.WithExternalConnector(&connector{kube: mgr.GetClient(), newClient: wizapi.Cached}),
-		managed.WithLogger(o.Logger.WithValues("controller", name)),
-		managed.WithRecorder(event.NewAPIRecorder(mgr.GetEventRecorderFor(name))), //nolint:staticcheck // event.NewAPIRecorder needs the old recorder, as in the Upjet controllers
-		managed.WithTimeout(2 * time.Minute),
-		// No initializers: the default would set the external name to the
-		// Kubernetes name, but it must stay empty until Wiz returns an ID.
-		managed.WithInitializers(),
-		managed.WithPollInterval(o.PollInterval),
-	}
-	if o.Features.Enabled(features.EnableBetaManagementPolicies) {
-		opts = append(opts, managed.WithManagementPolicies())
-	}
-	if o.MetricOptions != nil {
-		opts = append(opts, managed.WithMetricRecorder(o.MetricOptions.MRMetrics))
-		if o.MetricOptions.MRStateMetrics != nil {
-			rec := statemetrics.NewMRStateRecorder(mgr.GetClient(), o.Logger, o.MetricOptions.MRStateMetrics, list, o.MetricOptions.PollStateMetricInterval)
-			if err := mgr.Add(rec); err != nil {
-				return errors.Wrapf(err, "cannot register MR state metrics recorder for %s", gvk.Kind)
-			}
-		}
-	}
-	if o.Features.Enabled(xpfeature.EnableAlphaChangeLogs) && o.ChangeLogOptions != nil {
-		opts = append(opts, managed.WithChangeLogger(o.ChangeLogOptions.ChangeLogger))
-	}
-
-	r := managed.NewReconciler(mgr, resource.ManagedKind(gvk), opts...)
-	return ctrl.NewControllerManagedBy(mgr).
-		Named(name).
-		WithOptions(o.ForControllerRuntime()).
-		WithEventFilter(resource.DesiredStateChanged()).
-		For(obj).
-		Complete(ratelimiter.NewReconciler(name, r, o.GlobalRateLimiter))
+func newConnector(kube client.Client) managed.ExternalConnector {
+	return &connector{kube: kube, newClient: wizapi.Cached}
 }
 
 type connector struct {
@@ -123,15 +83,11 @@ func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.E
 	if _, ok := mg.(projectResource); !ok {
 		return nil, errors.New(errNotProject)
 	}
-	creds, err := clients.ExtractCredentials(ctx, c.kube, mg)
+	wiz, err := base.Client(ctx, c.kube, mg, c.newClient)
 	if err != nil {
-		return nil, errors.Wrap(err, errCredentials)
+		return nil, err
 	}
-	cfg, err := wizapi.ConfigFromCredentials(creds)
-	if err != nil {
-		return nil, errors.Wrap(err, errConfig)
-	}
-	return &external{wiz: c.newClient(cfg)}, nil
+	return &external{wiz: wiz}, nil
 }
 
 type external struct {

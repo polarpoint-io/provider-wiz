@@ -1,0 +1,43 @@
+fragment UserFields on User {
+  id
+  name
+  email
+  isSuspended
+  effectiveRole { id }
+  effectiveAssignedProjects { id }
+}
+
+query GetUser(
+  $id: ID!
+) {
+  user(id: $id) {
+    ...UserFields
+  }
+}
+
+# @genqlient(for: "CreateUserInput.assignedProjectIds", omitempty: true)
+mutation CreateUser(
+  $input: CreateUserInput!
+) {
+  createUser(input: $input) {
+    user { ...UserFields }
+  }
+}
+
+# UpdateUserPatch is bound to the hand-written UserPatch (patch.go) so that
+# an unset list is left out but an empty one is sent.
+mutation UpdateUser(
+  $input: UpdateUserInput!
+) {
+  updateUser(input: $input) {
+    user { ...UserFields }
+  }
+}
+
+mutation DeleteUser(
+  $input: DeleteUserInput!
+) {
+  deleteUser(input: $input) {
+    _stub
+  }
+}

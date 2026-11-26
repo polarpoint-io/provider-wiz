@@ -19,8 +19,6 @@ import (
 	gcp "github.com/polarpoint-io/provider-wiz/internal/controller/namespaced/connector/gcp"
 	samlgroupmapping "github.com/polarpoint-io/provider-wiz/internal/controller/namespaced/iam/samlgroupmapping"
 	samlidp "github.com/polarpoint-io/provider-wiz/internal/controller/namespaced/iam/samlidp"
-	serviceaccount "github.com/polarpoint-io/provider-wiz/internal/controller/namespaced/iam/serviceaccount"
-	user "github.com/polarpoint-io/provider-wiz/internal/controller/namespaced/iam/user"
 	awssns "github.com/polarpoint-io/provider-wiz/internal/controller/namespaced/integration/awssns"
 	jira "github.com/polarpoint-io/provider-wiz/internal/controller/namespaced/integration/jira"
 	servicenow "github.com/polarpoint-io/provider-wiz/internal/controller/namespaced/integration/servicenow"
@@ -49,8 +47,6 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		gcp.Setup,
 		samlgroupmapping.Setup,
 		samlidp.Setup,
-		serviceaccount.Setup,
-		user.Setup,
 		awssns.Setup,
 		jira.Setup,
 		servicenow.Setup,
@@ -85,8 +81,6 @@ func SetupGated(mgr ctrl.Manager, o controller.Options) error {
 		gcp.SetupGated,
 		samlgroupmapping.SetupGated,
 		samlidp.SetupGated,
-		serviceaccount.SetupGated,
-		user.SetupGated,
 		awssns.SetupGated,
 		jira.SetupGated,
 		servicenow.SetupGated,
@@ -120,8 +114,6 @@ func SetupWebhookWithManager(mgr ctrl.Manager) error {
 		gcp.SetupWebhookWithManager,
 		samlgroupmapping.SetupWebhookWithManager,
 		samlidp.SetupWebhookWithManager,
-		serviceaccount.SetupWebhookWithManager,
-		user.SetupWebhookWithManager,
 		awssns.SetupWebhookWithManager,
 		jira.SetupWebhookWithManager,
 		servicenow.SetupWebhookWithManager,

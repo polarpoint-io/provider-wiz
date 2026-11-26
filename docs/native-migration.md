@@ -36,8 +36,11 @@ code was inferred and should be checked then.
    then point at the native Go type.
 2. Add its operations to the schema and an `operations/*.graphql` file, then `go generate`.
 3. Write shared types in `apis/common/<kind>`, the two scoped types, and a controller under
-   `internal/controller/native`, then register them in `apis/*/register_native.go` and
-   `internal/controller/native/setup.go`.
+   `internal/controller/native` (the wiring is shared in `native/base`), then register them in
+   `internal/controller/native/setup.go`. A kind in a new API group also needs its group registered
+   in `apis/*/register_native.go`; one in a group Upjet still generates (like `iam`) shares that
+   group's generated `SchemeBuilder`. References to other kinds are resolved by a hand-written
+   `ResolveReferences`, because the referencing field lives in the shared parameters.
 4. Run `make generate` and remove the kind's old examples and docs.
 
 Keep the group, kind and external name (the Wiz ID) the same where you can, so existing objects keep
@@ -48,4 +51,6 @@ pointing at the same Wiz object.
 | Kind | Controller | Notes |
 | --- | --- | --- |
 | Project | native | Wiz cannot delete projects, so deleting a Project archives it. The old `CloudAccountLink` kind is now `spec.forProvider.cloudAccountLinks`. |
+| User | native | `assignedProjectIds` left unset is not managed; `[]` removes every assignment. `isSuspended` is new. Role and projects are read from Wiz's effective values, which a SAML group mapping can override. |
+| ServiceAccount | native | Wiz cannot update a service account: `name`, `type` and `scopes` are immutable, and a change to `assignedProjects` reports a sync error until the resource is recreated. The connection secret gets `client_id` and `client_secret` on create only; if that write fails, the resource reports a sync error, because the secret cannot be fetched again. `recreateIfRotated` is gone; `status.atProvider.lastRotatedAt` shows a rotation done outside Crossplane. |
 | All other kinds | Upjet | Unchanged. |

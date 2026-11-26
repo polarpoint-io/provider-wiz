@@ -2,7 +2,7 @@
 #
 # Provenance: reconstructed from the public jschoombee/terraform-provider-wiz
 # source (internal/wiz/structs.go, enums.go and the queries in
-# internal/provider/resource_project.go), not from Wiz's API reference or an
+# internal/provider/resource_{project,user,service_account}.go), not from Wiz's API reference or an
 # introspection result. It covers only the operations this provider uses.
 #
 # Replace with an introspected schema (scripts/wiz_introspect.py) when one is
@@ -22,17 +22,35 @@ enum RegulatoryStandard {
 
 type Query {
   project(id: ID!): Project
+  user(id: ID!): User
+  serviceAccount(id: ID!): ServiceAccount
 }
 
 type Mutation {
   createProject(input: CreateProjectInput!): CreateProjectPayload
   updateProject(input: UpdateProjectInput!): UpdateProjectPayload
+  createUser(input: CreateUserInput!): CreateUserPayload
+  updateUser(input: UpdateUserInput!): UpdateUserPayload
+  deleteUser(input: DeleteUserInput!): DeleteUserPayload
+  createServiceAccount(input: CreateServiceAccountInput!): CreateServiceAccountPayload
+  deleteServiceAccount(input: DeleteServiceAccountInput!): DeleteServiceAccountPayload
 }
 
 type User {
   id: ID!
   name: String
   email: String
+  isSuspended: Boolean
+  # TODO(needs real schema/docs): the Terraform provider reads the role and
+  # projects through these "effective" fields; a SAML-managed user may report
+  # values here that differ from what was set.
+  effectiveRole: UserRole
+  effectiveAssignedProjects: [Project!]
+}
+
+type UserRole {
+  id: ID!
+  name: String
 }
 
 type ResourceTag {
@@ -198,4 +216,81 @@ type CreateProjectPayload {
 
 type UpdateProjectPayload {
   project: Project
+}
+
+# Users
+
+input CreateUserInput {
+  email: String!
+  name: String!
+  role: String!
+  assignedProjectIds: [String!]
+  sendEmailInvite: Boolean!
+}
+
+input UpdateUserPatch {
+  name: String
+  email: String
+  role: String
+  assignedProjectIds: [String!]
+  isSuspended: Boolean
+}
+
+input UpdateUserInput {
+  id: ID!
+  patch: UpdateUserPatch!
+}
+
+input DeleteUserInput {
+  id: ID!
+}
+
+type CreateUserPayload {
+  user: User
+}
+
+type UpdateUserPayload {
+  user: User
+}
+
+type DeleteUserPayload {
+  _stub: String
+}
+
+# Service accounts
+
+enum ServiceAccountType {
+  THIRD_PARTY SENSOR KUBERNETES_ADMISSION_CONTROLLER BROKER KUBERNETES_CONNECTOR FIRST_PARTY
+}
+
+type ServiceAccount {
+  id: ID!
+  name: String!
+  clientId: String
+  # Only returned in full by createServiceAccount.
+  clientSecret: String
+  scopes: [String!]
+  type: ServiceAccountType
+  createdAt: DateTime
+  lastRotatedAt: DateTime
+  assignedProjects: [Project!]
+}
+
+input CreateServiceAccountInput {
+  name: String!
+  scopes: [String!]!
+  assignedProjectIds: [String!]
+  type: ServiceAccountType
+}
+
+input DeleteServiceAccountInput {
+  id: ID!
+}
+
+type CreateServiceAccountPayload {
+  serviceAccount: ServiceAccount
+}
+
+type DeleteServiceAccountPayload {
+  _stub: String
 }

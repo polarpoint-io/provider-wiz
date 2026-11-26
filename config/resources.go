@@ -25,6 +25,8 @@ const (
 var nativeResources = map[string]string{
 	tfProject:                        "project/v1alpha1.Project",
 	"wiz_project_cloud_account_link": "", // folded into Project.spec.forProvider.cloudAccountLinks
+	"wiz_user":                       "iam/v1alpha1.User",
+	"wiz_service_account":            "iam/v1alpha1.ServiceAccount",
 }
 
 // groupKind is the Crossplane API short group and kind for a Terraform resource.
@@ -35,8 +37,6 @@ type groupKind struct {
 
 // resourceGroupKinds maps every Terraform resource to its API group and kind.
 var resourceGroupKinds = map[string]groupKind{
-	"wiz_service_account":    {"iam", "ServiceAccount"},
-	"wiz_user":               {"iam", "User"},
 	"wiz_saml_idp":           {"iam", "SAMLIdP"},
 	"wiz_saml_group_mapping": {"iam", "SAMLGroupMapping"},
 
@@ -68,8 +68,6 @@ var resourceGroupKinds = map[string]groupKind{
 // resourceReferences maps a Terraform resource to the fields that hold the ID
 // of another Wiz resource managed by this provider.
 var resourceReferences = map[string]map[string]string{
-	"wiz_service_account":    {"assigned_projects": tfProject},
-	"wiz_user":               {"assigned_project_ids": tfProject},
 	"wiz_saml_group_mapping": {"saml_idp_id": "wiz_saml_idp"},
 
 	"wiz_integration_aws_sns": {fieldProjectID: tfProject, "aws_sns_connector_id": "wiz_connector_aws"},
@@ -117,21 +115,4 @@ func configureResources(p *ujconfig.Provider, scope string) {
 			}
 		})
 	}
-
-	// The service account's client credentials are returned as computed,
-	// non-sensitive attributes. Mark the secret sensitive so it is published
-	// to the connection secret instead of status.atProvider, and publish the
-	// client ID next to it so the secret is enough to build a ProviderConfig.
-	p.AddResourceConfigurator("wiz_service_account", func(r *ujconfig.Resource) {
-		if s, ok := r.TerraformResource.Schema["client_secret"]; ok {
-			s.Sensitive = true
-		}
-		r.Sensitive.AdditionalConnectionDetailsFn = func(attr map[string]any) (map[string][]byte, error) {
-			conn := map[string][]byte{}
-			if v, ok := attr["client_id"].(string); ok && v != "" {
-				conn["client_id"] = []byte(v)
-			}
-			return conn, nil
-		}
-	})
 }
