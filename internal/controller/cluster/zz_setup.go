@@ -31,8 +31,6 @@ import (
 	controlassociations "github.com/polarpoint-io/provider-wiz/internal/controller/cluster/policy/controlassociations"
 	hostconfigruleassociations "github.com/polarpoint-io/provider-wiz/internal/controller/cluster/policy/hostconfigruleassociations"
 	securityframework "github.com/polarpoint-io/provider-wiz/internal/controller/cluster/policy/securityframework"
-	cloudaccountlink "github.com/polarpoint-io/provider-wiz/internal/controller/cluster/project/cloudaccountlink"
-	project "github.com/polarpoint-io/provider-wiz/internal/controller/cluster/project/project"
 	providerconfig "github.com/polarpoint-io/provider-wiz/internal/controller/cluster/providerconfig"
 	graphquery "github.com/polarpoint-io/provider-wiz/internal/controller/cluster/report/graphquery"
 )
@@ -63,8 +61,6 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		controlassociations.Setup,
 		hostconfigruleassociations.Setup,
 		securityframework.Setup,
-		cloudaccountlink.Setup,
-		project.Setup,
 		providerconfig.Setup,
 		graphquery.Setup,
 	} {
@@ -101,8 +97,6 @@ func SetupGated(mgr ctrl.Manager, o controller.Options) error {
 		controlassociations.SetupGated,
 		hostconfigruleassociations.SetupGated,
 		securityframework.SetupGated,
-		cloudaccountlink.SetupGated,
-		project.SetupGated,
 		providerconfig.SetupGated,
 		graphquery.SetupGated,
 	} {
@@ -138,8 +132,6 @@ func SetupWebhookWithManager(mgr ctrl.Manager) error {
 		controlassociations.SetupWebhookWithManager,
 		hostconfigruleassociations.SetupWebhookWithManager,
 		securityframework.SetupWebhookWithManager,
-		cloudaccountlink.SetupWebhookWithManager,
-		project.SetupWebhookWithManager,
 		providerconfig.SetupWebhookWithManager,
 		graphquery.SetupWebhookWithManager,
 	} {

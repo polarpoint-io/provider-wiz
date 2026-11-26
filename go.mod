@@ -2,7 +2,10 @@ module github.com/polarpoint-io/provider-wiz
 
 go 1.27.4
 
-tool golang.org/x/tools/cmd/goimports
+tool (
+	github.com/Khan/genqlient
+	golang.org/x/tools/cmd/goimports
+)
 
 require (
 	dario.cat/mergo v1.0.2
@@ -24,13 +27,18 @@ require (
 
 require (
 	cloud.google.com/go v0.123.0 // indirect
+	github.com/Khan/genqlient v0.8.1 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
+	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b // indirect
+	github.com/alexflint/go-arg v1.5.1 // indirect
+	github.com/alexflint/go-scalar v1.2.0 // indirect
 	github.com/antchfx/htmlquery v1.2.4 // indirect
 	github.com/antchfx/xpath v1.3.6 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/blang/semver/v4 v4.0.0 // indirect
+	github.com/bmatcuk/doublestar/v4 v4.6.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/dave/jennifer v1.7.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
@@ -114,6 +122,7 @@ require (
 	github.com/tidwall/sjson v1.2.5 // indirect
 	github.com/tmccombs/hcl2json v0.3.3 // indirect
 	github.com/upbound/uptest v0.12.1-0.20260728095952-c230a8044006 // indirect
+	github.com/vektah/gqlparser/v2 v2.5.19 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect

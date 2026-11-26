@@ -1,0 +1,11 @@
+# Generate with: go generate ./internal/clients/wizapi
+schema: schema/wiz.graphql
+operations:
+  - operations/*.graphql
+generated: generated.go
+package: wizapi
+use_struct_references: false
+optional: pointer
+bindings:
+  DateTime:
+    type: string

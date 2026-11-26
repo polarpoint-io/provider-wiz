@@ -45,6 +45,7 @@ import (
 	"github.com/polarpoint-io/provider-wiz/internal/clients"
 	controllerCluster "github.com/polarpoint-io/provider-wiz/internal/controller/cluster"
 	controllerNamespaced "github.com/polarpoint-io/provider-wiz/internal/controller/namespaced"
+	"github.com/polarpoint-io/provider-wiz/internal/controller/native"
 	"github.com/polarpoint-io/provider-wiz/internal/features"
 	"github.com/polarpoint-io/provider-wiz/internal/version"
 )
@@ -258,10 +259,12 @@ func main() {
 		}), "Cannot setup CRD gate")
 		kingpin.FatalIfError(controllerCluster.SetupGated(mgr, clusterOpts), "Cannot setup cluster-scoped Wiz controllers")
 		kingpin.FatalIfError(controllerNamespaced.SetupGated(mgr, namespacedOpts), "Cannot setup namespaced Wiz controllers")
+		kingpin.FatalIfError(native.SetupGated(mgr, clusterOpts.Options, namespacedOpts.Options), "Cannot setup native Wiz controllers")
 	} else {
 		log.Info("Provider has missing RBAC permissions for watching CRDs, controller SafeStart capability will be disabled")
 		kingpin.FatalIfError(controllerCluster.Setup(mgr, clusterOpts), "Cannot setup cluster-scoped Wiz controllers")
 		kingpin.FatalIfError(controllerNamespaced.Setup(mgr, namespacedOpts), "Cannot setup namespaced Wiz controllers")
+		kingpin.FatalIfError(native.Setup(mgr, clusterOpts.Options, namespacedOpts.Options), "Cannot setup native Wiz controllers")
 	}
 
 	kingpin.FatalIfError(mgr.Start(ctrl.SetupSignalHandler()), "Cannot start controller manager")

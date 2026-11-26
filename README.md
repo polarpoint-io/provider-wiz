@@ -13,13 +13,16 @@ generated with [Upjet](https://github.com/crossplane/upjet) from the
 [`jschoombee/wiz`](https://registry.terraform.io/providers/jschoombee/wiz/latest/docs) Terraform provider
 ([source](https://github.com/jschoombee/terraform-provider-wiz), currently pinned to `v0.0.7`).
 
-It exposes all 25 Terraform resources as Crossplane managed resources, both cluster scoped
-(`*.wiz.polarpoint.io`) and namespaced for Crossplane v2 (`*.wiz.m.polarpoint.io`). All kinds are
-`v1alpha1` until they pass end-to-end tests against a Wiz tenant.
+The provider is moving, kind by kind, from Upjet to native controllers that call the Wiz GraphQL
+API directly, so it is no longer limited to what the Terraform provider covers. Kinds marked
+*native* below already use the Wiz API directly; see [docs/native-migration.md](docs/native-migration.md).
+Every kind is served both cluster scoped (`*.wiz.polarpoint.io`) and namespaced for Crossplane v2
+(`*.wiz.m.polarpoint.io`). All kinds are `v1alpha1` until they pass end-to-end tests against a
+Wiz tenant.
 
 | Group | Kinds |
 | --- | --- |
-| `project` | Project, CloudAccountLink |
+| `project` | Project (*native*; cloud account links are part of its spec) |
 | `iam` | ServiceAccount, User, SAMLIdP, SAMLGroupMapping |
 | `connector` | AWS, GCP |
 | `integration` | AWSSNS, Jira, ServiceNow |

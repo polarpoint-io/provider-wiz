@@ -1,0 +1,108 @@
+fragment ProjectFields on Project {
+  id
+  name
+  slug
+  description
+  isFolder
+  archived
+  businessUnit
+  identifiers
+  ancestorProjects { id }
+  projectOwners { id }
+  securityChampions { id }
+  riskProfile {
+    businessImpact
+    isActivelyDeveloped
+    hasAuthentication
+    hasExposedAPI
+    isInternetFacing
+    isCustomerFacing
+    storesData
+    sensitiveDataTypes
+    isRegulated
+    regulatoryStandards
+  }
+  cloudAccountLinks {
+    cloudAccount { id }
+    environment
+    resourceGroups
+    resourceTags { key value }
+    shared
+  }
+  cloudOrganizationLinks {
+    cloudOrganization { id }
+    environment
+    resourceGroups
+    resourceTags { key value }
+    shared
+  }
+  kubernetesClustersLinks {
+    kubernetesCluster { id }
+    environment
+    namespaces
+    shared
+  }
+}
+
+query GetProject($id: ID!) {
+  project(id: $id) { ...ProjectFields }
+}
+
+# Optional input fields are omitted rather than sent as null, so Wiz
+# keeps its defaults and a patch only touches the fields it carries.
+# @genqlient(for: "CreateProjectInput.slug", omitempty: true)
+# @genqlient(for: "CreateProjectInput.description", omitempty: true)
+# @genqlient(for: "CreateProjectInput.isFolder", omitempty: true)
+# @genqlient(for: "CreateProjectInput.archived", omitempty: true)
+# @genqlient(for: "CreateProjectInput.businessUnit", omitempty: true)
+# @genqlient(for: "CreateProjectInput.identifiers", omitempty: true)
+# @genqlient(for: "CreateProjectInput.parentProjectId", omitempty: true)
+# @genqlient(for: "CreateProjectInput.projectOwners", omitempty: true)
+# @genqlient(for: "CreateProjectInput.securityChampions", omitempty: true)
+# @genqlient(for: "CreateProjectInput.cloudAccountLinks", omitempty: true)
+# @genqlient(for: "CreateProjectInput.cloudOrganizationLinks", omitempty: true)
+# @genqlient(for: "CreateProjectInput.kubernetesClusterLinks", omitempty: true)
+# @genqlient(for: "ProjectRiskProfileInput.businessImpact", omitempty: true)
+# @genqlient(for: "ProjectRiskProfileInput.isActivelyDeveloped", omitempty: true)
+# @genqlient(for: "ProjectRiskProfileInput.hasAuthentication", omitempty: true)
+# @genqlient(for: "ProjectRiskProfileInput.hasExposedAPI", omitempty: true)
+# @genqlient(for: "ProjectRiskProfileInput.isInternetFacing", omitempty: true)
+# @genqlient(for: "ProjectRiskProfileInput.isCustomerFacing", omitempty: true)
+# @genqlient(for: "ProjectRiskProfileInput.storesData", omitempty: true)
+# @genqlient(for: "ProjectRiskProfileInput.sensitiveDataTypes", omitempty: true)
+# @genqlient(for: "ProjectRiskProfileInput.isRegulated", omitempty: true)
+# @genqlient(for: "ProjectRiskProfileInput.regulatoryStandards", omitempty: true)
+# @genqlient(for: "ProjectCloudAccountLinkInput.resourceGroups", omitempty: true)
+# @genqlient(for: "ProjectCloudAccountLinkInput.resourceTags", omitempty: true)
+# @genqlient(for: "ProjectCloudAccountLinkInput.shared", omitempty: true)
+# @genqlient(for: "ProjectCloudOrganizationLinkInput.resourceGroups", omitempty: true)
+# @genqlient(for: "ProjectCloudOrganizationLinkInput.resourceTags", omitempty: true)
+# @genqlient(for: "ProjectCloudOrganizationLinkInput.shared", omitempty: true)
+# @genqlient(for: "ProjectKubernetesClusterLinkInput.namespaces", omitempty: true)
+# @genqlient(for: "ProjectKubernetesClusterLinkInput.shared", omitempty: true)
+mutation CreateProject(
+  $input: CreateProjectInput!
+) {
+  createProject(input: $input) { project { ...ProjectFields } }
+}
+
+# @genqlient(for: "UpdateProjectInput.patch", omitempty: true)
+# @genqlient(for: "UpdateProjectInput.override", omitempty: true)
+# @genqlient(for: "UpdateProjectPatch.name", omitempty: true)
+# @genqlient(for: "UpdateProjectPatch.slug", omitempty: true)
+# @genqlient(for: "UpdateProjectPatch.description", omitempty: true)
+# @genqlient(for: "UpdateProjectPatch.archived", omitempty: true)
+# @genqlient(for: "UpdateProjectPatch.businessUnit", omitempty: true)
+# @genqlient(for: "UpdateProjectPatch.identifiers", omitempty: true)
+# @genqlient(for: "UpdateProjectPatch.parentProjectId", omitempty: true)
+# @genqlient(for: "UpdateProjectPatch.projectOwners", omitempty: true)
+# @genqlient(for: "UpdateProjectPatch.securityChampions", omitempty: true)
+# @genqlient(for: "UpdateProjectPatch.riskProfile", omitempty: true)
+# @genqlient(for: "UpdateProjectPatch.cloudAccountLinks", omitempty: true)
+# @genqlient(for: "UpdateProjectPatch.cloudOrganizationLinks", omitempty: true)
+# @genqlient(for: "UpdateProjectPatch.kubernetesClusterLinks", omitempty: true)
+mutation UpdateProject(
+  $input: UpdateProjectInput!
+) {
+  updateProject(input: $input) { project { ...ProjectFields } }
+}

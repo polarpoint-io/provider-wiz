@@ -1,0 +1,201 @@
+# Partial Wiz GraphQL schema, hand-written.
+#
+# Provenance: reconstructed from the public jschoombee/terraform-provider-wiz
+# source (internal/wiz/structs.go, enums.go and the queries in
+# internal/provider/resource_project.go), not from Wiz's API reference or an
+# introspection result. It covers only the operations this provider uses.
+#
+# Replace with an introspected schema (scripts/wiz_introspect.py) when one is
+# available; the operations in ../operations should keep compiling.
+
+scalar DateTime
+
+enum YesNoUnknown { YES NO UNKNOWN }
+enum BusinessImpact { LBI MBI HBI }
+enum Environment { PRODUCTION STAGING DEVELOPMENT TESTING OTHER }
+enum ProjectDataType { CLASSIFIED HEALTH PII PCI FINANCIAL CUSTOMER }
+enum RegulatoryStandard {
+  ISO_20000_1_2011 ISO_22301 ISO_27001 ISO_27017 ISO_27018 ISO_27701 ISO_9001
+  SOC FEDRAMP NIST_800_171 NIST_CSF HIPPA_HITECH HITRUST PCI_DSS SEC_17A_4
+  SEC_REGULATION_SCI SOX GDPR
+}
+
+type Query {
+  project(id: ID!): Project
+}
+
+type Mutation {
+  createProject(input: CreateProjectInput!): CreateProjectPayload
+  updateProject(input: UpdateProjectInput!): UpdateProjectPayload
+}
+
+type User {
+  id: ID!
+  name: String
+  email: String
+}
+
+type ResourceTag {
+  key: String!
+  value: String!
+}
+
+type CloudAccount {
+  id: ID!
+  externalId: String
+  name: String
+}
+
+type CloudOrganization {
+  id: ID!
+  externalId: String
+  name: String
+  path: String
+}
+
+type KubernetesCluster {
+  id: ID!
+  name: String
+}
+
+type ProjectCloudAccountLink {
+  cloudAccount: CloudAccount!
+  environment: Environment
+  resourceGroups: [String!]
+  resourceTags: [ResourceTag!]
+  shared: Boolean
+}
+
+type ProjectCloudOrganizationLink {
+  cloudOrganization: CloudOrganization!
+  environment: Environment
+  resourceGroups: [String!]
+  resourceTags: [ResourceTag!]
+  shared: Boolean
+}
+
+type ProjectKubernetesClusterLink {
+  kubernetesCluster: KubernetesCluster!
+  environment: Environment
+  namespaces: [String!]
+  shared: Boolean
+}
+
+type ProjectRiskProfile {
+  businessImpact: BusinessImpact
+  isActivelyDeveloped: YesNoUnknown
+  hasAuthentication: YesNoUnknown
+  hasExposedAPI: YesNoUnknown
+  isInternetFacing: YesNoUnknown
+  isCustomerFacing: YesNoUnknown
+  storesData: YesNoUnknown
+  sensitiveDataTypes: [ProjectDataType!]
+  isRegulated: YesNoUnknown
+  regulatoryStandards: [RegulatoryStandard!]
+}
+
+type Project {
+  id: ID!
+  name: String!
+  slug: String!
+  description: String
+  isFolder: Boolean!
+  archived: Boolean!
+  businessUnit: String
+  identifiers: [String!]
+  ancestorProjects: [Project!]
+  projectOwners: [User!]
+  securityChampions: [User!]
+  riskProfile: ProjectRiskProfile!
+  cloudAccountLinks: [ProjectCloudAccountLink!]
+  cloudOrganizationLinks: [ProjectCloudOrganizationLink!]
+  kubernetesClustersLinks: [ProjectKubernetesClusterLink!]
+}
+
+input ResourceTagInput {
+  key: String!
+  value: String!
+}
+
+input ProjectCloudAccountLinkInput {
+  cloudAccount: String!
+  environment: Environment!
+  resourceGroups: [String!]
+  resourceTags: [ResourceTagInput!]
+  shared: Boolean
+}
+
+input ProjectCloudOrganizationLinkInput {
+  cloudOrganization: String!
+  environment: Environment!
+  resourceGroups: [String!]
+  resourceTags: [ResourceTagInput!]
+  shared: Boolean
+}
+
+input ProjectKubernetesClusterLinkInput {
+  kubernetesCluster: String!
+  environment: Environment!
+  namespaces: [String!]
+  shared: Boolean
+}
+
+input ProjectRiskProfileInput {
+  businessImpact: BusinessImpact
+  isActivelyDeveloped: YesNoUnknown
+  hasAuthentication: YesNoUnknown
+  hasExposedAPI: YesNoUnknown
+  isInternetFacing: YesNoUnknown
+  isCustomerFacing: YesNoUnknown
+  storesData: YesNoUnknown
+  sensitiveDataTypes: [ProjectDataType!]
+  isRegulated: YesNoUnknown
+  regulatoryStandards: [RegulatoryStandard!]
+}
+
+input CreateProjectInput {
+  name: String!
+  slug: String
+  description: String
+  isFolder: Boolean
+  archived: Boolean
+  businessUnit: String
+  identifiers: [String!]
+  parentProjectId: ID
+  projectOwners: [ID!]
+  securityChampions: [ID!]
+  riskProfile: ProjectRiskProfileInput!
+  cloudAccountLinks: [ProjectCloudAccountLinkInput!]
+  cloudOrganizationLinks: [ProjectCloudOrganizationLinkInput!]
+  kubernetesClusterLinks: [ProjectKubernetesClusterLinkInput!]
+}
+
+input UpdateProjectPatch {
+  name: String
+  slug: String
+  description: String
+  archived: Boolean
+  businessUnit: String
+  identifiers: [String!]
+  parentProjectId: ID
+  projectOwners: [ID!]
+  securityChampions: [ID!]
+  riskProfile: ProjectRiskProfileInput
+  cloudAccountLinks: [ProjectCloudAccountLinkInput!]
+  cloudOrganizationLinks: [ProjectCloudOrganizationLinkInput!]
+  kubernetesClusterLinks: [ProjectKubernetesClusterLinkInput!]
+}
+
+input UpdateProjectInput {
+  id: ID!
+  patch: UpdateProjectPatch
+  override: UpdateProjectPatch
+}
+
+type CreateProjectPayload {
+  project: Project
+}
+
+type UpdateProjectPayload {
+  project: Project
+}

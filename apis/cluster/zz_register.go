@@ -15,7 +15,6 @@ import (
 	v1alpha1iam "github.com/polarpoint-io/provider-wiz/apis/cluster/iam/v1alpha1"
 	v1alpha1integration "github.com/polarpoint-io/provider-wiz/apis/cluster/integration/v1alpha1"
 	v1alpha1policy "github.com/polarpoint-io/provider-wiz/apis/cluster/policy/v1alpha1"
-	v1alpha1project "github.com/polarpoint-io/provider-wiz/apis/cluster/project/v1alpha1"
 	v1alpha1report "github.com/polarpoint-io/provider-wiz/apis/cluster/report/v1alpha1"
 	v1alpha1cluster "github.com/polarpoint-io/provider-wiz/apis/cluster/v1alpha1"
 	v1beta1 "github.com/polarpoint-io/provider-wiz/apis/cluster/v1beta1"
@@ -29,7 +28,6 @@ func init() {
 		v1alpha1iam.SchemeBuilder.AddToScheme,
 		v1alpha1integration.SchemeBuilder.AddToScheme,
 		v1alpha1policy.SchemeBuilder.AddToScheme,
-		v1alpha1project.SchemeBuilder.AddToScheme,
 		v1alpha1report.SchemeBuilder.AddToScheme,
 		v1alpha1cluster.SchemeBuilder.AddToScheme,
 		v1beta1.SchemeBuilder.AddToScheme,
