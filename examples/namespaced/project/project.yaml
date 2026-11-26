@@ -1,5 +1,7 @@
 apiVersion: project.wiz.m.polarpoint.io/v1alpha1
 kind: Project
+# Wiz cannot delete projects: deleting this resource archives the project and
+# renames it to its slug. Apply this before the iam examples, which reference it.
 metadata:
   name: example
   namespace: crossplane-system

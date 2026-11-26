@@ -1,3 +1,6 @@
+# Installs the provider. Packages are published to ghcr.io/polarpoint-io by the
+# manual "Publish Provider Package" workflow; set the tag to a version you
+# published.
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:

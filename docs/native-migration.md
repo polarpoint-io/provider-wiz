@@ -4,6 +4,10 @@ This provider is replacing its Upjet (Terraform) controllers with native ones th
 GraphQL API directly. The Terraform provider it wraps (`jschoombee/wiz`) misses much of Wiz's
 newer functionality, and the official `wizsec/wiz` provider is not open source.
 
+Project, User and ServiceAccount are native; every other kind is still Upjet (see [Status](#status)).
+The native controllers are covered by unit tests against an in-memory fake of the Wiz API, but
+have not yet been run against a live Wiz tenant.
+
 ## How it works
 
 | Piece | Where |
@@ -25,8 +29,8 @@ credentials secret (`wiz_url`, `wiz_auth_client_id`, `wiz_auth_client_secret`, o
 
 Wiz's API reference is behind a login, so the schema is reconstructed from the public Terraform
 provider source and only covers the operations used here. When an introspected schema is available
-(`scripts/wiz_introspect.py` in the project files), replace `schema/wiz.graphql` with it and
-regenerate; the operations should keep compiling. Anything marked `needs real schema/docs` in the
+(from a standard GraphQL introspection query against a tenant, if Wiz's terms allow it), replace
+`schema/wiz.graphql` with it and regenerate; the operations should keep compiling. Anything marked `needs real schema/docs` in the
 code was inferred and should be checked then.
 
 ## Moving a kind
@@ -50,7 +54,17 @@ pointing at the same Wiz object.
 
 | Kind | Controller | Notes |
 | --- | --- | --- |
-| Project | native | Wiz cannot delete projects, so deleting a Project archives it. The old `CloudAccountLink` kind is now `spec.forProvider.cloudAccountLinks`. |
+| Project | native | Wiz cannot delete projects, so deleting a Project archives it and renames it to its slug to free the name. The old `CloudAccountLink` kind is now `spec.forProvider.cloudAccountLinks`. |
 | User | native | `assignedProjectIds` left unset is not managed; `[]` removes every assignment. `isSuspended` is new. Role and projects are read from Wiz's effective values, which a SAML group mapping can override. |
 | ServiceAccount | native | Wiz cannot update a service account: `name`, `type` and `scopes` are immutable, and a change to `assignedProjects` reports a sync error until the resource is recreated. The connection secret gets `client_id` and `client_secret` on create only; if that write fails, the resource reports a sync error, because the secret cannot be fetched again. `recreateIfRotated` is gone; `status.atProvider.lastRotatedAt` shows a rotation done outside Crossplane. |
-| All other kinds | Upjet | Unchanged. |
+| All other kinds | Upjet | Unchanged. Candidates for the next batches are noted below. |
+
+## Next candidates
+
+- **CICDScanPolicy, ReportGraphQuery:** self-contained, with no other kind pointing at them.
+- **SecurityFramework:** its categories and sub-categories have IDs that CloudConfigRuleAssociations
+  and ControlAssociations point at, so an update must keep those IDs rather than replace the lists.
+- **Connector, Integration, AutomationRule:** each one is a single generic Wiz API with per-type
+  parameters, and other kinds reference them. Move them together.
+- **The *Associations kinds and SAMLGroupMapping:** these edit lists owned by another object. Fold
+  them into their parent where possible, as CloudAccountLink was folded into Project.
